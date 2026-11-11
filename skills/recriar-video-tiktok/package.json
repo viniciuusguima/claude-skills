@@ -1,0 +1,9 @@
+{
+  "name": "recriar-video-tiktok",
+  "private": true,
+  "type": "module",
+  "description": "Dependências dos scripts da skill (render via Chrome headless)",
+  "dependencies": {
+    "puppeteer-core": "^23.11.1"
+  }
+}

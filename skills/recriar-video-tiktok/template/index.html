@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Prévia do vídeo</title>
+<style>
+  :root { color-scheme: dark; }
+  html, body { margin: 0; background: #000; color: #ddd; font-family: 'Segoe UI', Arial, sans-serif; }
+  #wrap { display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 12px; }
+  canvas { max-width: 100%; max-height: calc(100vh - 150px); background: #000; display: block; }
+  #ui, #cenas { display: flex; gap: 8px; align-items: center; width: min(100%, 1280px); flex-wrap: wrap; }
+  #ui input[type=range] { flex: 1; min-width: 200px; }
+  button { background: #222; color: #eee; border: 1px solid #444; border-radius: 6px; padding: 6px 14px; cursor: pointer; font: inherit; }
+  #cenas button { font-size: 12px; padding: 4px 8px; }
+  #tempo { font-variant-numeric: tabular-nums; min-width: 120px; }
+  body.render #ui, body.render #cenas { display: none; }
+  body.render #wrap { padding: 0; }
+  body.render canvas { max-width: none; max-height: none; }
+</style>
+</head>
+<body>
+<div id="wrap">
+  <canvas id="c"></canvas>
+  <div id="ui">
+    <button id="play">▶ Play</button>
+    <input id="scrub" type="range" min="0" step="0.01" value="0">
+    <span id="tempo">0.00s</span>
+  </div>
+  <div id="cenas"></div>
+</div>
+<audio id="aud" src="build/trilha_final.wav" preload="auto"></audio>
+<script src="timeline.js"></script>
+<script src="motor.js"></script>
+<script src="cenas.js"></script>
+<script>
+  const cv = document.getElementById('c');
+  cv.width = Motor.W; cv.height = Motor.H;
+  const g = cv.getContext('2d');
+  const params = new URLSearchParams(location.search);
+  window.renderFrame = t => Motor.render(g, t);
+
+  // folha de conferência: grade com um quadro de cada cena em frações do tempo dela
+  window.renderFolha = (fracs = [0.85]) => {
+    const cs = TIMELINE.cenas, n = cs.length * fracs.length;
+    const cols = Math.ceil(Math.sqrt(n * (Motor.H / Motor.W) * 1.0)) || 1;
+    const rows = Math.ceil(n / cols);
+    const cw = Motor.W > Motor.H ? 640 : 360, ch = Math.round(cw * Motor.H / Motor.W);
+    const out = document.createElement('canvas'); out.width = cols * cw; out.height = rows * ch;
+    const og = out.getContext('2d'); og.fillStyle = '#300'; og.fillRect(0, 0, out.width, out.height);
+    const off = document.createElement('canvas'); off.width = Motor.W; off.height = Motor.H;
+    const offg = off.getContext('2d');
+    let j = 0;
+    cs.forEach((c, i) => fracs.forEach(f => {
+      const ini = i === 0 ? 0 : c.inicio, t = ini + (c.fim - ini) * f;
+      Motor.render(offg, t);
+      const x = (j % cols) * cw, y = Math.floor(j / cols) * ch;
+      og.drawImage(off, x, y, cw - 3, ch - 3);
+      og.fillStyle = 'yellow'; og.font = '20px sans-serif';
+      og.fillText(`${i + 1}. ${c.id}  ${t.toFixed(1)}s`, x + 8, y + 24);
+      j++;
+    }));
+    return out.toDataURL('image/png');
+  };
+
+  if (params.has('render')) {
+    document.body.classList.add('render');
+  } else {
+    const aud = document.getElementById('aud'), scrub = document.getElementById('scrub'),
+          play = document.getElementById('play'), tempo = document.getElementById('tempo');
+    const total = TIMELINE.total;
+    scrub.max = total;
+    let tManual = +(params.get('t') || 0);
+    aud.currentTime = tManual;
+    const lista = document.getElementById('cenas');
+    TIMELINE.cenas.forEach((c, i) => {
+      const b = document.createElement('button');
+      b.textContent = `${i + 1}. ${c.id}`; b.title = c.texto;
+      b.onclick = () => { tManual = i === 0 ? 0 : c.inicio; aud.currentTime = tManual; };
+      lista.appendChild(b);
+    });
+    play.onclick = () => { aud.paused ? aud.play() : aud.pause(); };
+    aud.onplay = () => play.textContent = '❚❚ Pausar';
+    aud.onpause = () => play.textContent = '▶ Play';
+    scrub.oninput = () => { tManual = +scrub.value; aud.currentTime = tManual; };
+    document.addEventListener('keydown', e => { if (e.code === 'Space') { e.preventDefault(); play.click(); } });
+    (function loop() {
+      const t = aud.paused ? tManual : aud.currentTime;
+      if (!aud.paused) tManual = t;
+      Motor.render(g, Math.min(t, total));
+      scrub.value = t; tempo.textContent = `${t.toFixed(2)}s / ${total.toFixed(1)}s`;
+      requestAnimationFrame(loop);
+    })();
+  }
+</script>
+</body>
+</html>
