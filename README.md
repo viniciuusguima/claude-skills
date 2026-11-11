@@ -15,13 +15,13 @@ ligue) a pasta da skill para lá.
 
 **Windows (PowerShell)**: uma junction mantém a skill sincronizada com o repositório:
 ```powershell
-git clone git@github.com:viniciuusguima/claude-skills.git E:\Projetos\claude-skills
+gh repo clone viniciuusguima/claude-skills E:\Projetos\claude-skills
 New-Item -ItemType Junction -Path "$env:USERPROFILE\.claude\skills\recriar-video-tiktok" -Target "E:\Projetos\claude-skills\skills\recriar-video-tiktok"
 ```
 
 **macOS / Linux**:
 ```bash
-git clone git@github.com:viniciuusguima/claude-skills.git ~/claude-skills
+gh repo clone viniciuusguima/claude-skills ~/claude-skills
 ln -s ~/claude-skills/skills/recriar-video-tiktok ~/.claude/skills/recriar-video-tiktok
 ```
 
