@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Modelo</title>
+<style>
+  html, body { margin: 0; height: 100%; background: #0c0f14; color: #e8ecf1; font-family: "Segoe UI", Arial, sans-serif; }
+  body { display: flex; flex-direction: column; align-items: center; }
+  #stage { flex: 1; min-height: 0; display: flex; align-items: center; justify-content: center; padding: 10px; box-sizing: border-box; width: 100%; }
+  #view { height: 100%; max-width: 100%; aspect-ratio: 9 / 16; object-fit: contain; border-radius: 8px; background: #000; }
+  #ui { display: flex; gap: 10px; align-items: center; padding: 10px 14px; width: 100%; box-sizing: border-box; background: #151a22; flex-wrap: wrap; }
+  button { background: #2a6df4; color: #fff; border: 0; border-radius: 6px; padding: 8px 14px; font-size: 14px; cursor: pointer; }
+  button#export { background: #1f9d55; }
+  #seek { flex: 1; min-width: 120px; }
+  #time { width: 56px; text-align: right; font-variant-numeric: tabular-nums; }
+  #status { font-size: 13px; color: #9fb0c3; min-width: 160px; }
+</style>
+</head>
+<body>
+<div id="stage"><canvas id="view"></canvas></div>
+<div id="ui">
+  <button id="play">▶ Reproduzir</button>
+  <input id="seek" type="range" min="0" max="12" step="0.01" value="0">
+  <span id="time">0.0 s</span>
+  <button id="export">Exportar MP4</button>
+  <span id="status"></span>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mp4-muxer@5.1.3/build/mp4-muxer.min.js"></script>
+<script src="js/util.js"></script>
+<script src="js/kit.js"></script>
+<script src="js/studio.js"></script>
+<script src="js/sfx.js"></script>
+<script src="js/modelo_world.js"></script>
+<script src="js/modelo_audio.js"></script>
+<script src="js/modelo_main.js"></script>
+</body>
+</html>
