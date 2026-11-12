@@ -83,6 +83,19 @@ function makeStudio(cfg) {
     if (fout > 0) { ctx.fillStyle = `rgba(0,0,0,${fout})`; ctx.fillRect(0, 0, 720, 1280); }
   }
 
+  function wavBlob(a) { // áudio {sr, N, L, R} -> WAV PCM 16 bits estéreo
+    const N = a.N, buf = new ArrayBuffer(44 + N * 4), dv = new DataView(buf);
+    const txt = (o, s) => { for (let i = 0; i < s.length; i++) dv.setUint8(o + i, s.charCodeAt(i)); };
+    txt(0, 'RIFF'); dv.setUint32(4, 36 + N * 4, true); txt(8, 'WAVE'); txt(12, 'fmt ');
+    dv.setUint32(16, 16, true); dv.setUint16(20, 1, true); dv.setUint16(22, 2, true); dv.setUint32(24, a.sr, true);
+    dv.setUint32(28, a.sr * 4, true); dv.setUint16(32, 4, true); dv.setUint16(34, 16, true); txt(36, 'data'); dv.setUint32(40, N * 4, true);
+    for (let i = 0, o = 44; i < N; i++, o += 4) {
+      dv.setInt16(o, Math.round(clamp(a.L[i] || 0, -1, 1) * 32767), true);
+      dv.setInt16(o + 2, Math.round(clamp(a.R[i] || 0, -1, 1) * 32767), true);
+    }
+    return new Blob([buf], { type: 'audio/wav' });
+  }
+
   function start(renderAt, synth, fileName) {
     const ui = { play: document.getElementById('play'), seek: document.getElementById('seek'), time: document.getElementById('time'), exp: document.getElementById('export'), status: document.getElementById('status') };
     let curT = 0, playing = false, lastNow = 0, actx = null, abuf = null, asrc = null, audioData = null;
@@ -108,14 +121,30 @@ function makeStudio(cfg) {
 
     window.__exp = { state: 'idle', frame: 0, total: Math.round(DUR * FPS), msg: '' };
     const yieldNow = () => new Promise(r => { const c = new MessageChannel(); c.port1.onmessage = () => r(); c.port2.postMessage(0); });
+    // Só quando o navegador não codifica AAC: salva o vídeo mudo e o áudio em WAV; o server.py junta em AAC com o ffmpeg.
+    async function juntarComFfmpeg(buf, a, name) {
+      const base = name.replace(/\.mp4$/i, ''), video = base + '.video.mp4', audio = base + '.audio.wav';
+      const salvar = async (n, body) => { const r = await fetch('/save?name=' + encodeURIComponent(n), { method: 'POST', body }); if (!r.ok) throw new Error(`falha ao salvar ${n}: ${r.status}`); };
+      await salvar(video, new Blob([buf], { type: 'video/mp4' }));
+      await salvar(audio, wavBlob(a));
+      window.__exp.state = 'muxing'; ui.status.textContent = 'Juntando vídeo e áudio (ffmpeg)...';
+      const r = await fetch('/mux?' + new URLSearchParams({ video, audio, name }), { method: 'POST' });
+      const txt = await r.text();
+      if (!r.ok) throw new Error('falha ao juntar vídeo e áudio: ' + txt);
+      return parseInt(txt, 10) || 0;
+    }
     async function exportVideo(name = fileName) {
       const X = window.__exp; X.state = 'running'; X.msg = ''; X.frame = 0;
       playing = false; stopAudio();
       try {
         const total = X.total;
+        // Com AAC (Chrome/Edge no Windows e no Mac) o áudio entra direto no MP4, como sempre.
+        // Sem AAC (Chrome no Linux), sai o MP4 sem áudio + um WAV, e o server.py junta os dois com o ffmpeg.
+        let aac = false;
+        try { aac = (await AudioEncoder.isConfigSupported({ codec: 'mp4a.40.2', sampleRate: 48000, numberOfChannels: 2, bitrate: 192000 })).supported === true; } catch (e) { }
         const muxer = new Mp4Muxer.Muxer({
           target: new Mp4Muxer.ArrayBufferTarget(), video: { codec: 'avc', width: W, height: H, frameRate: FPS },
-          audio: { codec: 'aac', numberOfChannels: 2, sampleRate: 48000 }, fastStart: 'in-memory', firstTimestampBehavior: 'offset',
+          ...(aac ? { audio: { codec: 'aac', numberOfChannels: 2, sampleRate: 48000 } } : {}), fastStart: 'in-memory', firstTimestampBehavior: 'offset',
         });
         let err = null;
         const venc = new VideoEncoder({ output: (c, m) => muxer.addVideoChunk(c, m), error: e => { err = e; } });
@@ -133,24 +162,28 @@ function makeStudio(cfg) {
         await venc.flush(); venc.close();
         X.state = 'audio'; ui.status.textContent = 'Gerando áudio...'; await yieldNow();
         const a = getAudio();
-        const aenc = new AudioEncoder({ output: (c, m) => muxer.addAudioChunk(c, m), error: e => { err = e; } });
-        aenc.configure({ codec: 'mp4a.40.2', sampleRate: a.sr, numberOfChannels: 2, bitrate: 192000 });
-        const CH = 4800;
-        for (let o = 0; o < a.N; o += CH) {
-          const n = Math.min(CH, a.N - o), data = new Float32Array(n * 2);
-          data.set(a.L.subarray(o, o + n), 0); data.set(a.R.subarray(o, o + n), n);
-          const ad = new AudioData({ format: 'f32-planar', sampleRate: a.sr, numberOfFrames: n, numberOfChannels: 2, timestamp: Math.round(o / a.sr * 1e6), data });
-          aenc.encode(ad); ad.close();
-          if (aenc.encodeQueueSize > 20) await yieldNow();
+        if (aac) {
+          const aenc = new AudioEncoder({ output: (c, m) => muxer.addAudioChunk(c, m), error: e => { err = e; } });
+          aenc.configure({ codec: 'mp4a.40.2', sampleRate: a.sr, numberOfChannels: 2, bitrate: 192000 });
+          const CH = 4800;
+          for (let o = 0; o < a.N; o += CH) {
+            const n = Math.min(CH, a.N - o), data = new Float32Array(n * 2);
+            data.set(a.L.subarray(o, o + n), 0); data.set(a.R.subarray(o, o + n), n);
+            const ad = new AudioData({ format: 'f32-planar', sampleRate: a.sr, numberOfFrames: n, numberOfChannels: 2, timestamp: Math.round(o / a.sr * 1e6), data });
+            aenc.encode(ad); ad.close();
+            if (aenc.encodeQueueSize > 20) await yieldNow();
+          }
+          await aenc.flush(); aenc.close();
         }
-        await aenc.flush(); aenc.close();
         if (err) throw err;
         muxer.finalize();
         const buf = muxer.target.buffer;
         X.state = 'saving'; X.bytes = buf.byteLength; ui.status.textContent = 'Salvando arquivo...';
-        const res = await fetch('/save?name=' + encodeURIComponent(name), { method: 'POST', body: new Blob([buf], { type: 'video/mp4' }) });
-        if (!res.ok) throw new Error('falha ao salvar: ' + res.status);
-        X.state = 'done'; ui.status.textContent = `Pronto: ${name} (${(buf.byteLength / 1048576).toFixed(1)} MB)`;
+        if (aac) {
+          const res = await fetch('/save?name=' + encodeURIComponent(name), { method: 'POST', body: new Blob([buf], { type: 'video/mp4' }) });
+          if (!res.ok) throw new Error('falha ao salvar: ' + res.status);
+        } else X.bytes = await juntarComFfmpeg(buf, a, name);
+        X.state = 'done'; ui.status.textContent = `Pronto: ${name} (${(X.bytes / 1048576).toFixed(1)} MB)`;
       } catch (e) {
         X.state = 'error'; X.msg = String(e && e.stack || e); ui.status.textContent = 'Erro: ' + e;
       }

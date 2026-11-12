@@ -29,6 +29,7 @@ const NAVEGADORES = [
   "C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe",
   "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
   "/usr/bin/google-chrome", "/usr/bin/chromium",
+  "/usr/bin/google-chrome-stable", "/usr/bin/chromium-browser", "/snap/bin/chromium", "/usr/bin/microsoft-edge",
 ].filter(Boolean);
 const exe = NAVEGADORES.find(p => fs.existsSync(p));
 if (!exe) { console.error("Nenhum Chrome/Edge encontrado. Defina NAVEGADOR=caminho/do/executavel."); process.exit(2); }

@@ -56,7 +56,7 @@ Depois de `start`, no console da página:
 - `renderAt(t)` → desenha o quadro do instante t (precisa ser global no `_main.js`).
 - `await snap([t1,...], 'nome', larguraCelula=432, alturaCelula=768)` → grava `debug/nome.png` com um quadro por instante, etiquetado.
 - `synthNow()` → áudio final `{L, R, N, sr, peak}` para medir.
-- `exportVideo('nome.mp4')` → renderiza e salva na pasta do projeto; progresso em `window.__exp` (`state`, `frame`, `total`, `msg`, `bytes`).
+- `exportVideo('nome.mp4')` → renderiza e salva na pasta do projeto; progresso em `window.__exp` (`state`, `frame`, `total`, `msg`, `bytes`). Se o navegador não codifica AAC (Chrome no Linux), grava `nome.video.mp4` e `nome.audio.wav` e pede ao `server.py` (`POST /mux`) para juntar os dois em `nome.mp4` com o ffmpeg; nessa etapa `state` vale `'muxing'`.
 
 ## sfx.js
 
