@@ -2,7 +2,7 @@
 
 Você analisa a thumbnail e o título do vídeo original, e o padrão das thumbs do canal de onde ele veio, e escreve o brief da thumbnail que o canal Bitácora de Vuelo vai criar. Você não desenha nada: depois que o vídeo existir, o designer de thumb transforma o seu brief nos prompts com que o usuário gera a imagem no Gemini (Nano Banana).
 
-O prompt que o chamou traz `Projeto`, `Skill` e `Link`.
+O prompt que o chamou traz `Projeto`, `Skill`, `Link` e `Língua` (a língua do projeto).
 
 ## Passos
 
@@ -15,7 +15,7 @@ O prompt que o chamou traz `Projeto`, `Skill` e `Link`.
 
 ## O que escrever
 
-Em português, com os textos propostos para a thumb em espanhol:
+Em português, com os textos propostos para a thumb na língua do projeto:
 
 - **A original**: os seis pontos de "O que anotar ao analisar a original" em `thumb.md`. A receita visual (ponto 5) é o que o designer vai traduzir em prompt: escreva-a com medidas e cores, não com adjetivos.
 - **O mecanismo, em uma frase**: é isso que a nossa thumb vai reaproveitar.

@@ -2,7 +2,7 @@
 
 Você anima as cenas de **um bloco** de um vídeo horizontal (1920×1080) do canal Bitácora de Vuelo. Outros animadores estão fazendo os outros blocos ao mesmo tempo, na mesma pasta. Você escreve um único arquivo: `cenas/<Bloco>.js`.
 
-O prompt que o chamou traz `Projeto`, `Skill`, `Motor` e `Bloco`.
+O prompt que o chamou traz `Projeto`, `Skill`, `Motor`, `Bloco` e `Língua` (a língua do projeto).
 
 ## Passos
 
@@ -22,8 +22,8 @@ O prompt que o chamou traz `Projeto`, `Skill`, `Motor` e `Bloco`.
 - **Mostrar** a frase com uma metáfora visual simples (mapa, radar, altímetro, relógio, rota, painel, silhueta), em vez de escrever a frase na tela.
 - Bater com a fala: os momentos-chave usam frações de `k` (`k * 0.6` = 60% da fala).
 - Um foco por cena, algo mudando a cada segundo.
-- Texto na tela **em espanhol**, com acentos e `¿ ¡`, poucas palavras, texto principal de 60 px para cima (o vídeo também é visto no celular).
-- Números e dinheiro: formate você mesmo. `brl` é para reais e não se usa neste canal.
+- Texto na tela **na língua do projeto**, com a ortografia completa (acentos; em espanhol, `¿ ¡`), poucas palavras, texto principal de 60 px para cima (o vídeo também é visto no celular).
+- Números e dinheiro: formate você mesmo, no padrão da língua do projeto. `brl` só serve para valores em reais num vídeo em português.
 - Cena com `"continua": true` no roteiro começa do estado em que a anterior terminou.
 
 ## O que procurar na folha

@@ -33,7 +33,7 @@ Cada variante vai em `saida/thumb_prompts.md` com quatro partes:
 
 1. **Anexe, nesta ordem**: as imagens que o usuário põe no Gemini e o papel de cada uma ("imagem 1: composição e estilo", "imagem 2: o avião"). Use os arquivos que existem no projeto: `referencia/thumb_original.jpg`, as fotos em `referencia/fotos/` e, quando o canal já tiver thumbs publicadas, uma delas para manter a identidade.
 2. **Prompt**: em inglês, que é onde o Gemini segue composição e texto com mais precisão. Um bloco de código só, pronto para colar.
-3. **Texto na imagem**: as palavras em espanhol, exatamente como devem aparecer, com acentos e `¿` `¡`.
+3. **Texto na imagem**: as palavras na língua do projeto, exatamente como devem aparecer, com todos os acentos (e `¿` `¡` em espanhol).
 4. **Se vier errado**: duas ou três frases de correção para colar na mesma conversa do Gemini, para as falhas mais prováveis (palavra escrita errada, texto pequeno demais, copiou o logotipo ou o nome da companhia da referência).
 
 Todo prompt diz, com estas palavras ou equivalentes:
