@@ -7,6 +7,7 @@ Minhas skills pessoais para o Claude Code. Cada pasta em `skills/` é uma skill 
 | Skill | O que faz |
 |---|---|
 | [recriar-video-tiktok](skills/recriar-video-tiktok/SKILL.md) | Recria em PT-BR, do zero, vídeos curtos de motion graphics do TikTok/Reels/Shorts a partir de um link: roteiro próprio, voz neural, trilha, animação em canvas (preto e branco, bonecos sob holofote) e MP4 pronto para postar. |
+| [resumo-marvel](skills/resumo-marvel/SKILL.md) | Vídeo longo para o YouTube (1920×1080, PT-BR) que resume heróis, vilões e sagas no formato "O ÚNICO resumo de X": roteiro em capítulos, narração pela Cartesia, stills e trailers oficiais, montagem com ffmpeg e capa em grade 3×2. |
 | [universo-simulado](skills/universo-simulado/SKILL.md) | Produz do zero um vídeo vertical completo (MP4 1080×1920, 60–75 s, PT-BR) do canal UNIVERSO SIMULADO a partir de uma única ideia: simulação 3D low-poly em primeira pessoa, legendas, trilha e efeitos sintetizados. |
 
 ## Mods (plugins)
