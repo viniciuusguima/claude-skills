@@ -23,6 +23,8 @@ Por que sem perguntas: o usuário já decidiu o formato (abaixo) e pediu para n�
 
 Tudo roda numa página local: three.js r128 desenha a cena, um canvas 2D põe texto por cima, WebCodecs + mp4-muxer gravam o MP4 e o áudio é gerado em JavaScript. Não há arquivos de mídia. Precisa de Python (servidor local), Node e Chrome ou Edge instalados: o script `scripts/video.mjs` desta skill abre a página num Chrome headless e faz a checagem, as folhas de quadros, a medição do som e a exportação pela linha de comando, sem o painel do navegador. Na primeira vez num PC, rode `npm install` na pasta da skill.
 
+No Windows e no Mac, o Chrome grava o áudio (AAC) direto no MP4. No Linux, o Chrome não codifica AAC: a exportação percebe isso sozinha, salva o vídeo sem áudio e um WAV, e o `server.py` junta os dois em AAC com o ffmpeg (que então precisa estar instalado). Os comandos e o arquivo final são os mesmos nos dois casos. Se o `video.mjs` não achar o navegador, defina `NAVEGADOR=caminho/do/executavel`.
+
 A pasta `assets/projeto/` desta skill é o projeto pronto:
 
 | Arquivo | Para quê |
