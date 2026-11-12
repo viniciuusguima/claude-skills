@@ -40,7 +40,7 @@ Próximo parágrafo...
 ## Como escrever
 
 - **Sem introdução**: o vídeo abre direto no primeiro capítulo, já contando a história.
-- Capítulos cronológicos de ~1,5 a 2,5 min (200 a 350 palavras), de 5 a 10 por vídeo. Total entre 1.000 e 2.500 palavras (a Luana fala ~150 palavras por minuto).
+- Capítulos cronológicos de ~1,5 a 2,5 min (200 a 350 palavras), de 5 a 10 por vídeo. Total entre 1.000 e 2.500 palavras (a voz fala ~150 palavras por minuto).
 - Cada capítulo responde "o que mudou e por quê": o fato, a motivação do personagem e a consequência. O fio que liga tudo aparece no último capítulo ("a última armadura começou na primeira").
 - Frases curtas, para o ouvido: uma ideia por frase, sem parênteses nem siglas que a voz leia mal. Números por extenso quando a leitura ficar ambígua.
 - Uma marcação a cada 2 ou 3 frases (10 a 20 s de fala), alternando imagem e cena. A montagem quebra planos longos em pedaços de ~5 s usando outras imagens da mesma pasta ou outros cortes do mesmo trailer.

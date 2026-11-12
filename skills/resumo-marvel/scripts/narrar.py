@@ -30,7 +30,7 @@ sys.path.insert(0, str(Path(__file__).parent))
 from alinhar import escrever_montagem, ler_roteiro, rascunho  # noqa: E402
 
 API, VERSAO = "https://api.cartesia.ai", "2026-08-14"
-PADRAO = {"voz": "700d1ee3-a641-4018-ba6e-899dcadc9e2b",  # Luana (pt-BR), a voz que o usuário escolheu na Cartesia
+PADRAO = {"voz": "b0f46533-d4bb-493f-a26f-a99e1f2e86e3",  # Heitor (pt-BR): a voz do canal Marvel (a Luana é a do Mentalidade)
           "modelo": "sonic-3.6", "velocidade": 1.0, "pausa_bloco": 0.35, "pausa_capitulo": 0.9}
 SR = 48000
 
@@ -92,7 +92,7 @@ def main():
     ap.add_argument("--capitulos", type=int, help="só os N primeiros capítulos")
     ap.add_argument("--amostra", action="store_true")
     ap.add_argument("--listar", action="store_true")
-    ap.add_argument("--genero", default="feminine")
+    ap.add_argument("--genero", default="masculine")
     ap.add_argument("--saida", default="audio/narracao.wav")
     ap.add_argument("--refazer-montagem", action="store_true")
     a = ap.parse_args()
