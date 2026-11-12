@@ -9,6 +9,22 @@ Minhas skills pessoais para o Claude Code. Cada pasta em `skills/` é uma skill 
 | [recriar-video-tiktok](skills/recriar-video-tiktok/SKILL.md) | Recria em PT-BR, do zero, vídeos curtos de motion graphics do TikTok/Reels/Shorts a partir de um link: roteiro próprio, voz neural, trilha, animação em canvas (preto e branco, bonecos sob holofote) e MP4 pronto para postar. |
 | [universo-simulado](skills/universo-simulado/SKILL.md) | Produz do zero um vídeo vertical completo (MP4 1080×1920, 60–75 s, PT-BR) do canal UNIVERSO SIMULADO a partir de uma única ideia: simulação 3D low-poly em primeira pessoa, legendas, trilha e efeitos sintetizados. |
 
+## Mods (plugins)
+
+Mods mudam a própria interface do Claude Code. Cada pasta em `plugins/` é um mod, listado em `.claude-plugin/marketplace.json`.
+
+| Mod | O que faz |
+|---|---|
+| [painel-uso](plugins/painel-uso/README.md) | Abre sozinho, em todo chat, um painel com os tokens gastos (chat e agentes), o contexto ocupado, o custo, os agentes iniciados e as skills usadas. `/uso` reabre o painel. |
+
+Instalar num PC novo (no terminal, numa sessão do Claude Code):
+
+```
+/plugin install painel-uso --marketplace viniciuusguima/claude-skills
+```
+
+Responda `y` para adicionar o marketplace e escolha o escopo de usuário. No app desktop: + ao lado da caixa de mensagem → Plugins → Add marketplace `viniciuusguima/claude-skills` → Add plugin.
+
 ## Instalar num PC novo
 
 O Claude Code carrega as skills de `~/.claude/skills/<nome>/`. Clone o repositório e copie (ou
