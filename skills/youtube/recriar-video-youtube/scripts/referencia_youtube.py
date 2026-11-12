@@ -2,6 +2,7 @@
 
     python <skill>/scripts/referencia_youtube.py "<url>" [--projeto .] [--canal 12]
     python <skill>/scripts/referencia_youtube.py --onde-watch
+    python <skill>/scripts/referencia_youtube.py --onde-motor
 
 Não baixa o vídeo (quem assiste é a skill watch). Escreve:
   referencia/meta.json              título, canal, duração, views, descrição, tags, capítulos
@@ -11,6 +12,7 @@ Com --canal N, também as thumbs dos N vídeos mais vistos entre os 30 últimos 
   referencia/thumbs_canal.png (grade) e referencia/thumbs_canal.md (posição, views, título)
 
 --onde-watch só imprime o caminho do watch.py da skill watch (plugin claude-video), ou avisa que falta instalar.
+--onde-motor só imprime a pasta da skill recriar-video-tiktok, que traz o motor de animação, a voz e o render.
 """
 import argparse
 import json
@@ -46,6 +48,16 @@ def achar_watch() -> Path | None:
                              key=lambda p: p.stat().st_mtime, reverse=True)
         candidatos += list(plugins.glob("marketplaces/*/skills/watch/scripts/watch.py"))
     return next((c for c in candidatos if c.exists()), None)
+
+
+def achar_motor() -> Path | None:
+    """Pasta da skill recriar-video-tiktok (motor de animação, voz, trilha e render)."""
+    skill = Path(__file__).resolve().parent.parent
+    candidatos = [Path(os.environ["MOTOR_DIR"])] if os.environ.get("MOTOR_DIR") else []
+    candidatos += [skill.parent.parent / "tiktok" / "recriar-video-tiktok",   # no repositório: skills/youtube/ -> skills/tiktok/
+                   skill.parent / "recriar-video-tiktok",                      # skills lado a lado
+                   Path.home() / ".claude" / "skills" / "recriar-video-tiktok"]
+    return next((c for c in candidatos if (c / "scripts" / "novo_projeto.py").exists()), None)
 
 
 def ytdlp(*args: str) -> dict:
@@ -123,8 +135,14 @@ def main() -> None:
     ap.add_argument("--projeto", default=".")
     ap.add_argument("--canal", type=int, default=0, metavar="N", help="também as N thumbs mais vistas do canal")
     ap.add_argument("--onde-watch", action="store_true")
+    ap.add_argument("--onde-motor", action="store_true")
     a = ap.parse_args()
 
+    if a.onde_motor:
+        m = achar_motor()
+        print(m if m else "skill recriar-video-tiktok não encontrada: instale-a (veja o README do repositório) "
+                          "ou defina MOTOR_DIR=caminho")
+        sys.exit(0 if m else 3)
     if a.onde_watch:
         w = achar_watch()
         print(w if w else INSTALAR_WATCH)

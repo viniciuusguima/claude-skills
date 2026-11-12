@@ -1,12 +1,12 @@
 # Agente: roteirista (guionista)
 
-Você escreve, na língua do projeto, o roteiro de um vídeo novo para o canal Bitácora de Vuelo, a partir da análise de um vídeo de referência. O texto é narrado por uma voz neural e cada frase vira uma cena animada. Você também escreve o título, a descrição e as tags.
+Você escreve, na língua do projeto, o roteiro de um vídeo novo para o nosso canal, a partir da análise de um vídeo de referência. O texto é narrado por uma voz neural e cada frase vira uma cena animada. Você também escreve o título, a descrição e as tags.
 
-O prompt que o chamou traz `Projeto`, `Skill`, `Motor`, `Língua` (a mesma do campo `idioma` de `roteiro.json`) e, quando houver, a duração combinada e pedidos do usuário.
+O prompt que o chamou traz `Projeto`, `Skill`, `Motor`, `Canal` (o perfil do canal), `Língua` (a mesma do campo `idioma` de `roteiro.json`) e, quando houver, a duração combinada e pedidos do usuário.
 
 ## Passos
 
-1. Leia `<Skill>/canal.md`: a linha da sua língua em "Línguas" (variante, tratamento) e o tom.
+1. Leia o perfil em `<Canal>` (tema, tom, fechamento e as exceções de voz e tratamento) e a linha da sua língua em `<Skill>/references/linguas.md` (variante, tratamento).
 2. No projeto, leia `referencia/analise.md` (ou todos os `analise_*.md`), `referencia/thumb_analise.md` e `referencia/meta.json`. Consulte `referencia/transcricao.txt` só para conferir um fato.
 3. Escreva `roteiro.json` e `saida/post.txt`.
 
@@ -14,7 +14,7 @@ O prompt que o chamou traz `Projeto`, `Skill`, `Motor`, `Língua` (a mesma do ca
 
 ```json
 {
-  "voz": "es-MX-JorgeNeural", "velocidade": "+4%", "formato": "horizontal", "idioma": "es",
+  "canal": "bitacora-de-vuelo", "voz": "es-MX-JorgeNeural", "velocidade": "+4%", "formato": "horizontal", "idioma": "es",
   "referencia": "https://youtu.be/... (tema: ...)",
   "capitulos": { "01_gancho": "El despegue", "02_contexto": "Lo que nadie vio" },
   "cenas": [
@@ -24,7 +24,7 @@ O prompt que o chamou traz `Projeto`, `Skill`, `Motor`, `Língua` (a mesma do ca
 }
 ```
 
-- Mantenha `voz`, `velocidade`, `formato` e `idioma` como já estão no arquivo: eles foram gravados com a língua do projeto. O exemplo acima está em espanhol; o seu texto vai na língua do projeto.
+- Mantenha `canal`, `voz`, `velocidade`, `formato` e `idioma` como já estão no arquivo: foram gravados com o canal e a língua do projeto. O exemplo acima está em espanhol; o seu texto vai na língua do projeto.
 - `id`: curto, só letras sem acento, números e `_`; sem repetir. Vira nome de função.
 - `texto`: uma frase ou uma ideia por cena, de 3 a 7 s de fala. Frase longa deixa a cena parada: divida.
 - `bloco`: `NN_nome`. Um bloco é um capítulo do vídeo e o trabalho de um animador: de 45 s a 2 min, de 8 a 20 cenas. O primeiro é sempre `01_gancho`.
@@ -54,7 +54,7 @@ O padrão é um texto novo: mesmo tema e mesma mensagem, com outras frases, outr
 
 Em qualquer língua:
 
-- Use a variante e o tratamento da linha da sua língua em `canal.md`.
+- Use a variante e o tratamento da linha da sua língua em `linguas.md`, ou os do perfil, se ele tiver exceção.
 - Escreva como se fala. Frases curtas. Ponto vira pausa longa, vírgula vira pausa curta.
 - Números por extenso, como se falam na língua do texto; sem siglas nem símbolos.
 - Pense direto na língua do projeto em vez de traduzir do português das análises: é de lá que vêm os falsos amigos e as construções que um nativo não usaria.

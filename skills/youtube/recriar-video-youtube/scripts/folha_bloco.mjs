@@ -6,12 +6,20 @@
 //   node <skill>/scripts/folha_bloco.mjs 02_contexto --fracs 0.2,0.5,0.9  (momentos de cada cena; padrão 0.35,0.85)
 //   node <skill>/scripts/folha_bloco.mjs 02_contexto --cenas radar,caida  (só essas cenas, em quadros maiores)
 import fs from "node:fs";
+import os from "node:os";
 import path from "node:path";
 import { createRequire } from "node:module";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
 const SKILL = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const MOTOR = path.resolve(SKILL, "..", "recriar-video-tiktok");
+// o motor (skill recriar-video-tiktok) traz o puppeteer
+const MOTOR = [
+  process.env.MOTOR_DIR,
+  path.resolve(SKILL, "..", "..", "tiktok", "recriar-video-tiktok"),   // no repositório: skills/youtube/ -> skills/tiktok/
+  path.resolve(SKILL, "..", "recriar-video-tiktok"),                   // skills lado a lado em ~/.claude/skills
+  path.join(os.homedir(), ".claude", "skills", "recriar-video-tiktok"),
+].filter(Boolean).find(p => fs.existsSync(path.join(p, "package.json")));
+if (!MOTOR) { console.error("skill recriar-video-tiktok não encontrada. Defina MOTOR_DIR=caminho."); process.exit(1); }
 let puppeteer;
 try {
   const mod = createRequire(path.join(MOTOR, "package.json"))("puppeteer-core");

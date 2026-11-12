@@ -41,7 +41,7 @@ Todo prompt diz, com estas palavras ou equivalentes:
 - Formato 16:9, 1280×720, thumbnail de YouTube.
 - Que as imagens anexadas são referência de composição e estilo, e que o desenho é novo: pintura, nome da companhia e logotipos trocados ou removidos.
 - O texto exato entre aspas, em maiúsculas, e "no other text". Acento é onde o gerador mais erra; peça para conferir cada letra.
-- A marca do canal (`canal.md`): o destaque na cor do canal em hex e as três cantoneiras na mesma cor, nos cantos superior esquerdo, inferior esquerdo e superior direito.
+- A marca do canal (perfil do canal, "Identidade visual"): o destaque na cor do canal em hex e a marca nas thumbs, com posição e cor (no Bitácora de Vuelo, três cantoneiras nos cantos superior esquerdo, inferior esquerdo e superior direito).
 - O canto inferior direito (cerca de 220×100 px) livre de texto e do elemento principal: o YouTube cobre essa área com a duração do vídeo.
 - Alto contraste e um foco só, legível em tamanho pequeno.
 
@@ -63,7 +63,7 @@ O YouTube aceita até 2 MB. Se passar, converta para JPG (`ffmpeg -i thumb_a.png
 
 ## Thumb por código (só quando o usuário pedir)
 
-Se o usuário quiser a thumb pronta sem passar pelo Gemini, ela sai em HTML no estilo do vídeo (fundo preto, branco, cor de destaque, cantoneiras): `thumb_a.html` e `thumb_b.html` na pasta do projeto, cópias de `template/thumb.html`.
+Se o usuário quiser a thumb pronta sem passar pelo Gemini, ela sai em HTML no estilo do vídeo (fundo preto, branco, a cor de destaque e a marca do canal; troque `--acento` e `#marca` pelo que está no perfil): `thumb_a.html` e `thumb_b.html` na pasta do projeto, cópias de `template/thumb.html`.
 ```bash
 node <skill>/scripts/gerar_thumb.mjs --quadro 12.5,48          # quadros do vídeo -> build/quadro_*.png, para usar em <img id="imagem">
 node <skill>/scripts/gerar_thumb.mjs --titulo "<o título>"    # -> saida/thumb_a.png, saida/thumb_b.png, build/thumb_previa.png
