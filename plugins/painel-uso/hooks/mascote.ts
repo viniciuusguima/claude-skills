@@ -1,9 +1,10 @@
 // Builds the pane's scene as one SVG document: a little orange pixel Claude
-// on a grey background. Every skill used gives him an accessory (sunglasses,
-// a ring, a top hat...), every agent is another little Claude standing
-// behind him, and when a usage limit (5h or 7 days) runs out he turns grey.
-// Everything moves with SMIL and CSS inside the SVG, so the surface animates
-// it with no redraws from the mod and no model calls.
+// on a grey background. Every skill used gives him one more piece of a
+// disguise (sunglasses, a hat, a moustache, a gold earring), every
+// agent is another little Claude in costume standing behind him, and when a
+// usage limit (5h or 7 days) runs out he turns grey. Everything moves with
+// SMIL inside the SVG, so the surface animates it with no redraws from the
+// mod and no model calls.
 
 export type SceneAgent = {
   type: string
@@ -36,6 +37,7 @@ export type SceneData = {
   contextPercent?: number
   usd?: number
   limits: SceneLimit[]
+  /** In the order they started: the first wears the first costume. */
   agents: SceneAgent[]
   /** In the order they were first used: the first gets the first accessory. */
   skills: SceneSkill[]
@@ -48,24 +50,34 @@ const CX = W / 2
 
 export const SCENE = { width: W, height: H }
 
-/** One accessory per skill, handed out in the order the skills are first used. */
+/** One piece of the disguise per skill, handed out in the order the skills are first used. */
 export const ACCESSORIES = [
   { key: 'oculos', name: 'óculos escuros', emoji: '🕶️' },
-  { key: 'anel', name: 'anel de ouro', emoji: '💍' },
-  { key: 'cartola', name: 'cartola', emoji: '🎩' },
-  { key: 'gravata', name: 'gravata borboleta', emoji: '🎀' },
-  { key: 'relogio', name: 'relógio', emoji: '⌚' },
-  { key: 'tenis', name: 'tênis vermelho', emoji: '👟' },
-  { key: 'balao', name: 'balão', emoji: '🎈' },
-  { key: 'capa', name: 'capa de herói', emoji: '🦸' },
-  { key: 'aureola', name: 'auréola', emoji: '😇' },
-  { key: 'corrente', name: 'corrente de ouro', emoji: '📿' },
+  { key: 'chapeu', name: 'chapéu', emoji: '🎩' },
+  { key: 'bigode', name: 'bigode', emoji: '🥸' },
+  { key: 'brinco', name: 'brinco de argola', emoji: '💍' },
 ] as const
 
 export type AccessoryKey = (typeof ACCESSORIES)[number]['key']
 
-/** The accessory the skill at this position (first-use order) gives. */
+/** The accessory the skill at this position (first-use order) gives; none past the last. */
 export const accessoryFor = (index: number) => ACCESSORIES[index]
+
+/**
+ * The agents' costumes, handed out in the order the agents start: the first
+ * agent wears the first, the fourth starts over. To customise them, change an
+ * entry here and its case in `costume`, or add both for a new one.
+ */
+export const FIGURINOS = [
+  { key: 'social', name: 'camisa social verde, calça cáqui, óculos escuros e chapéu preto', emoji: '🕴️' },
+  { key: 'couro', name: 'casaco longo de couro vermelho, camiseta cinza, máscara prateada de olhos vermelhos e toca-fitas azul', emoji: '🎭' },
+  { key: 'boina', name: 'boina xadrez, cachecol azul, sobretudo e charuto', emoji: '🚬' },
+] as const
+
+export type FigurinoKey = (typeof FIGURINOS)[number]['key']
+
+/** The costume the agent at this position (start order) wears. */
+export const figurinoFor = (index: number) => FIGURINOS[index % FIGURINOS.length]!
 
 const esc = (s: string) =>
   s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
@@ -168,96 +180,326 @@ const claude = (
   return parts.join('')
 }
 
-/** One accessory drawn on the main Claude; `back` ones go behind his body. */
-const accessory = (
-  key: AccessoryKey,
-  x: number,
-  y: number,
-  u: number,
-  animate: boolean,
-  has: Set<AccessoryKey>,
-): { back?: string; front?: string } => {
+/** Drawing in a Claude's own units, as `claude` lays him out: (x, y) is the top-left of his body, u one pixel. */
+const pen = (x: number, y: number, u: number) => {
   const X = (a: number) => n(x + a * u)
   const Y = (b: number) => n(y + b * u)
   const S = (v: number) => n(v * u)
   const R = (a: number, b: number, w: number, h: number, f: string, extra = '') =>
     `<rect x="${X(a)}" y="${Y(b)}" width="${S(w)}" height="${S(h)}" fill="${f}"${extra}/>`
+  const P = (points: [number, number][], f: string) =>
+    `<polygon points="${points.map(([a, b]) => `${X(a)},${Y(b)}`).join(' ')}" fill="${f}"/>`
+  return { X, Y, S, R, P }
+}
 
+type Pen = ReturnType<typeof pen>
+
+/** The left edge of each of his four tentacles. */
+const LEGS = [2, 4, 7, 9]
+
+/** Sunglasses whose lenses cover each eye whole (the eyes are 3–4 and 8–9 across, 2–4 down). */
+const oculos = ({ R, S }: Pen) => {
+  const rx = ` rx="${S(0.35)}"`
+  return (
+    R(2.1, 1.7, 2.8, 2.6, '#111', rx) +
+    R(7.1, 1.7, 2.8, 2.6, '#111', rx) +
+    R(4.9, 2.25, 2.2, 0.45, '#111') +
+    R(1.0, 2.1, 1.1, 0.35, '#111') +
+    R(9.9, 2.1, 1.1, 0.35, '#111') +
+    R(2.45, 2.0, 0.8, 0.35, '#fff', ' opacity="0.55"') +
+    R(7.45, 2.0, 0.8, 0.35, '#fff', ' opacity="0.55"')
+  )
+}
+
+/** A fedora sitting on top of his head. */
+const fedora = ({ R }: Pen, c: { crown: string; brim: string; band: string }) =>
+  R(3.0, -2.9, 6.0, 2.6, c.crown) +
+  R(5.2, -2.9, 1.6, 0.4, c.brim) +
+  R(3.0, -1.05, 6.0, 0.6, c.band) +
+  R(1.4, -0.45, 9.2, 0.65, c.brim) +
+  R(3.25, -2.6, 0.45, 1.4, '#fff', ' opacity="0.14"')
+
+/** A handlebar moustache under the eyes: high in the middle, drooping, tips curled up. */
+const bigode = ({ R }: Pen) => {
+  const c = '#3A2418'
+  return (
+    R(4.1, 4.55, 3.8, 0.7, c) +
+    R(3.3, 4.85, 0.9, 0.6, c) +
+    R(7.8, 4.85, 0.9, 0.6, c) +
+    R(2.7, 4.55, 0.65, 0.6, c) +
+    R(8.65, 4.55, 0.65, 0.6, c) +
+    R(4.4, 4.62, 1.2, 0.16, '#fff', ' opacity="0.15"')
+  )
+}
+
+/** A gold hoop earring hanging from the right side of his head, with a glint while the scene moves. */
+const brinco = ({ X, Y, S, R }: Pen, lively: boolean) =>
+  R(10.85, 0.9, 0.3, 0.3, '#FFD43B') +
+  `<circle cx="${X(11)}" cy="${Y(1.6)}" r="${S(0.45)}" fill="none" stroke="#FFD43B" stroke-width="${S(0.18)}" shape-rendering="geometricPrecision"/>` +
+  (lively
+    ? `<rect x="${X(11.2)}" y="${Y(1.85)}" width="${S(0.22)}" height="${S(0.22)}" fill="#fff" opacity="0"><animate attributeName="opacity" values="0;0;1;0" keyTimes="0;0.7;0.85;1" dur="2.6s" repeatCount="indefinite"/></rect>`
+    : '')
+
+/** One accessory drawn on the main Claude. */
+const accessory = (key: AccessoryKey, p: Pen, lively: boolean): string => {
   switch (key) {
     case 'oculos':
+      return `<g class="acc-oculos"><title>óculos escuros</title>${oculos(p)}</g>`
+    case 'chapeu':
+      return `<g class="acc-chapeu"><title>chapéu</title>${fedora(p, { crown: '#6B4E37', brim: '#553B28', band: '#1E1A17' })}</g>`
+    case 'bigode':
+      return `<g class="acc-bigode"><title>bigode</title>${bigode(p)}</g>`
+    case 'brinco':
+      return `<g class="acc-brinco"><title>brinco de argola</title>${brinco(p, lively)}</g>`
+  }
+}
+
+/** Sleeves over the arms, the sides up to the shoulders and a band from `neck` down: a top that leaves the face clear. */
+const torso = ({ R }: Pen, c: string, shade: string, bottom: number, neck = 4.1) =>
+  R(0, 2, 1, 2, c) +
+  R(11, 2, 1, 2, c) +
+  R(1, 2, 1.1, neck - 1.9, c) +
+  R(9.9, 2, 1.1, neck - 1.9, c) +
+  R(1, neck, 10, bottom - neck, c) +
+  R(1, bottom - 0.3, 10, 0.3, shade)
+
+/**
+ * One patch of khaki plaid with brown and green bands, filling the rectangle
+ * (a, b, w, h). The bands sit at fixed places, so patches side by side line up
+ * into one cloth.
+ */
+const xadrez = ({ R }: Pen, a: number, b: number, w: number, h: number) => {
+  const BROWN = [2.7, 4.3, 5.9, 7.5, 9.1, 10.2]
+  const GREEN = [-1.55, -0.95, -0.4]
+  const across = BROWN.filter(x => x < a + w && x + 0.5 > a).map(x => {
+    const x0 = Math.max(a, x)
+    return R(x0, b, Math.min(a + w, x + 0.5) - x0, h, '#6B4A2B', ' opacity="0.7"')
+  })
+  const down = GREEN.filter(y => y < b + h && y + 0.28 > b).map(y => {
+    const y0 = Math.max(b, y)
+    return R(a, y0, w, Math.min(b + h, y + 0.28) - y0, '#4F7A3A', ' opacity="0.75"')
+  })
+  return R(a, b, w, h, '#C2A878') + across.join('') + down.join('')
+}
+
+/** Music notes rising from the tape player while the scene moves. */
+const notas = ({ X, Y, S }: Pen) =>
+  [0, 1]
+    .map(k => {
+      const t = `dur="2.4s" begin="-${(k * 1.2).toFixed(1)}s" repeatCount="indefinite"`
+      return `<text x="${X(11)}" y="${Y(-0.6)}" font-size="${S(1.9)}" fill="#FFD3DA" opacity="0">${k ? '♫' : '♪'}
+        <animate attributeName="y" values="${Y(-0.6)};${Y(-4.2)}" ${t}/>
+        <animate attributeName="x" values="${X(11)};${X(12.2)};${X(11.4)}" ${t}/>
+        <animate attributeName="opacity" values="0;1;0" ${t}/></text>`
+    })
+    .join('')
+
+/** Cigar smoke: puffs that rise, swell and fade while the scene moves, a still wisp when paused. */
+const fumaca = ({ X, Y, S }: Pen, lively: boolean) => {
+  if (!lively) {
+    const at = (a: number, b: number, r: number, o: number) =>
+      `<circle cx="${X(a)}" cy="${Y(b)}" r="${S(r)}" fill="#E9ECEF" opacity="${o}"/>`
+    return `<g class="fumaca" shape-rendering="geometricPrecision">${at(11.2, 2.9, 0.45, 0.5)}${at(11.6, 1.4, 0.7, 0.35)}${at(11.2, -0.3, 0.95, 0.2)}</g>`
+  }
+  const dur = 3.6
+  const puffs = [0, 1, 2]
+    .map(k => {
+      const t = `dur="${dur}s" begin="-${((k * dur) / 3).toFixed(1)}s" repeatCount="indefinite"`
+      return `<circle cx="${X(11.1)}" cy="${Y(3.8)}" r="${S(0.3)}" fill="#E9ECEF" opacity="0">
+        <animate attributeName="cy" values="${Y(3.8)};${Y(-2.8)}" ${t}/>
+        <animate attributeName="cx" values="${X(11.1)};${X(11.8)};${X(10.9)};${X(11.6)}" ${t}/>
+        <animate attributeName="r" values="${S(0.3)};${S(1.3)}" ${t}/>
+        <animate attributeName="opacity" values="0;0.7;0" keyTimes="0;0.15;1" ${t}/></circle>`
+    })
+    .join('')
+  return `<g class="fumaca" shape-rendering="geometricPrecision">${puffs}</g>`
+}
+
+/**
+ * An agent's costume, drawn over his body. `top` is the highest unit it
+ * reaches (a hat, the headphones), so his name tag goes above it.
+ */
+const costume = (key: FigurinoKey, p: Pen, lively: boolean): { svg: string; top: number } => {
+  const { X, Y, S, R, P } = p
+
+  switch (key) {
+    case 'social': {
+      // light green dress shirt, khaki trousers, a goatee, sunglasses and a black hat
+      const G = '#69DB7C'
+      const GD = '#40C057'
+      const GL = '#B2F2BB'
+      const K = '#C8B48A'
+      const KD = '#A8956F'
+      const BEARD = '#5C3A21'
       return {
-        front: `<g class="acc-oculos"><title>óculos escuros</title>
-          ${R(2.2, 1.6, 2.6, 1.9, '#111')}${R(7.2, 1.6, 2.6, 1.9, '#111')}
-          ${R(4.8, 2.0, 2.4, 0.4, '#111')}${R(0.9, 1.9, 1.3, 0.35, '#111')}${R(9.8, 1.9, 1.3, 0.35, '#111')}
-          ${R(2.5, 1.85, 0.7, 0.35, '#fff', ' opacity="0.65"')}${R(7.5, 1.85, 0.7, 0.35, '#fff', ' opacity="0.65"')}</g>`,
-      }
-    case 'anel':
-      return {
-        front: `<g class="acc-anel"><title>anel de ouro</title>
-          <circle cx="${X(11.5)}" cy="${Y(3.7)}" r="${S(0.42)}" fill="none" stroke="#FFD54A" stroke-width="${S(0.24)}"/>
-          <circle cx="${X(11.5)}" cy="${Y(3.2)}" r="${S(0.24)}" fill="#7DF9FF">${
-            animate ? `<animate attributeName="opacity" values="1;0.4;1" dur="1.4s" repeatCount="indefinite"/>` : ''
-          }</circle></g>`,
-      }
-    case 'cartola':
-      return {
-        front: `<g class="acc-cartola"><title>cartola</title>
-          ${R(3.6, -3.6, 4.8, 3.2, '#1B1B1D')}${R(3.6, -1.45, 4.8, 0.55, '#C0392B')}${R(2.4, -0.55, 7.2, 0.6, '#111')}
-          ${R(3.8, -3.5, 0.5, 2.0, '#fff', ' opacity="0.12"')}</g>`,
-      }
-    case 'gravata':
-      return {
-        front: `<g class="acc-gravata"><title>gravata borboleta</title>
-          <polygon points="${X(6)},${Y(5.0)} ${X(4.8)},${Y(4.4)} ${X(4.8)},${Y(5.6)}" fill="#3B5BDB"/>
-          <polygon points="${X(6)},${Y(5.0)} ${X(7.2)},${Y(4.4)} ${X(7.2)},${Y(5.6)}" fill="#3B5BDB"/>
-          ${R(5.7, 4.7, 0.6, 0.6, '#2B44B0')}</g>`,
-      }
-    case 'relogio':
-      return {
-        front: `<g class="acc-relogio"><title>relógio</title>
-          ${R(-0.15, 3.35, 1.3, 0.55, '#333')}
-          <circle cx="${X(0.5)}" cy="${Y(3.62)}" r="${S(0.4)}" fill="#F1F3F5" stroke="#333" stroke-width="${S(0.12)}"/>
-          <path d="M${X(0.5)},${Y(3.62)} L${X(0.5)},${Y(3.38)}" stroke="#333" stroke-width="${S(0.08)}"/></g>`,
-      }
-    case 'tenis':
-      return {
-        front: `<g class="acc-tenis"><title>tênis vermelho</title>${[2, 4, 7, 9]
-          .map(l => `${R(l - 0.25, 7.25, 1.5, 0.75, '#E03131')}${R(l - 0.25, 7.8, 1.5, 0.22, '#fff')}`)
-          .join('')}</g>`,
-      }
-    case 'balao': {
-      const sway = animate
-        ? `<animateTransform attributeName="transform" type="rotate" values="-5,${X(12)},${Y(2.6)};6,${X(12)},${Y(2.6)};-5,${X(12)},${Y(2.6)}" dur="3.2s" repeatCount="indefinite"/>`
-        : ''
-      return {
-        front: `<g class="acc-balao"><title>balão</title>${sway}
-          <path d="M${X(11.9)},${Y(2.6)} Q${X(13.6)},${Y(0)} ${X(13.3)},${Y(-2.9)}" fill="none" stroke="#ddd" stroke-width="${S(0.1)}"/>
-          <ellipse cx="${X(13.4)}" cy="${Y(-4.3)}" rx="${S(1.15)}" ry="${S(1.4)}" fill="#FF6B9D"/>
-          <ellipse cx="${X(13.0)}" cy="${Y(-4.8)}" rx="${S(0.3)}" ry="${S(0.45)}" fill="#fff" opacity="0.5"/>
-          <polygon points="${X(13.4)},${Y(-2.95)} ${X(13.1)},${Y(-2.6)} ${X(13.7)},${Y(-2.6)}" fill="#E0507F"/></g>`,
+        top: -2.9,
+        svg:
+          torso(p, G, GD, 5.5, 4.5) +
+          P([[4.6, 4.5], [6, 4.5], [5.55, 5.15]], GL) +
+          P([[6, 4.5], [7.4, 4.5], [6.45, 5.15]], GL) +
+          R(5.92, 4.95, 0.16, 0.55, GD) +
+          R(5.85, 5.0, 0.3, 0.18, '#F1F3F5') +
+          // goatee: a short moustache and a tuft on the chin
+          R(5.1, 3.6, 1.8, 0.3, BEARD) +
+          R(5.4, 3.95, 1.2, 0.75, BEARD) +
+          R(5.55, 4.0, 0.4, 0.15, '#fff', ' opacity="0.15"') +
+          R(1, 5.5, 10, 0.5, K) +
+          R(1, 5.5, 10, 0.18, '#5C3D24') +
+          R(5.55, 5.44, 0.9, 0.3, '#E0B03A') +
+          LEGS.map(l => R(l, 6, 1, 1.6, K) + R(l + 0.65, 6, 0.35, 1.6, KD) + R(l - 0.15, 7.6, 1.3, 0.4, '#1D1D1F')).join('') +
+          oculos(p) +
+          fedora(p, { crown: '#1C1C1F', brim: '#0E0E10', band: '#55555C' }),
       }
     }
-    case 'capa':
-      return {
-        back: `<g class="acc-capa"><title>capa de herói</title>
-          <polygon points="${X(1.3)},${Y(0.6)} ${X(10.7)},${Y(0.6)} ${X(12.6)},${Y(7.8)} ${X(-0.6)},${Y(7.8)}" fill="#7B2FF7"/>
-          <polygon points="${X(-0.6)},${Y(7.8)} ${X(12.6)},${Y(7.8)} ${X(12.2)},${Y(7.2)} ${X(-0.2)},${Y(7.2)}" fill="#5A1FC0"/></g>`,
+
+    case 'couro': {
+      // long open red leather coat over a grey t-shirt, a strap across the
+      // chest, a silver mask with glowing red eyes, and a blue tape player in
+      // his hand wired to the mask
+      const COAT = '#9B2335'
+      const COAT_D = '#6B1424'
+      const COAT_L = '#D0566A'
+      const SHINE = ' opacity="0.35"'
+      const SHIRT = '#8D949C'
+      const SHIRT_D = '#6C737B'
+      const STRAP = '#2B2B2E'
+      const PANTS = '#3B3B42'
+      const SILVER = '#9AA0A6'
+      const SILVER_L = '#C9CDD2'
+      const SILVER_D = '#5F6368'
+      const GOLD = '#B8962E'
+      const GOLD_D = '#8C7020'
+      // a red eye with a glow and a little lens flare, pulsing while the scene moves
+      const eye = (a: number) => {
+        const pulse = lively ? `<animate attributeName="opacity" values="0.35;0.8;0.35" dur="1.6s" repeatCount="indefinite"/>` : ''
+        return `<g shape-rendering="geometricPrecision">
+          <circle cx="${X(a)}" cy="${Y(2.5)}" r="${S(1.05)}" fill="#FF2D2D" opacity="0.5">${pulse}</circle>
+          <rect x="${X(a - 1.4)}" y="${Y(2.45)}" width="${S(2.8)}" height="${S(0.1)}" fill="#FF9A9A" opacity="0.8"/>
+          <rect x="${X(a - 0.05)}" y="${Y(1.25)}" width="${S(0.1)}" height="${S(2.5)}" fill="#FF9A9A" opacity="0.6"/>
+          <circle cx="${X(a)}" cy="${Y(2.5)}" r="${S(0.5)}" fill="#FF4D4D"/>
+          <circle cx="${X(a)}" cy="${Y(2.5)}" r="${S(0.22)}" fill="#FFF0F0"/></g>`
       }
-    case 'aureola': {
-      const top = has.has('cartola') ? -4.5 : -1.2
+      const buttons = (a: number) => [1.0, 1.5, 2.0].map(b => R(a, b, 0.75, 0.25, SILVER_D)).join('')
       return {
-        front: `<g class="acc-aureola"><title>auréola</title>
-          <ellipse cx="${X(6)}" cy="${Y(top)}" rx="${S(2.6)}" ry="${S(0.55)}" fill="none" stroke="#FFE066" stroke-width="${S(0.32)}">${
-            animate ? `<animate attributeName="stroke-opacity" values="1;0.55;1" dur="2s" repeatCount="indefinite"/>` : ''
-          }</ellipse></g>`,
+        top: -1.2,
+        svg:
+          // sleeves, and the coat's sides from the shoulders down
+          R(0, 2, 1, 2, COAT) +
+          R(11, 2, 1, 2, COAT) +
+          R(0, 3.6, 1, 0.4, COAT_D) +
+          R(11, 3.6, 1, 0.4, COAT_D) +
+          R(0.15, 2.15, 0.2, 1.2, '#fff', SHINE) +
+          R(1, 3.0, 1.1, 1.1, COAT) +
+          R(9.9, 3.0, 1.1, 1.1, COAT) +
+          R(1, 4.1, 3.4, 1.5, COAT) +
+          R(7.6, 4.1, 3.4, 1.5, COAT) +
+          P([[3.3, 4.1], [4.4, 4.1], [4.4, 5.1]], COAT_D) +
+          P([[7.6, 4.1], [8.7, 4.1], [7.6, 5.1]], COAT_D) +
+          R(1.3, 4.3, 1.6, 0.15, '#fff', SHINE) +
+          R(9.1, 4.3, 1.6, 0.15, '#fff', SHINE) +
+          // grey t-shirt in the open front, with the belt over it
+          R(4.4, 4.1, 3.2, 1.5, SHIRT) +
+          R(5.3, 4.1, 1.4, 0.25, SHIRT_D) +
+          R(4.4, 5.35, 3.2, 0.28, STRAP) +
+          R(5.7, 5.3, 0.6, 0.38, '#ADB5BD') +
+          // a strap across the chest with a gold buckle
+          P([[1.4, 4.1], [2.5, 4.1], [9.6, 5.6], [8.5, 5.6]], STRAP) +
+          R(5.45, 4.62, 0.75, 0.45, '#C9A227') +
+          // the coat's long skirt, open over dark trousers and boots
+          R(3.9, 5.6, 4.2, 0.4, PANTS) +
+          R(4, 6, 1, 1.6, PANTS) +
+          R(7, 6, 1, 1.6, PANTS) +
+          R(0.8, 5.6, 3.1, 1.9, COAT) +
+          R(8.1, 5.6, 3.1, 1.9, COAT) +
+          R(0.8, 7.25, 3.1, 0.25, COAT_D) +
+          R(8.1, 7.25, 3.1, 0.25, COAT_D) +
+          R(1.1, 5.8, 0.2, 1.3, '#fff', SHINE) +
+          R(10.6, 5.8, 0.2, 1.3, '#fff', SHINE) +
+          LEGS.map(l => R(l - 0.15, 7.6, 1.3, 0.4, '#1A1A1A')).join('') +
+          // silver mask over his whole face: fins at the top, gold faceplate,
+          // buttons on the sides, a breathing grille and two canisters at the jaw
+          R(1, -0.5, 10, 4.6, SILVER) +
+          R(1, -0.5, 10, 0.35, SILVER_L) +
+          R(0.7, -1.2, 1.9, 1.4, SILVER_D) +
+          R(9.4, -1.2, 1.9, 1.4, SILVER_D) +
+          R(0.9, -1.05, 1.4, 0.3, SILVER_L) +
+          R(9.7, -1.05, 1.4, 0.3, SILVER_L) +
+          R(4.3, -0.85, 3.4, 0.45, SILVER_D) +
+          R(2.0, 1.25, 8.0, 2.3, GOLD) +
+          R(2.0, 3.25, 8.0, 0.3, GOLD_D) +
+          buttons(1.15) +
+          buttons(10.1) +
+          R(4.4, 2.9, 3.2, 1.5, SILVER_L) +
+          R(4.7, 3.05, 2.6, 1.2, '#2F3236') +
+          [3.2, 3.55, 3.9].map(b => R(4.85, b, 2.3, 0.12, '#6C7076')).join('') +
+          R(1.6, 3.6, 2.2, 0.8, SILVER_L) +
+          R(1.35, 3.65, 0.5, 0.7, '#2B2D31') +
+          R(8.2, 3.6, 2.2, 0.8, SILVER_L) +
+          R(10.15, 3.65, 0.5, 0.7, '#2B2D31') +
+          eye(3.5) +
+          eye(8.5) +
+          // the blue tape player in his right hand, wired to the side of the mask
+          `<path d="M${X(12.6)},${Y(3.1)} Q${X(13.2)},${Y(2.2)} ${X(11)},${Y(2.3)}" fill="none" stroke="#343A40" stroke-width="${S(0.14)}" shape-rendering="geometricPrecision"/>` +
+          R(11.05, 3.1, 1.9, 1.5, '#1C7ED6', ` rx="${S(0.2)}"`) +
+          R(11.05, 4.25, 1.9, 0.35, '#1864AB') +
+          R(11.3, 3.35, 1.4, 0.75, '#A5D8FF') +
+          R(11.4, 3.62, 1.2, 0.2, '#1D3557') +
+          R(11.3, 2.9, 0.5, 0.2, '#ADB5BD') +
+          (lively ? notas(p) : ''),
       }
     }
-    case 'corrente':
+
+    case 'boina': {
+      // beret, blue scarf, a long overcoat and a cigar that smokes
+      const C = '#9C6B43'
+      const CD = '#7A5233'
+      const B = '#2F6FDE'
+      const BD = '#1F4FB0'
+      const BL = '#74A4F5'
+      const BERET = '#4A3423'
+      const BTN = '#3A2A1C'
+      const ember = lively
+        ? `<rect x="${X(10.65)}" y="${Y(4.02)}" width="${S(0.3)}" height="${S(0.47)}" fill="#E8590C"><animate attributeName="fill" values="#C2410C;#FFB020;#E8590C;#C2410C" keyTimes="0;0.12;0.3;1" dur="3.6s" repeatCount="indefinite"/></rect>`
+        : R(10.65, 4.02, 0.3, 0.47, '#E8590C')
       return {
-        front: `<g class="acc-corrente"><title>corrente de ouro</title>
-          <path d="M${X(2)},${Y(3.9)} Q${X(6)},${Y(5.7)} ${X(10)},${Y(3.9)}" fill="none" stroke="#FFD54A" stroke-width="${S(0.26)}" stroke-dasharray="${S(0.3)} ${S(0.15)}"/>
-          <circle cx="${X(6)}" cy="${Y(4.85)}" r="${S(0.4)}" fill="#FFC107" stroke="#B8860B" stroke-width="${S(0.08)}"/></g>`,
+        top: -2.1,
+        svg:
+          // overcoat from the scarf down, with a long skirt over the tentacles
+          // (nothing up by his head: the arms stay his own colour)
+          R(1, 4.6, 10, 1.1, C) +
+          R(0.7, 5.6, 10.6, 1.35, C) +
+          R(0.7, 5.7, 10.6, 0.3, CD) +
+          R(0.7, 6.7, 10.6, 0.25, CD) +
+          R(5.95, 6.0, 0.1, 0.95, CD) +
+          R(5.25, 6.15, 0.35, 0.35, BTN) +
+          R(6.4, 6.15, 0.35, 0.35, BTN) +
+          LEGS.map(l => R(l, 6.95, 1, 0.65, '#2B2B30') + R(l - 0.15, 7.6, 1.3, 0.4, '#151515')).join('') +
+          // scarf round his neck, knotted on his right so the cigar shows, its ends hanging over the coat
+          R(1, 4.6, 10, 0.75, B) +
+          R(1, 4.6, 10, 0.15, BL) +
+          R(1, 5.2, 10, 0.15, BD) +
+          R(2.6, 4.55, 1.4, 0.95, BD) +
+          R(2.7, 5.35, 0.85, 2.0, B) +
+          R(3.65, 5.35, 0.8, 1.6, B) +
+          R(2.7, 6.05, 0.85, 0.18, BL) +
+          R(2.7, 7.15, 0.85, 0.2, BL) +
+          R(3.65, 6.75, 0.8, 0.2, BL) +
+          // plaid beret in khaki, brown and green, slouching to his left
+          xadrez(p, 2.4, -1.15, 7.4, 1.25) +
+          xadrez(p, 3.2, -1.65, 5.8, 0.55) +
+          xadrez(p, 8.6, -0.85, 1.9, 0.9) +
+          R(5.75, -2.1, 0.45, 0.5, BERET) +
+          R(2.6, -0.1, 7.0, 0.3, BERET) +
+          R(3.5, -1.5, 1.3, 0.2, '#fff', ' opacity="0.18"') +
+          // cigar in his mouth, its tip glowing with each puff
+          R(6.4, 3.98, 3.9, 0.55, '#7B4A26') +
+          R(6.4, 3.98, 3.9, 0.15, '#A0673A') +
+          R(7.1, 3.98, 0.45, 0.55, '#D4A72C') +
+          R(10.3, 3.98, 0.35, 0.55, '#9A9A9A') +
+          ember +
+          fumaca(p, lively),
       }
+    }
   }
 }
 
@@ -315,26 +557,30 @@ export const buildScene = (d: SceneData, animate: boolean): string => {
         .join('')
     : `<text x="18" y="${BAR_Y + 2}" class="sm" fill="${LABEL}">limites de uso: sem leitura ainda</text>`
 
-  // ── The stage: agents behind, Claude in front, his accessories on him ──
+  // ── The stage: agents in costume behind, Claude in front in his disguise ──
   const agents = d.agents.slice(-MINI_SLOTS.length)
   const hiddenAgents = d.agents.length - agents.length
-  const MU = 4.6
+  const MU = 5
   const minis = agents
     .map((a, i) => {
       const [sx, base] = MINI_SLOTS[i]!
       const x = sx - 6 * MU
       const y = base - 8 * MU
+      const pp = pen(x, y, MU)
+      const fig = figurinoFor(hiddenAgents + i)
+      const dress = costume(fig.key, pp, lively)
       const tint = MINI_TINTS[i % MINI_TINTS.length]!
       const color = a.isRunning ? tint : '#C9A296'
       const bob =
         lively && a.isRunning
           ? `<animateTransform attributeName="transform" type="translate" values="0,0;0,-5;0,0" dur="${(0.55 + (i % 3) * 0.12).toFixed(2)}s" repeatCount="indefinite"/>`
           : ''
-      return `<g class="mini"><title>${esc(a.type)} — ${esc(a.description)}\n${fmt(a.tokens)} tokens · ${a.isRunning ? 'rodando' : 'terminou'}</title>
+      return `<g class="mini"><title>${esc(a.type)} — ${esc(a.description)}\n${esc(fig.name)}\n${fmt(a.tokens)} tokens · ${a.isRunning ? 'rodando' : 'terminou'}</title>
         <ellipse cx="${sx}" cy="${base + 2}" rx="${n(5.5 * MU)}" ry="3" fill="#000" opacity="0.22"/>
         <g opacity="${a.isRunning ? 1 : 0.75}">${bob}
           ${claude(x, y, MU, { color, shade: a.isRunning ? ORANGE_DARK : '#A8857A', light: a.isRunning ? ORANGE_LIGHT : '#D9B9AE', eyes: isBroken ? 'x' : 'open', blink: lively, blinkDelay: i * 0.7 })}
-          <text x="${sx}" y="${n(y - 4)}" text-anchor="middle" class="xs" fill="${a.isRunning ? '#ffd3c2' : '#bdbdbd'}">${esc(clip(a.type, 9))}${a.isRunning ? '' : ' ✓'}</text>
+          <g class="fig-${fig.key}">${dress.svg}</g>
+          <text x="${sx}" y="${n(pp.Y(dress.top) - 4)}" text-anchor="middle" class="xs" fill="${a.isRunning ? '#ffd3c2' : '#bdbdbd'}">${esc(clip(a.type, 9))}${a.isRunning ? '' : ' ✓'}</text>
         </g></g>`
     })
     .join('')
@@ -344,9 +590,7 @@ export const buildScene = (d: SceneData, animate: boolean): string => {
   const MX = CX - 6 * U
   const MY = 330
   const skills = d.skills.slice(0, ACCESSORIES.length)
-  const keys = skills.map((_, i) => ACCESSORIES[i]!.key)
-  const has = new Set<AccessoryKey>(keys)
-  const worn = keys.map(k => accessory(k, MX, MY, U, lively, has))
+  const worn = skills.map((_, i) => accessory(ACCESSORIES[i]!.key, pen(MX, MY, U), lively))
 
   const body = claude(MX, MY, U, {
     color: ORANGE,
@@ -358,20 +602,22 @@ export const buildScene = (d: SceneData, animate: boolean): string => {
   const mainBob = lively
     ? `<animateTransform attributeName="transform" type="translate" values="0,0;0,-4;0,0" dur="1.9s" repeatCount="indefinite"/>`
     : ''
-  const main = `<g class="claude"><title>Claude${skills.length ? ` com ${skills.length} acessório(s)` : ''}</title>
+  const main = `<g class="claude"><title>Claude${skills.length ? ` com ${skills.length} peça(s) do disfarce` : ''}</title>
     <ellipse cx="${CX}" cy="${MY + 8 * U + 4}" rx="${6.2 * U}" ry="6" fill="#000" opacity="0.28"/>
     <g ${isBroken ? `transform="rotate(-5,${CX},${MY + 8 * U})"` : ''}>${mainBob}
-      ${worn.map(w => w.back ?? '').join('')}
       ${body}
-      ${worn.map(w => w.front ?? '').join('')}
+      ${worn.join('')}
     </g></g>`
 
-  // Speech bubble: the context, or how he feels when the limit is gone.
+  // Speech bubble: the context, or how he feels when the limit is gone. It
+  // sits right under the limit bars, clear of the name tags of the agents
+  // behind him, and points at his head (or his hat).
+  const BY = limits.length >= 3 ? 266 : 240
   const bubbleText = isBroken ? 'zzz… sem energia' : pct === undefined ? 'oi!' : `contexto ${Math.round(p)}%`
   const bubble = `<g class="bubble">
-    <rect x="12" y="266" width="104" height="26" rx="9" fill="${isBroken ? '#3a3a3a' : '#f4f4f5'}"/>
-    <polygon points="92,291 104,291 110,318" fill="${isBroken ? '#3a3a3a' : '#f4f4f5'}"/>
-    <text x="64" y="283" text-anchor="middle" class="xs" fill="${isBroken ? '#9a9a9a' : '#2a2a2e'}">${esc(bubbleText)}</text></g>`
+    <rect x="12" y="${BY}" width="104" height="26" rx="9" fill="${isBroken ? '#3a3a3a' : '#f4f4f5'}"/>
+    <polygon points="96,${BY + 25} 108,${BY + 25} 118,${BY + 52}" fill="${isBroken ? '#3a3a3a' : '#f4f4f5'}"/>
+    <text x="64" y="${BY + 17}" text-anchor="middle" class="xs" fill="${isBroken ? '#9a9a9a' : '#2a2a2e'}">${esc(bubbleText)}</text></g>`
 
   // A little rain cloud over him when the limit is gone.
   const drops = [0, 1, 2, 3, 4]
@@ -390,10 +636,10 @@ export const buildScene = (d: SceneData, animate: boolean): string => {
         ${drops}</g>`
     : ''
 
-  // ── Below the stage: which skill gave which accessory ──
+  // ── Below the stage: which skill gave which piece of the disguise ──
   const ACC_Y = 454
   const accList = skills.length
-    ? `<text x="18" y="${ACC_Y}" class="label" fill="${LABEL}">ACESSÓRIOS · SKILLS</text>
+    ? `<text x="18" y="${ACC_Y}" class="label" fill="${LABEL}">DISFARCE · SKILLS</text>
        ${skills
          .map((s, i) => {
            const col = i % 2
@@ -402,8 +648,8 @@ export const buildScene = (d: SceneData, animate: boolean): string => {
          })
          .join('')}
        ${d.skills.length > skills.length ? `<text x="${W - 18}" y="${ACC_Y}" text-anchor="end" class="xs" fill="${SUB}">+${d.skills.length - skills.length} skills</text>` : ''}`
-    : `<text x="${CX}" y="${ACC_Y + 6}" text-anchor="middle" class="sm" fill="${LABEL}">cada skill usada vira um acessório</text>
-       <text x="${CX}" y="${ACC_Y + 24}" text-anchor="middle" class="sm" fill="${LABEL}">cada agente, um Claudezinho atrás dele</text>`
+    : `<text x="${CX}" y="${ACC_Y + 6}" text-anchor="middle" class="sm" fill="${LABEL}">cada skill usada vira uma peça do disfarce</text>
+       <text x="${CX}" y="${ACC_Y + 24}" text-anchor="middle" class="sm" fill="${LABEL}">cada agente, um Claudezinho fantasiado</text>`
 
   const kindsText = broken ? broken.kinds.map(limitName).join(' e ') : ''
   const brokenMsg = isBroken

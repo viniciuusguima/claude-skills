@@ -2,7 +2,7 @@ import { atom, read, update } from 'claude-code'
 import type { EngineInterface, ModelUsage, Register } from 'claude-code'
 
 import type { AgentRow, Meter, SkillRow, Tokens } from '../types'
-import { SCENE, accessoryFor, buildScene, limitName, limitState } from './mascote'
+import { SCENE, accessoryFor, buildScene, figurinoFor, limitName, limitState } from './mascote'
 import type { SceneBroken } from './mascote'
 
 const PANE = 'painel-uso'
@@ -267,12 +267,13 @@ export const register: Register = on => {
         </Text>
         {agentList.length === 0 && <Text dimColor>nenhum agente usado ainda</Text>}
         {agentList
+          .map((a, i) => ({ ...a, fig: figurinoFor(i) }))
           .slice(-12)
           .reverse()
           .map(a => (
             <Text>
               <Text color={a.isRunning ? 'warning' : 'success'}>{a.isRunning ? '●' : '✓'}</Text>{' '}
-              <Text bold>{a.type}</Text> <Text dimColor>{a.description}</Text>
+              {a.fig.emoji} <Text bold>{a.type}</Text> <Text dimColor>{a.description}</Text>
               {total(a.tokens) > 0 ? <Text dimColor> · {fmt(total(a.tokens))}</Text> : ''}
             </Text>
           ))}

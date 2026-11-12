@@ -102,10 +102,50 @@ test('conta skills pela ferramenta Skill e por /nome, sem contar duas vezes', as
   const term = await $.ui.mount({ ...PANE, surface: 'terminal' })
   expect((await term.find({ type: 'Text', text: /^Skills/ }))?.text).toBe('Skills (3)')
   expect((await term.find({ type: 'Text', text: /tdd/ }))?.text).toBe('🕶️ mattpocock-skills:tdd ×2')
-  expect((await term.find({ type: 'Text', text: /universo-simulado/ }))?.text).toBe('💍 universo-simulado')
-  expect((await term.find({ type: 'Text', text: /research/ }))?.text).toBe('🎩 research')
+  expect((await term.find({ type: 'Text', text: /universo-simulado/ }))?.text).toBe('🎩 universo-simulado')
+  expect((await term.find({ type: 'Text', text: /research/ }))?.text).toBe('🥸 research')
   expect(await term.find({ type: 'Text', text: /clear/ })).toBeUndefined()
   await term.unmount()
+})
+
+test('cada skill vira uma peça do disfarce e cada agente veste um figurino', async ($, on) => {
+  mock.clock(on, { now: NOW })
+  on('command.register', () => ({ value: { command: 'uso' } }))
+  on('ui.open', () => ({ value: { isPlaced: true } }))
+  on('session.start', (_, e) => ({ cwd: e.cwd }))
+  on('agent.spawn', (_, e) => ({ model: 'claude-haiku-5-5', agentId: `ag-${e.tool_use_id}` }))
+  on('ui.toast', () => ({ value: undefined }))
+  on('tool.call', () => ({ result: 'ok' }) as never)
+
+  await $.session.start({ cwd: '/', surface: 'desktop', isInteractive: true })
+  for (const id of ['a', 'b', 'c', 'd']) {
+    await $.agent.spawn({ tool_use_id: id, prompt: 'x', description: `agente ${id}`, subagentType: 'Explore' } as never)
+  }
+  for (const skill of ['um', 'dois', 'tres', 'quatro', 'cinco']) {
+    await $.tool.call({ tool: 'Skill', skill } as never)
+  }
+
+  const ui = await $.ui.mount({ ...PANE, surface: 'desktop' })
+  const svg = JSON.stringify(await ui.find({ type: 'Svg' }))
+  for (const acc of ['acc-oculos', 'acc-chapeu', 'acc-bigode', 'acc-brinco']) expect(svg).toContain(acc)
+  // a quinta skill não ganha peça: aparece só na lista
+  expect(svg).toContain('+1 skills')
+  expect((await ui.find({ type: 'Text', text: /cinco/ }))?.text).toBe('cinco')
+  // os figurinos vão na ordem dos agentes, e o quarto recomeça do primeiro
+  for (const fig of ['fig-social', 'fig-couro', 'fig-boina']) expect(svg).toContain(fig)
+  expect(svg.split('fig-social').length - 1).toBe(2)
+  expect((await ui.find({ type: 'Text', text: /agente a/ }))?.text).toContain('🕴️')
+  expect((await ui.find({ type: 'Text', text: /agente b/ }))?.text).toContain('🎭')
+  expect((await ui.find({ type: 'Text', text: /agente c/ }))?.text).toContain('🚬')
+  // a fumaça do charuto sobe enquanto anima, e para quando pausa
+  expect(svg).toContain('class=\\"fumaca\\"')
+  expect(svg).toContain('attributeName=\\"cy\\"')
+
+  await ui.press({ key: 'pause' })
+  const still = JSON.stringify(await ui.find({ type: 'Svg' }))
+  expect(still).toContain('class=\\"fumaca\\"')
+  expect(still).not.toContain('<animate')
+  await ui.unmount()
 })
 
 const NOW = Date.parse('2026-11-11T22:00:00Z')

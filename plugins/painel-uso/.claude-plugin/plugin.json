@@ -1,6 +1,6 @@
 {
   "name": "painel-uso",
-  "version": "0.2.2",
+  "version": "0.3.0",
   "description": "Painel ao lado do chat com tokens, contexto, custo, agentes e skills usados na sessão",
   "types": "./types/index.d.ts",
   "license": "MIT"
