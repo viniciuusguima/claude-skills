@@ -5,7 +5,7 @@ description: Produz do zero um vídeo vertical completo (MP4 1080×1920, 60–75
 
 # Universo Simulado
 
-O usuário diz só a ideia. Você entrega o MP4 pronto, sem perguntas no caminho: escreve o roteiro, monta as cenas 3D, a câmera, as legendas, o som, confere os quadros, exporta e envia o arquivo. No final, conta em poucas linhas as escolhas que fez e o que não foi verificado.
+O usuário diz só a ideia. Você entrega o MP4 pronto, sem perguntas no caminho: escreve o roteiro, monta as cenas 3D, a câmera, as legendas, o som, confere os quadros, exporta, sobe no Google Drive, deixa o card do Trello pronto para postar e envia o arquivo. No final, conta em poucas linhas as escolhas que fez e o que não foi verificado.
 
 Por que sem perguntas: o usuário já decidiu o formato (abaixo) e pediu para não ser consultado a cada vídeo. Só pare para perguntar se a ideia for ambígua a ponto de dar dois vídeos totalmente diferentes.
 
@@ -34,6 +34,8 @@ A pasta `assets/projeto/` desta skill é o projeto pronto:
 
 Leia `references/api.md` antes de escrever código: ele lista as funções disponíveis e as convenções de câmera e de tela. Quando precisar de um efeito parecido com algo do vídeo do Sol (explosão, fogo, céu estrelado, planeta, corredor, passos), abra o arquivo `sol_*` correspondente e adapte.
 
+Cada vídeo também é um **card** no quadro do Trello do usuário, que anda pelas listas junto com o trabalho e termina com o link do Drive e o texto do post. Leia `references/publicar.md` antes do passo 1: lá estão os endereços do quadro e da pasta do Drive, o que fazer com o card em cada etapa e como subir o vídeo.
+
 ## Passo a passo
 
 ### 1. Roteiro (antes de qualquer código)
@@ -48,6 +50,8 @@ Decida e anote para você mesmo:
 
 Varie o cenário de um vídeo para outro; não reaproveite a praia do Sol só porque já existe.
 
+Com o roteiro decidido, abra o **card** do vídeo em ✍️ Roteiro, com o resumo e o texto do post.
+
 ### 2. Preparar a pasta
 
 Se a pasta de trabalho ainda não tem `server.py` e `js/studio.js`, copie **o conteúdo** de `assets/projeto/` para ela (inclusive `.claude/launch.json`). Se já tem, não sobrescreva: vídeos anteriores moram ali.
@@ -58,6 +62,8 @@ Suba o servidor (`python server.py 8770`, ou a configuração `videos` do `launc
 
 ### 3. Escrever o vídeo
 
+Mova o **card** para 🎬 Produção.
+
 - `_world.js`: os tempos do roteiro em um objeto (`T`), funções de altura do chão e um `buildX(scene)` por cenário, cada um devolvendo `update(t, ...)`.
 - `_main.js`: `camState(t)` (onde a câmera está e para onde olha em cada trecho), poses das mãos, `renderAt(t)`, legendas, marcador, efeitos 2D (clarões, cortes), cartão final.
 - `_audio.js`: uma função que monta a trilha com `makeSfx` e termina com `S.finish()`.
@@ -66,7 +72,7 @@ Tudo é função do tempo `t`: `renderAt(t)` precisa desenhar o mesmo quadro sem
 
 ### 4. Olhar os quadros e ajustar (a parte que decide a qualidade)
 
-O código quase sempre roda de primeira, mas quase nunca fica bom de primeira. Reserve duas ou três rodadas:
+Mova o **card** para 🔍 Revisão. O código quase sempre roda de primeira, mas quase nunca fica bom de primeira. Reserve duas ou três rodadas:
 
 1. Leia os erros do console e rode `renderAt` de 0 até o fim em passos de 0,25 s dentro de um `try` para pegar erros em qualquer trecho.
 2. Para cada trecho, grave uma folha de quadros no console da página, `await snap([t1, t2, t3, t4, t5, t6], 'nome')`, e **abra a imagem** `debug/nome.png`. Cubra o vídeo inteiro (umas 8 a 10 folhas), incluindo os instantes logo antes e logo depois de cada corte e de cada impacto.
@@ -92,11 +98,12 @@ Ninguém vai ouvir a trilha antes do usuário, então meça. No console: `const 
 1. No console: `exportVideo('<slug>.mp4')` **sem `await`**, e acompanhe `window.__exp` (`state`: running → audio → saving → done, ou error com `msg`). A exportação leva cerca de um minuto e chamadas ao console costumam ter limite de ~30 s, então consulte em chamadas separadas.
 2. Confira o arquivo: busque o MP4 como blob, ponha num `<video>` com `URL.createObjectURL` (o servidor não aceita pedidos parciais, então sem blob o salto no tempo não funciona), verifique duração, 1080×1920 e a presença da faixa de áudio, e desenhe alguns quadros num canvas para olhar.
 3. Apague a pasta `debug/`.
-4. Envie o arquivo ao usuário e escreva um resumo curto: o que o vídeo mostra em uma ou duas frases, as escolhas que você fez (cenário, duração, fato do cartão final) e, com franqueza, o que não foi verificado — o áudio foi medido e não ouvido; quais fatos não foram conferidos.
+4. Copie o MP4 para a pasta do canal no Drive do PC, pegue o link e mova o **card** para 📱 Pronto para postar (`references/publicar.md`).
+5. Envie o arquivo ao usuário e escreva um resumo curto: o que o vídeo mostra em uma ou duas frases, as escolhas que você fez (cenário, duração, fato do cartão final), o link do card e, com franqueza, o que não foi verificado — o áudio foi medido e não ouvido; quais fatos não foram conferidos.
 
 ## Pedidos de ajuste
 
-Quando o usuário comentar um vídeo pronto ("o grito ficou estranho", "mais tempo na corrida", "troca a frase do final"), edite só os arquivos daquele vídeo, confira os quadros dos trechos alterados, exporte de novo com o mesmo nome e envie. Se o comentário for uma preferência que vale para os próximos vídeos, diga isso ao usuário e ofereça atualizar esta skill.
+Quando o usuário comentar um vídeo pronto ("o grito ficou estranho", "mais tempo na corrida", "troca a frase do final"), edite só os arquivos daquele vídeo, confira os quadros dos trechos alterados, exporte de novo com o mesmo nome, substitua o arquivo na pasta do Drive (o link do **card** continua valendo) e envie. Se o comentário for uma preferência que vale para os próximos vídeos, diga isso ao usuário e ofereça atualizar esta skill.
 
 ## Limites
 
