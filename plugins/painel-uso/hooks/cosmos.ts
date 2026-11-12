@@ -279,7 +279,7 @@ export const buildCosmos = (d: CosmosData, animate: boolean): string => {
       <text x="${W - 106}" y="${H - 18}" fill="#bfe9ff">${d.limits.length ? 'limites de uso' : 'sem limites'}</text>
     </g>`
 
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" font-family="Inter, Segoe UI, system-ui, sans-serif">
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="100%" height="100%" preserveAspectRatio="xMidYMid meet" font-family="Inter, Segoe UI, system-ui, sans-serif">
   <defs>
     <radialGradient id="space" cx="50%" cy="55%" r="75%"><stop offset="0%" stop-color="#1b1640"/><stop offset="55%" stop-color="#0b0b22"/><stop offset="100%" stop-color="#05050f"/></radialGradient>
     <radialGradient id="nebula" cx="30%" cy="70%" r="60%"><stop offset="0%" stop-color="#6a3cff" stop-opacity="0.28"/><stop offset="100%" stop-color="#6a3cff" stop-opacity="0"/></radialGradient>

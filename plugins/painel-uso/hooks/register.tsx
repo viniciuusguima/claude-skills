@@ -234,13 +234,16 @@ export const register: Register = on => {
         },
         !isStill,
       )
+      // The pane's width is given in code-font cells (~7.8 CSS px each); the
+      // scene fills it, keeping its 440x500 proportions.
+      const width = Math.max(300, Math.min(1100, Math.floor(e.props.bodyColumns * 7.8) - 8))
       const alt =
         `Tokens ${fmt(total(all))}; contexto ${m?.contextPercent ?? '—'}%; ` +
         `${agentList.length} agentes; ${skillList.length} skills`
 
       return (
         <Box flexDirection="column" gap={1}>
-          <Svg source={source} alt={alt} isInteractive />
+          <Svg source={source} alt={alt} isInteractive width={width} height={Math.round((width * 500) / 440)} />
           <Button
             key="pause"
             label={isStill ? '▶ Animar' : '⏸ Pausar animação'}
