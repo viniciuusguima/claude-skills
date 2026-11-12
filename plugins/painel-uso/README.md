@@ -9,8 +9,13 @@ Mod para o Claude Code que abre automaticamente, em toda sessão, um painel ao l
 
 No app desktop, no VS Code e no celular o painel vira uma **cena vertical com um Claudezinho laranja** (pixel art) num fundo cinza, feita para caber bonita num painel estreito ao lado do chat:
 
-- **Skills viram acessórios**: cada skill usada na sessão dá um acessório novo pra ele, na ordem em que foram usadas: óculos escuros 🕶️, anel de ouro 💍, cartola 🎩, gravata borboleta 🎀, relógio ⌚, tênis vermelho 👟, balão 🎈, capa de herói 🦸, auréola 😇 e corrente de ouro 📿. A lista embaixo dele mostra qual skill deu qual acessório.
-- **Agentes viram Claudezinhos**: cada agente (subagente) iniciado aparece como um Claudezinho menor atrás dele, pulando enquanto roda e mais apagado com ✓ quando termina.
+- **Skills montam um disfarce**: cada skill usada na sessão dá uma peça nova pra ele, na ordem em que foram usadas: óculos escuros 🕶️, chapéu 🎩, bigode 🥸 e brinco de argola dourado 💍. Da quinta skill em diante não tem peça nova, e elas aparecem só na lista. A lista embaixo dele mostra qual skill deu qual peça.
+- **Agentes viram Claudezinhos fantasiados**: cada agente (subagente) iniciado aparece como um Claudezinho menor atrás dele, pulando enquanto roda e mais apagado com ✓ quando termina. Eles vestem os figurinos na ordem em que começam, e o quarto recomeça do primeiro:
+  1. 🕴️ camisa social verde-clara, calça cáqui, cavanhaque, óculos escuros e chapéu preto;
+  2. 🎭 casaco longo de couro vermelho aberto sobre camiseta cinza, alça no peito, máscara prateada com olhos vermelhos brilhando e um toca-fitas azul na mão ligado à máscara (e notas musicais subindo);
+  3. 🚬 boina xadrez (cáqui, marrom e verde), cachecol azul, sobretudo e um charuto que solta fumaça.
+
+  Para mudar ou criar figurinos, edite a lista `FIGURINOS` e a função `costume` em `hooks/mascote.ts`.
 - O balão de fala mostra quanto do contexto está ocupado, e em cima ficam os tokens e as barras dos limites de 5h e 7 dias.
 
 **Quando um limite acaba** (5 horas ou 7 dias chegando a 100%), o Claude e tudo nele **fica cinza**, com olhos de X, uma nuvenzinha de chuva em cima e o aviso "CLAUDE ESGOTADO", dizendo quanto falta para o limite voltar. Quando o limite renova, ele volta a ficar laranja. Para ver esse visual sem esperar o limite, digite `/uso quebrado` (e de novo para desligar).
