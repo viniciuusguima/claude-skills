@@ -1,17 +1,17 @@
 ---
 name: recriar-video-youtube
-description: Recria em espanhol, do zero, um vídeo longo do YouTube (horizontal, 3 a 10 min) para o canal Bitácora de Vuelo a partir de um link — assiste ao original com a skill watch (plugin claude-video), analisa a thumbnail e o título, escreve um roteiro próprio em espanhol, gera narração neural, anima em canvas, renderiza o MP4 1920×1080 e cria a thumbnail 1280×720, o título, a descrição com capítulos e as tags. O trabalho é dividido entre agentes (analista de vídeo, analista de thumb, roteirista, animadores por bloco, designer de thumb, revisor). Use sempre que o usuário mandar um link do YouTube (youtube.com/watch, youtu.be) pedindo para "fazer esse vídeo", "recriar", "fazer igual em espanhol", "vídeo para o Bitácora de Vuelo", ou pedir só a thumbnail, o título ou a análise de um vídeo do YouTube para esse canal, mesmo que não diga "skill". Para Shorts, TikTok e Reels (vídeo curto vertical em português) use recriar-video-tiktok.
+description: Recria em espanhol, do zero, um vídeo longo do YouTube (horizontal, 3 a 10 min) para o canal Bitácora de Vuelo a partir de um link — assiste ao original com a skill watch (plugin claude-video), analisa a thumbnail e o título, escreve um roteiro próprio em espanhol, gera narração neural, anima em canvas, renderiza o MP4 1920×1080 e escreve os prompts da thumbnail para o Gemini (Nano Banana), o título, a descrição com capítulos e as tags. O trabalho é dividido entre agentes (analista de vídeo, analista de thumb, roteirista, animadores por bloco, designer de thumb, revisor). Use sempre que o usuário mandar um link do YouTube (youtube.com/watch, youtu.be) pedindo para "fazer esse vídeo", "recriar", "fazer igual em espanhol", "vídeo para o Bitácora de Vuelo", ou pedir só a thumbnail, o título ou a análise de um vídeo do YouTube para esse canal, mesmo que não diga "skill". Para Shorts, TikTok e Reels (vídeo curto vertical em português) use recriar-video-tiktok.
 ---
 
 # Recriar vídeo do YouTube em espanhol (canal Bitácora de Vuelo)
 
-A entrega tem três partes, todas em espanhol e todas geradas por código:
+A entrega tem três partes, todas em espanhol:
 
-- `saida/<slug>.mp4`: 1920×1080, 30 fps, narração neural, trilha sintetizada, animação em canvas.
-- `saida/thumb_a.png` e `saida/thumb_b.png`: duas thumbnails 1280×720 para o usuário escolher ou testar uma contra a outra no YouTube.
+- `saida/<slug>.mp4`: 1920×1080, 30 fps, narração neural, trilha sintetizada, animação em canvas, tudo gerado por código.
+- `saida/thumb_prompts.md`: dois prompts (A e B) com que o usuário gera no Gemini (Nano Banana) as thumbnails 1280×720, anexando a thumb original e as fotos dele como referência. O que ele gerar volta como `saida/thumb_a.png` e `saida/thumb_b.png`, para escolher ou testar uma contra a outra no YouTube.
 - `saida/post.txt`: título, descrição com capítulos e tags.
 
-Nada do original entra no vídeo nem na thumbnail: nem imagem, nem áudio, nem frase. O original é a referência de tema, estrutura e ritmo.
+Nada do original entra no vídeo: nem imagem, nem áudio, nem frase. O original é a referência de tema, estrutura e ritmo. Na thumbnail, a original entra só como anexo de referência no Gemini, e o prompt pede um desenho novo.
 
 Caminhos usados abaixo:
 
@@ -28,10 +28,10 @@ Você conversa com o usuário, roda os scripts, despacha os agentes e confere o 
 | Agente | Brief | Lê | Escreve | Roda junto com |
 |---|---|---|---|---|
 | Analista de vídeo | `agentes/analista-video.md` | o link (via watch) | `referencia/analise.md`, `referencia/transcricao.txt` | analista de thumb |
-| Analista de thumb | `agentes/analista-thumb.md` | thumb e título originais, thumbs do canal | `referencia/thumb_analise.md` | analista de vídeo |
+| Analista de thumb | `agentes/analista-thumb.md` | thumb e título originais, thumbs do canal, `referencia/fotos/` | `referencia/thumb_analise.md` | analista de vídeo |
 | Roteirista | `agentes/guionista.md` | as duas análises, `canal.md` | `roteiro.json`, `saida/post.txt` | — |
 | Animador (um por bloco) | `agentes/animador.md` | `roteiro.json`, `timeline.js`, o bloco dele | `cenas/<bloco>.js` | os outros animadores |
-| Designer de thumb | `agentes/disenador-thumb.md` | `referencia/thumb_analise.md`, `saida/post.txt` | `thumb_a.html`, `thumb_b.html`, `saida/thumb_*.png` | o render final |
+| Designer de thumb | `agentes/disenador-thumb.md` | `referencia/thumb_analise.md`, `saida/post.txt`, `referencia/fotos/` | `saida/thumb_prompts.md` | o render final |
 | Revisor | `agentes/revisor.md` | tudo o que vai ser publicado | `build/revision.md` | — |
 
 **Como despachar**: ferramenta Agent, tipo `general-purpose`, com este prompt (preencha os caminhos absolutos; agentes paralelos vão na mesma mensagem):
@@ -56,6 +56,7 @@ Pergunte só o que não estiver claro no pedido; para o resto, use o padrão e d
 | Voz | a de `canal.md` |
 | Roteiro | **próprio**, no mesmo tema e estrutura do original |
 | Pasta | `E:/Projetos/bitacora-de-vuelo/<slug-curto-do-tema>` |
+| Fotos para a thumb | peça logo na primeira mensagem: fotos do assunto (o avião, o lugar) e o print da thumb do canal de referência. Ele salva em `<projeto>/referencia/fotos/`; o que vier colado no chat você descreve no prompt do designer de thumb. Sem fotos, o prompt usa só a thumb original |
 
 Sobre o roteiro: o visual, a voz e a música já saem originais. O texto é o que mais pesa em direitos autorais, e reaproveitá-lo prende o canal ao conteúdo de outra pessoa. O padrão é um roteiro novo com a mesma mensagem central. Se o usuário pedir uma adaptação fiel, faça, e lembre em uma linha de dar crédito ao canal original na descrição.
 
@@ -120,6 +121,8 @@ Enquanto os dois trabalham, feche `saida/post.txt`: escolha o título com o usu�
 ```bash
 python <skill>/scripts/juntar_cenas.py --capitulos
 ```
+Quando o designer voltar, mande `saida/thumb_prompts.md` ao usuário com `SendUserFile` e peça para ele gerar as duas no Gemini e salvar como `saida/thumb_a.png` e `saida/thumb_b.png`. O vídeo segue sem esperar por isso; quando as imagens chegarem, confira-as como em "Conferir a imagem gerada" de `references/thumb.md`.
+
 Quando o render terminar, confira o resultado de verdade:
 ```bash
 ffmpeg -v error -i saida/<slug>.mp4 -vf "fps=1/15,scale=480:-1,tile=6x6" -frames:v 1 build/conferencia.png
@@ -133,11 +136,11 @@ Despache o **revisor**. Ele não participou de nada, e é por isso que serve: l�
 Leia `build/revision.md`. Corrija tudo o que estiver como **bloqueante** (texto de cena: `roteiro.json` → passos 3, 5 e 6 de novo, só a voz das cenas alteradas é regerada) e use o seu critério no resto.
 
 ### 8. Entregar
-Copie o MP4 e as duas thumbnails para a pasta do canal no Drive, pegue os links e mova o **card** para 📱 Pronto para postar (`references/publicar.md`).
+Copie o MP4, os prompts e as thumbnails que o usuário já gerou para a pasta do canal no Drive, pegue os links e mova o **card** para 📱 Pronto para postar (`references/publicar.md`).
 
-Mande o MP4 e as thumbnails com `SendUserFile` e, na mensagem, nesta ordem:
+Mande o MP4 com `SendUserFile` e, na mensagem, nesta ordem:
 1. **Título**, **descrição** e **tags** em blocos de código separados, para copiar com um clique.
-2. Qual thumbnail você recomenda e por quê, em uma frase.
+2. Qual thumbnail (A ou B) você recomenda e por quê, em uma frase; se ele ainda não gerou, lembre que os prompts estão no Drive.
 3. Em poucas linhas: duração, voz, se o roteiro é próprio ou adaptado, o que o revisor apontou e ficou sem corrigir, que você não ouviu o áudio (vale assistir uma vez) e como mudar uma frase (editar `roteiro.json` → passos 3, 5 e 6).
 4. O link do **card**.
 
@@ -149,7 +152,7 @@ Mande o MP4 e as thumbnails com `SendUserFile` e, na mensagem, nesta ordem:
 
 ## Quando algo foge do padrão
 
-- **Watch não instalada**: é o plugin `watch` do repositório `bradautomates/claude-video`. Peça ao usuário para rodar `claude plugin marketplace add bradautomates/claude-video` e `claude plugin install watch@claude-video` e abrir uma sessão nova. Para não parar o trabalho, dá para analisar pelo navegador embutido como em `<motor>/references/extracao.md` (seção YouTube); avise que a análise visual fica mais rasa.
+- **Watch não instalada**: é o plugin `watch` do repositório `bradautomates/claude-video`. Com o ok do usuário, instale você mesmo com `claude plugin marketplace add bradautomates/claude-video` e `claude plugin install watch@claude-video`. Não precisa de sessão nova: os agentes chamam o `watch.py` pelo caminho, que `referencia_youtube.py --onde-watch` já encontra. Na primeira vez o usuário escolhe o motor (passo 0); com Gemini, abra `~/.config/watch/.env` no Bloco de Notas para ele colar a chave, que nunca passa pelo chat. Se ele preferir não instalar, analise pelo navegador embutido como em `<motor>/references/extracao.md` (seção YouTube) e avise que a análise visual fica mais rasa.
 - **Watch falha ao baixar (erro 403)**: atualize o yt-dlp (`winget upgrade --id yt-dlp.yt-dlp`) e tente uma vez. Não use cookies do navegador sem o usuário pedir.
 - **Gemini falha**: a watch não troca de motor sozinha. Diga ao usuário o erro e ofereça rodar com `--engine local`.
 - **Vídeo original com pessoa falando para a câmera ou feito de filmagens**: a skill produz no estilo animado. Avise e siga; a análise e o roteiro funcionam igual.

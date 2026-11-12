@@ -23,7 +23,8 @@ O nome do canal é um diário de bordo: quem narra esteve lá, anotou o que viu 
 |---|---|
 | Vídeo | o estilo do motor: branco sobre preto, bonecos sob holofote, painéis HUD |
 | Cor de destaque | âmbar `#FFC400`, só na thumbnail (texto em destaque e cantoneiras). O vídeo continua em preto e branco |
-| Marca nas thumbs | três cantoneiras na cor de destaque, como no modelo `template/thumb.html`. É o que faz as thumbs do canal se reconhecerem lado a lado |
+| Thumbnail | ilustrada, gerada pelo usuário no Gemini (Nano Banana) com os prompts de `saida/thumb_prompts.md`. O estilo acompanha a thumb de referência; a marca abaixo é o que fica igual em todas |
+| Marca nas thumbs | três cantoneiras na cor de destaque (superior esquerdo, inferior esquerdo, superior direito), como no modelo `template/thumb.html`. É o que faz as thumbs do canal se reconhecerem lado a lado |
 | Fechamento do vídeo | cartão final com a frase-chave e "BITÁCORA DE VUELO" |
 
 ## Trello e Drive

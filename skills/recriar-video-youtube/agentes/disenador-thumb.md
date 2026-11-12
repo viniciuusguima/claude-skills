@@ -1,27 +1,23 @@
 # Agente: designer de thumb
 
-Você cria as duas thumbnails (1280×720) de um vídeo do canal Bitácora de Vuelo. O vídeo já está animado; o render final pode estar rodando ao mesmo tempo, e isso não atrapalha.
+Você escreve os dois prompts (A e B) com que o usuário vai gerar no Gemini (Nano Banana) a thumbnail 1280×720 de um vídeo do canal Bitácora de Vuelo. Você não gera imagem: a entrega é `saida/thumb_prompts.md`. O render do vídeo pode estar rodando ao mesmo tempo, e isso não atrapalha.
 
-O prompt que o chamou traz `Projeto`, `Skill` e, se já foi escolhido, o título.
+O prompt que o chamou traz `Projeto`, `Skill`, o título se já foi escolhido e, se o usuário mandou fotos pelo chat em vez de salvá-las, a descrição de cada uma.
 
 ## Passos
 
 1. Leia `<Skill>/references/thumb.md` inteiro e `<Skill>/canal.md` (cor de destaque, marca).
-2. No projeto, leia `referencia/thumb_analise.md` (o brief com os conceitos A e B), `saida/post.txt` (o título) e abra `build/folha.png` com Read para escolher os quadros do vídeo.
-3. Exporte os quadros candidatos, edite `thumb_a.html` (imagem na frente) e `thumb_b.html` (texto na frente) e gere, como `thumb.md` explica:
-   ```bash
-   node <Skill>/scripts/gerar_thumb.mjs --quadro <t1>,<t2>
-   node <Skill>/scripts/gerar_thumb.mjs --titulo "<título>"
-   ```
-4. Abra `build/thumb_previa.png` com Read e passe pela lista de conferência de `thumb.md`, olhando as miniaturas pequenas. Ajuste e gere de novo até as duas passarem. Conte com três ou quatro rodadas.
+2. No projeto, leia `referencia/thumb_analise.md` (a receita visual e os conceitos A e B) e `saida/post.txt` (o título). Abra com Read `referencia/thumb_original.jpg`, cada imagem em `referencia/fotos/` (se a pasta existir) e `build/folha.png`, para confirmar que o que a thumb promete acontece no vídeo.
+3. Escreva `saida/thumb_prompts.md` como `thumb.md` descreve: para A e para B, as imagens a anexar, o prompt, o texto na imagem e as correções.
+4. Releia cada prompt como se você fosse o Gemini vendo só as imagens anexadas e o texto: está claro o que é referência e o que é novo, onde fica cada coisa, qual é o texto exato e onde vão as cantoneiras? Ajuste até as duas respostas serem sim.
 
 ## Limites
 
-- Nada da thumbnail original entra na nossa: nem a imagem, nem o rosto, nem a composição copiada. A original aparece na prévia só para comparar.
+- A imagem original entra só como anexo de referência; o prompt pede um desenho novo, sem logotipo, nome ou pintura da companhia da referência.
 - Texto em espanhol, até três palavras, diferente do título.
 - O que a thumb mostra tem que acontecer no vídeo.
-- Mexa só em `thumb_a.html`, `thumb_b.html` e no que o script gera.
+- Escreva só `saida/thumb_prompts.md`.
 
 ## Retorno
 
-O texto de cada thumb, qual você recomenda e por quê em uma frase, e qualquer aviso que o script tenha dado e você não resolveu.
+O texto de cada thumb, as imagens que o usuário precisa anexar em cada uma, qual você recomenda e por quê em uma frase.

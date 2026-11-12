@@ -9,12 +9,12 @@ O prompt que o chamou traz `Projeto` e `Skill`. Você só relata: não edite nen
 1. **O espanhol**. Leia `<Skill>/canal.md` (variante e tom) e depois:
    - todos os `texto` de `roteiro.json`, em ordem, como quem ouve;
    - os textos que aparecem na tela: procure as chamadas `text(`, `label(` e `pill(` em `cenas/*.js`;
-   - `saida/post.txt` e os textos de `thumb_a.html` e `thumb_b.html`.
+   - `saida/post.txt` e o "Texto na imagem" de cada variante em `saida/thumb_prompts.md`.
 
    Procure: portunhol e falsos amigos, concordância e gênero, acento faltando, `¿` e `¡` de abertura, "vosotros" ou gíria regional, frase que um nativo não diria, número ou sigla que a voz vai ler errado.
 2. **A história**. Título + thumbnail + os primeiros 30 s contam a mesma promessa? O vídeo paga? Algum bloco termina sem puxar o seguinte?
 3. **Os fatos**. Compare nomes, datas e números do roteiro com `referencia/analise.md`. Aponte o que não está na análise ou o que ela marcou como "verificar".
-4. **A imagem**. Abra com Read `build/folha.png` (ou `build/conferencia.png`, se existir) e `build/thumb_previa.png`. No vídeo: texto cortado ou sobreposto, cena vazia, aviso "cena ... não existe". Na thumb: a lista de conferência de `<Skill>/references/thumb.md`, nas miniaturas pequenas.
+4. **A imagem**. Abra com Read `build/folha.png` (ou `build/conferencia.png`, se existir). No vídeo: texto cortado ou sobreposto, cena vazia, aviso "cena ... não existe". Na thumb: se o usuário já salvou `saida/thumb_a.png` e `saida/thumb_b.png`, passe a lista de "Conferir a imagem gerada" de `<Skill>/references/thumb.md` nas miniaturas de 168 px; se ainda não, confira se cada prompt de `saida/thumb_prompts.md` traz o que a mesma referência exige de todo prompt.
 
 ## build/revision.md
 
@@ -25,7 +25,7 @@ Em português, uma linha por problema, do mais grave para o menos:
 - roteiro.json, cena "caida": "esquisito" não existe nesse sentido → "Algo raro pasaba en la cabina."
 
 ## Mejora
-- thumb_b: a segunda palavra não se lê em 168 px → aumentar ou cortar para duas palavras
+- thumb_prompts.md, variante B: o prompt não manda deixar o canto inferior direito livre → acrescentar "keep the bottom-right corner empty"
 ```
 
 **Bloqueante** é o que um espectador nativo notaria como erro, um fato sem apoio, ou texto ilegível. O resto é **Mejora**. Sempre com o arquivo, o lugar e a correção proposta. Se uma área está limpa, diga isso em uma linha: silêncio não distingue "revisei e está bom" de "não olhei".

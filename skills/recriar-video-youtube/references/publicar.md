@@ -44,8 +44,9 @@ Atualize o campo **Status** da descrição a cada movimento, em uma frase.
 **Roteiro (<duração> min):** <a mensagem central em uma ou duas frases, em português> (próprio ou adaptado)
 
 **Vídeo:** <link do Drive, ou "(link do Drive quando ficar pronto)">
-**Thumbnail A:** <link do Drive>
-**Thumbnail B:** <link do Drive>  (recomendada: <A ou B>)
+**Prompts da thumb (Gemini):** <link do Drive>  (recomendada: <A ou B>)
+**Thumbnail A:** <link do Drive, ou "(a gerar no Gemini)">
+**Thumbnail B:** <link do Drive, ou "(a gerar no Gemini)">
 
 ---
 **Texto do post (copiar no YouTube):**
@@ -58,7 +59,7 @@ Atualize o campo **Status** da descrição a cada movimento, em uma frase.
 O MP4 sobe inteiro pelo **Google Drive para computador**: copie os arquivos para a pasta do canal dentro do Drive do PC, e eles sincronizam sozinhos. O conector do Drive só leva arquivos de até 10 MB, então o envio é sempre pela pasta sincronizada.
 
 1. A pasta do canal no PC é `H:\My Drive\Bitácora de Vuelo`. Se a H: não existir, procure a unidade com `My Drive` ou `Meu Drive` na raiz (a G: é um HD de fotos, não o Drive). **No primeiro vídeo a pasta ainda não existe**: crie-a ali, espere sincronizar, pegue o ID com `search_files` (`title = 'Bitácora de Vuelo'`) e grave-o na tabela de endereços acima.
-2. Copie `saida/<slug>.mp4`, `saida/thumb_a.png` e `saida/thumb_b.png` para lá, com o slug no nome das thumbs (`<slug>_thumb_a.png`) para não sobrescrever as de outro vídeo. Num pedido de ajuste, substitua o arquivo de mesmo nome: o Drive guarda como nova versão e o link continua o mesmo.
+2. Copie `saida/<slug>.mp4`, `saida/thumb_prompts.md` e, se o usuário já gerou, `saida/thumb_a.png` e `saida/thumb_b.png` para lá, com o slug no nome dos arquivos da thumb (`<slug>_thumb_prompts.md`, `<slug>_thumb_a.png`) para não sobrescrever os de outro vídeo. Os prompts no Drive deixam o usuário gerar as thumbs no Gemini pelo celular. Num pedido de ajuste, substitua o arquivo de mesmo nome: o Drive guarda como nova versão e o link continua o mesmo.
 3. Pegue os links: `search_files` com `title = '<nome do arquivo>' and parentId = '<pasta do canal>'`. Repita a cada ~30 s até o arquivo aparecer com o `fileSize` igual ao do arquivo local; o link é o `viewUrl`.
 
 Sem o Drive no PC, deixe o card em 🔍 Revisão com o caminho dos arquivos na descrição e diga ao usuário para arrastá-los para a pasta "Bitácora de Vuelo" do Drive.
