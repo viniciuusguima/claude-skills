@@ -33,6 +33,7 @@ declare module 'claude-code' {
       agents: Shaped<AgentRow[]>
       skills: Shaped<SkillRow[]>
       meter: Shaped<Meter | null>
+      isPaused: boolean
     }
   }
 }

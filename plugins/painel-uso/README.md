@@ -7,23 +7,13 @@ Mod para o Claude Code que abre automaticamente, em toda sessão, um painel ao l
 - **Agentes** (subagentes) iniciados: tipo, descrição, se ainda estão rodando e quantos tokens gastaram.
 - **Skills** carregadas na sessão e quantas vezes cada uma foi usada.
 
+No app desktop, no VS Code e no celular o painel vira um **sistema solar 3D animado**: o contexto é um planeta de vidro que vai se enchendo de líquido, os agentes são luas em órbita (brilhando enquanto rodam), as skills são estrelas douradas no cinturão externo e os limites de 5h/7 dias são anéis em volta do planeta. Tem um botão para pausar a animação. A animação roda localmente e não gasta tokens.
+
 Também mostra um resumo na barra de status e um aviso rápido quando um agente começa.
 Se o painel for fechado, digite `/uso` para abrir de novo.
 
 ## Instalar
 
-No terminal, numa sessão do Claude Code:
-
 ```
-/plugin install painel-uso --marketplace viniciuusguima/claude-skills
+/plugin install painel-uso --marketplace <dono>/<repositorio>
 ```
-
-Responda `y` para adicionar o marketplace e escolha o escopo de usuário (Enter), para valer em todas as sessões.
-
-Pelo shell:
-
-```
-claude plugin install painel-uso --marketplace viniciuusguima/claude-skills
-```
-
-No app desktop, onde `/plugin` não roda: clique no + ao lado da caixa de mensagem, depois Plugins, Add marketplace com `viniciuusguima/claude-skills`, e então Add plugin.

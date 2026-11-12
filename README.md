@@ -15,7 +15,7 @@ Mods mudam a própria interface do Claude Code. Cada pasta em `plugins/` é um m
 
 | Mod | O que faz |
 |---|---|
-| [painel-uso](plugins/painel-uso/README.md) | Abre sozinho, em todo chat, um painel com os tokens gastos (chat e agentes), o contexto ocupado, o custo, os agentes iniciados e as skills usadas. `/uso` reabre o painel. |
+| [painel-uso](plugins/painel-uso/README.md) | Abre sozinho, em todo chat, um painel (no desktop, um sistema solar 3D animado) com os tokens gastos (chat e agentes), o contexto ocupado, o custo, os agentes iniciados e as skills usadas. `/uso` reabre o painel. |
 
 Instalar num PC novo (no terminal, numa sessão do Claude Code):
 

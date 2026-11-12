@@ -44,11 +44,24 @@ test('conta tokens, agentes e skills em todas as superfícies', async ($, on) =>
   await $.skill.prompt({ skill: 'tdd', text: '...', frontmatter: {} } as never)
   await $.skill.prompt({ skill: 'tdd', text: '...', frontmatter: {} } as never)
 
-  for (const surface of ['terminal', 'desktop', 'vscode', 'mobile'] as const) {
+  const term = await $.ui.mount({ ...PANE, surface: 'terminal' })
+  expect((await term.find({ type: 'Text', text: /^Total:/ }))?.text).toBe('Total: 8.0k')
+  expect((await term.find({ type: 'Text', text: /Explore/ }))?.text).toContain('buscar arquivos')
+  expect((await term.find({ type: 'Text', text: /tdd/ }))?.text).toBe('tdd ×2')
+  await term.unmount()
+
+  for (const surface of ['desktop', 'vscode', 'mobile'] as const) {
     const ui = await $.ui.mount({ ...PANE, surface })
-    expect((await ui.find({ type: 'Text', text: /^Total:/ }))?.text).toBe('Total: 8.0k')
-    expect((await ui.find({ type: 'Text', text: /Explore/ }))?.text).toContain('buscar arquivos')
+    const svg = await ui.find({ type: 'Svg' })
+    expect(svg).toBeDefined()
+    expect(JSON.stringify(svg)).toContain('8.0k')
+    expect(JSON.stringify(svg)).toContain('animateMotion')
     expect((await ui.find({ type: 'Text', text: /tdd/ }))?.text).toBe('tdd ×2')
+
+    await ui.press({ key: 'pause' })
+    const still = await ui.find({ type: 'Svg' })
+    expect(JSON.stringify(still)).not.toContain('animateMotion')
+    await ui.press({ key: 'pause' })
     await ui.unmount()
   }
 })

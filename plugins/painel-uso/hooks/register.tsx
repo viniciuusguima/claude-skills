@@ -2,6 +2,7 @@ import { atom, read, update } from 'claude-code'
 import type { ModelUsage, Register } from 'claude-code'
 
 import type { AgentRow, Meter, SkillRow, Tokens } from '../types'
+import { buildCosmos } from './cosmos'
 
 const PANE = 'painel-uso'
 const TITLE = 'Uso da sessão'
@@ -21,6 +22,7 @@ const skills = atom({ plugin: 'painel-uso', key: 'skills' } as const, [], {
 const meter = atom({ plugin: 'painel-uso', key: 'meter' } as const, null, {
   shape: 'meter-1',
 })
+const isPaused = atom({ plugin: 'painel-uso', key: 'isPaused' } as const, false)
 
 const add = (t: Tokens, u: ModelUsage): Tokens => ({
   input: t.input + u.input_tokens,
@@ -169,6 +171,87 @@ export const register: Register = on => {
     const all = sum(t, agentTokens)
     const running = agentList.filter(a => a.isRunning).length
 
+    const agentsBox = (
+      <Box flexDirection="column">
+        <Text bold>
+          Agentes ({agentList.length}
+          {running > 0 ? `, ${running} rodando` : ''})
+        </Text>
+        {agentList.length === 0 && <Text dimColor>nenhum agente usado ainda</Text>}
+        {agentList
+          .slice(-12)
+          .reverse()
+          .map(a => (
+            <Text>
+              <Text color={a.isRunning ? 'warning' : 'success'}>{a.isRunning ? '●' : '✓'}</Text>{' '}
+              <Text bold>{a.type}</Text> <Text dimColor>{a.description}</Text>
+              {total(a.tokens) > 0 ? <Text dimColor> · {fmt(total(a.tokens))}</Text> : ''}
+            </Text>
+          ))}
+      </Box>
+    )
+
+    const skillsBox = (
+      <Box flexDirection="column">
+        <Text bold>Skills ({skillList.length})</Text>
+        {skillList.length === 0 && <Text dimColor>nenhuma skill usada ainda</Text>}
+        {skillList
+          .slice(-12)
+          .reverse()
+          .map(s => (
+            <Text>
+              <Text bold>{s.name}</Text>
+              {s.count > 1 ? <Text dimColor> ×{s.count}</Text> : ''}
+            </Text>
+          ))}
+      </Box>
+    )
+
+    // Desktop, VS Code and mobile draw SVG: the animated 3D scene.
+    if (e.surface !== 'terminal') {
+      const { Svg, Button } = $.ui.resolve(e)
+      const isStill = await read($, isPaused)
+      const source = buildCosmos(
+        {
+          totalTokens: total(all),
+          input: all.input,
+          output: all.output,
+          cache: all.cacheRead + all.cacheWrite,
+          mainTokens: total(t),
+          agentTokens: total(agentTokens),
+          contextTokens: m?.contextTokens,
+          contextWindow: m?.contextWindow,
+          contextPercent: m?.contextPercent,
+          usd: m?.usd,
+          limits: m?.limits ?? [],
+          agents: agentList.map(a => ({
+            type: a.type,
+            description: a.description,
+            isRunning: a.isRunning,
+            tokens: total(a.tokens),
+          })),
+          skills: skillList,
+        },
+        !isStill,
+      )
+      const alt =
+        `Tokens ${fmt(total(all))}; contexto ${m?.contextPercent ?? '—'}%; ` +
+        `${agentList.length} agentes; ${skillList.length} skills`
+
+      return (
+        <Box flexDirection="column" gap={1}>
+          <Svg source={source} alt={alt} isInteractive />
+          <Button
+            key="pause"
+            label={isStill ? '▶ Animar' : '⏸ Pausar animação'}
+            onPress={() => update($, isPaused, v => !v)}
+          />
+          {agentsBox}
+          {skillsBox}
+        </Box>
+      )
+    }
+
     return (
       <Box flexDirection="column" gap={1}>
         <Box flexDirection="column">
@@ -209,37 +292,8 @@ export const register: Register = on => {
           </Box>
         )}
 
-        <Box flexDirection="column">
-          <Text bold>
-            Agentes ({agentList.length}
-            {running > 0 ? `, ${running} rodando` : ''})
-          </Text>
-          {agentList.length === 0 && <Text dimColor>nenhum agente usado ainda</Text>}
-          {agentList
-            .slice(-12)
-            .reverse()
-            .map(a => (
-              <Text>
-                <Text color={a.isRunning ? 'warning' : 'success'}>{a.isRunning ? '●' : '✓'}</Text>{' '}
-                <Text bold>{a.type}</Text> <Text dimColor>{a.description}</Text>
-                {total(a.tokens) > 0 ? <Text dimColor> · {fmt(total(a.tokens))}</Text> : ''}
-              </Text>
-            ))}
-        </Box>
-
-        <Box flexDirection="column">
-          <Text bold>Skills ({skillList.length})</Text>
-          {skillList.length === 0 && <Text dimColor>nenhuma skill usada ainda</Text>}
-          {skillList
-            .slice(-12)
-            .reverse()
-            .map(s => (
-              <Text>
-                <Text bold>{s.name}</Text>
-                {s.count > 1 ? <Text dimColor> ×{s.count}</Text> : ''}
-              </Text>
-            ))}
-        </Box>
+        {agentsBox}
+        {skillsBox}
       </Box>
     )
   })
