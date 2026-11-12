@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>thumb</title>
+<!--
+  Thumbnail 1280x720. Edite este arquivo e rode: node <skill>/scripts/gerar_thumb.mjs
+  Regras e como conferir: <skill>/references/thumb.md
+  Zona morta: o canto inferior direito (220x100 px) fica coberto pelo selo de duração do YouTube.
+-->
+<style>
+  :root { --acento: #FFC400; --fundo: #000; --texto: #fff; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; width: 1280px; height: 720px; overflow: hidden; background: var(--fundo);
+    font-family: 'Segoe UI', 'Inter', Arial, sans-serif; color: var(--texto); }
+  #thumb { position: relative; width: 1280px; height: 720px; overflow: hidden; }
+
+  /* imagem: um quadro do próprio vídeo (gerar_thumb.mjs --quadro T), recortado no elemento principal */
+  #imagem { position: absolute; right: 0; top: 0; width: 820px; height: 720px; object-fit: cover; object-position: 50% 50%;
+    filter: contrast(1.2) brightness(1.15);
+    -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 42%); mask-image: linear-gradient(90deg, transparent 0, #000 42%); }
+  /* holofote, o mesmo clima do vídeo */
+  #luz { position: absolute; inset: 0;
+    background: radial-gradient(ellipse 520px 620px at 72% 38%, rgba(255,255,255,.20), transparent 70%); }
+
+  #texto { position: absolute; left: 70px; top: 0; bottom: 0; width: 700px;
+    display: flex; flex-direction: column; justify-content: center; }
+  #texto div { font-weight: 900; font-size: 168px; line-height: .9; letter-spacing: -4px; text-transform: uppercase;
+    text-shadow: 0 8px 40px rgba(0,0,0,.95), 0 0 4px rgba(0,0,0,.9); white-space: nowrap; }
+  .acento { color: var(--acento); }
+
+  /* marca do canal: cantoneiras e faixa na cor de destaque, iguais em todas as thumbs */
+  #marca { position: absolute; inset: 26px; pointer-events: none; }
+  #marca i { position: absolute; width: 46px; height: 46px; border: 6px solid var(--acento); }
+  #marca i:nth-child(1) { left: 0; top: 0; border-right: 0; border-bottom: 0; }
+  #marca i:nth-child(2) { left: 0; bottom: 0; border-right: 0; border-top: 0; }
+  #marca i:nth-child(3) { right: 0; top: 0; border-left: 0; border-bottom: 0; }
+</style>
+</head>
+<body>
+<div id="thumb">
+  <div id="luz"></div>
+  <!-- <img id="imagem" src="build/quadro_12.5.png" alt=""> -->
+  <div id="texto">
+    <div>DOS</div>
+    <div class="acento">PALABRAS</div>
+  </div>
+  <div id="marca"><i></i><i></i><i></i></div>
+</div>
+</body>
+</html>
