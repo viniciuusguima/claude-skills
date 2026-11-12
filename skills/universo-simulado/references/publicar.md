@@ -52,7 +52,7 @@ Atualize o campo **Status** da descrição a cada movimento, em uma frase.
 
 O MP4 exportado (~60 MB) sobe inteiro pelo **Google Drive para computador**: copie o arquivo para a pasta do canal dentro do Drive do PC, e ele sincroniza sozinho. O conector do Drive e o upload do Claude in Chrome só levam arquivos de até 10 MB, e comprimir o vídeo até caber nisso estraga a imagem no celular, então o envio é sempre pela pasta sincronizada.
 
-1. A pasta do canal no PC é `H:\My Drive\Universo Simulado`. Se a H: não existir, procure a unidade com `My Drive` ou `Meu Drive` na raiz (a G: é um HD de fotos, não o Drive).
+1. A letra da unidade muda de um PC para outro: num deles a pasta é `H:\My Drive\Universo Simulado` (lá a G: é um HD de fotos); no outro é `G:\Meu Drive\Universo Simulado`. Procure a unidade que tem `My Drive` ou `Meu Drive` na raiz e use essa.
 2. Copie `<slug>.mp4` para lá com o título como nome, sem `?` (o Windows não aceita): `E se você fosse enterrado vivo.mp4`. Num pedido de ajuste, substitua o arquivo de mesmo nome: o Drive guarda como nova versão e o link continua o mesmo.
 3. Pegue o link: `search_files` com `title = '<nome do arquivo>' and parentId = '<pasta do canal>'`. Repita a cada ~30 s até o arquivo aparecer com o `fileSize` igual ao do MP4 local; o link é o `viewUrl`.
 
