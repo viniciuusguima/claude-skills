@@ -21,7 +21,7 @@ Por que sem perguntas: o usuário já decidiu o formato (abaixo) e pediu para n�
 
 ## Como funciona por dentro
 
-Tudo roda numa página local: three.js r128 desenha a cena, um canvas 2D põe texto por cima, WebCodecs + mp4-muxer gravam o MP4 e o áudio é gerado em JavaScript. Não há arquivos de mídia nem instalação além de Python (servidor local) e um navegador controlável (painel do navegador do app ou Chrome).
+Tudo roda numa página local: three.js r128 desenha a cena, um canvas 2D põe texto por cima, WebCodecs + mp4-muxer gravam o MP4 e o áudio é gerado em JavaScript. Não há arquivos de mídia. Precisa de Python (servidor local), Node e Chrome ou Edge instalados: o script `scripts/video.mjs` desta skill abre a página num Chrome headless e faz a checagem, as folhas de quadros, a medição do som e a exportação pela linha de comando, sem o painel do navegador. Na primeira vez num PC, rode `npm install` na pasta da skill.
 
 A pasta `assets/projeto/` desta skill é o projeto pronto:
 
@@ -29,8 +29,10 @@ A pasta `assets/projeto/` desta skill é o projeto pronto:
 |---|---|
 | `server.py` | Servidor local; também grava o MP4 e as folhas de quadros que a página envia |
 | `js/util.js`, `js/kit.js`, `js/studio.js`, `js/sfx.js` | Peças comuns. **Não edite**; a referência está em `references/api.md` |
-| `modelo.html`, `js/modelo_world.js`, `js/modelo_main.js`, `js/modelo_audio.js` | Vídeo mínimo de 12 s que funciona. É o ponto de partida de todo vídeo novo |
+| `modelo.html`, `js/modelo_roteiro.js`, `js/modelo_world.js`, `js/modelo_main.js`, `js/modelo_audio.js` | Vídeo mínimo de 12 s que funciona. É o ponto de partida de todo vídeo novo |
 | `sol.html`, `js/sol_*.js` | Vídeo completo de 70 s ("E se o Sol explodisse?"). Exemplo de qualidade final: três cenários, cortes, clarões, espaço, mãos, trilha |
+
+Cada vídeo tem cinco arquivos: `<slug>.html` e, em `js/`, `<slug>_roteiro.js` (só tempos e textos: o objeto `ROTEIRO` com duração, trechos `T`, título, legendas, cartão final e texto do post), `<slug>_world.js` (cenas 3D), `<slug>_main.js` (câmera, mãos, marcador, efeitos) e `<slug>_audio.js` (trilha). O roteiro fica separado para que trocar uma frase ou um tempo não exija mexer no código das cenas.
 
 Leia `references/api.md` antes de escrever código: ele lista as funções disponíveis e as convenções de câmera e de tela. Quando precisar de um efeito parecido com algo do vídeo do Sol (explosão, fogo, céu estrelado, planeta, corredor, passos), abra o arquivo `sol_*` correspondente e adapte.
 
@@ -40,13 +42,14 @@ Cada vídeo também é um **card** no quadro do Trello do usuário, que anda pel
 
 ### 1. Roteiro (antes de qualquer código)
 
-Decida e anote para você mesmo:
+O roteiro é o arquivo `js/<slug>_roteiro.js`: copie `js/modelo_roteiro.js` e preencha. Decida:
 
 - **Slug** curto sem acento (`lua`, `tsunami`, `buraco_negro`); ele dá nome aos arquivos.
 - **Trechos com tempos**, 6 a 10 trechos. A estrutura que funciona: gancho com a imagem mais forte (0–4 s) → calma em primeira pessoa com contagem regressiva → o evento → reação/fuga → consequências em escala maior (às vezes vista de fora, do espaço ou do alto) → cena final quieta → cartão final (últimos ~5 s).
 - **Legendas**: 12 a 18, cada uma 2,5 a 3,6 s na tela, frase curta, no presente, falando com "você". Deixe 0,3 a 0,5 s entre elas.
-- **Marcador** de cada trecho.
+- **Marcador** de cada trecho (anote num comentário do roteiro; o código dele fica no `_main.js`).
 - **Fatos**: números e afirmações das legendas e do cartão final. Se houver busca na web, confira os principais; se não houver, escreva de memória e avise no final que não foram conferidos. O cartão final deve dizer a verdade mesmo quando a premissa é impossível ("o Sol não tem massa para explodir").
+- **Texto do post** no campo `post`, no formato do `references/publicar.md`.
 
 Varie o cenário de um vídeo para outro; não reaproveite a praia do Sol só porque já existe.
 
@@ -56,16 +59,16 @@ Com o roteiro decidido, abra o **card** do vídeo em ✍️ Roteiro, com o resum
 
 Se a pasta de trabalho ainda não tem `server.py` e `js/studio.js`, copie **o conteúdo** de `assets/projeto/` para ela (inclusive `.claude/launch.json`). Se já tem, não sobrescreva: vídeos anteriores moram ali.
 
-Crie os arquivos do vídeo novo a partir do modelo: `<slug>.html`, `js/<slug>_world.js`, `js/<slug>_main.js`, `js/<slug>_audio.js`. No HTML troque o título, o `max` do controle de tempo e os três nomes de script. No `main`, o último argumento de `studio.start` é o nome do MP4.
+Crie os arquivos do vídeo novo a partir do modelo: `<slug>.html`, `js/<slug>_world.js`, `js/<slug>_main.js`, `js/<slug>_audio.js` (o `_roteiro.js` já saiu do passo 1). No HTML troque o título, o `max` do controle de tempo (igual a `ROTEIRO.DUR`) e os quatro nomes de script; o roteiro vem antes do world.
 
-Suba o servidor (`python server.py 8770`, ou a configuração `videos` do `launch.json`; se a porta estiver ocupada, use outra) e abra `http://localhost:<porta>/<slug>.html`.
+Os scripts de `video.mjs` sobem o servidor sozinhos. Para o usuário assistir com som, suba o servidor (`python server.py 8770`; se a porta estiver ocupada, use outra) e abra `http://localhost:<porta>/<slug>.html` no painel do navegador.
 
 ### 3. Escrever o vídeo
 
 Mova o **card** para 🎬 Produção.
 
-- `_world.js`: os tempos do roteiro em um objeto (`T`), funções de altura do chão e um `buildX(scene)` por cenário, cada um devolvendo `update(t, ...)`.
-- `_main.js`: `camState(t)` (onde a câmera está e para onde olha em cada trecho), poses das mãos, `renderAt(t)`, legendas, marcador, efeitos 2D (clarões, cortes), cartão final.
+- `_world.js`: funções de altura do chão e um `buildX(scene)` por cenário, cada um devolvendo `update(t, ...)`. Os tempos vêm de `ROTEIRO.T`.
+- `_main.js`: `camState(t)` (onde a câmera está e para onde olha em cada trecho), poses das mãos, `renderAt(t)`, marcador e efeitos 2D (clarões, cortes). Título, legendas e cartão final são desenhados a partir de `ROTEIRO`, como no modelo; não copie textos para cá.
 - `_audio.js`: uma função que monta a trilha com `makeSfx` e termina com `S.finish()`.
 
 Tudo é função do tempo `t`: `renderAt(t)` precisa desenhar o mesmo quadro sempre que receber o mesmo `t`, porque a exportação e a conferência pulam no tempo. Por isso nada de `Math.random()` nem de estado acumulado entre quadros; use `mulberry32`, `hash2` e fórmulas em `t`.
@@ -74,9 +77,11 @@ Tudo é função do tempo `t`: `renderAt(t)` precisa desenhar o mesmo quadro sem
 
 Mova o **card** para 🔍 Revisão. O código quase sempre roda de primeira, mas quase nunca fica bom de primeira. Reserve duas ou três rodadas:
 
-1. Leia os erros do console e rode `renderAt` de 0 até o fim em passos de 0,25 s dentro de um `try` para pegar erros em qualquer trecho.
-2. Para cada trecho, grave uma folha de quadros no console da página, `await snap([t1, t2, t3, t4, t5, t6], 'nome')`, e **abra a imagem** `debug/nome.png`. Cubra o vídeo inteiro (umas 8 a 10 folhas), incluindo os instantes logo antes e logo depois de cada corte e de cada impacto.
-3. Corrija o que viu, recarregue a página e tire de novo só as folhas afetadas.
+Todos os comandos rodam na pasta de trabalho (`<skill>` é a pasta desta skill):
+
+1. `node <skill>/scripts/video.mjs checar <slug>` → erros de carregamento e de `renderAt` de 0 até o fim, a cada 0,25 s.
+2. `node <skill>/scripts/video.mjs folha <slug> praia=5,7,9,11,13,15 fuga=24,25.5,27,29,30.5,31.5 ...` → uma folha `debug/<nome>.png` por argumento, com um quadro por instante. **Abra cada imagem.** Cubra o vídeo inteiro (umas 8 a 10 folhas), incluindo os instantes logo antes e logo depois de cada corte e de cada impacto.
+3. Corrija o que viu e tire de novo só as folhas afetadas.
 
 Defeitos que apareceram nos vídeos anteriores, para procurar de propósito:
 
@@ -91,12 +96,12 @@ Defeitos que apareceram nos vídeos anteriores, para procurar de propósito:
 
 ### 5. Medir o som
 
-Ninguém vai ouvir a trilha antes do usuário, então meça. No console: `const a = synthNow()` e calcule o RMS de cada segundo em dB. Critérios: nenhum NaN; duração igual à do vídeo; ambiente por volta de −30 a −22 dB; impactos por volta de −14 a −8 dB; nenhum trecho mudo sem querer (abaixo de −45 dB). Se os trechos calmos estiverem baixos, aumente o `amp` deles ou o `drive` de `finish`.
+Ninguém vai ouvir a trilha antes do usuário, então meça: `node <skill>/scripts/video.mjs som <slug>` mostra a duração, as amostras NaN e o RMS de cada segundo em dB, e avisa o que sair dos limites. Critérios: nenhum NaN; duração igual à do vídeo; ambiente por volta de −30 a −22 dB; impactos por volta de −14 a −8 dB; nenhum trecho mudo sem querer (abaixo de −45 dB). Se os trechos calmos estiverem baixos, aumente o `amp` deles ou o `drive` de `finish`.
 
 ### 6. Exportar, conferir e entregar
 
-1. No console: `exportVideo('<slug>.mp4')` **sem `await`**, e acompanhe `window.__exp` (`state`: running → audio → saving → done, ou error com `msg`). A exportação leva cerca de um minuto e chamadas ao console costumam ter limite de ~30 s, então consulte em chamadas separadas.
-2. Confira o arquivo: busque o MP4 como blob, ponha num `<video>` com `URL.createObjectURL` (o servidor não aceita pedidos parciais, então sem blob o salto no tempo não funciona), verifique duração, 1080×1920 e a presença da faixa de áudio, e desenhe alguns quadros num canvas para olhar.
+1. `node <skill>/scripts/video.mjs exportar <slug>` → grava `<slug>.mp4` na pasta de trabalho (uns 20 s para 70 s de vídeo) e confere com ffprobe se é 1080×1920, tem áudio e tem a duração do roteiro. Código de saída 1 = algo falhou; leia a mensagem.
+2. Olhe alguns quadros do arquivo final: `ffmpeg -v error -i <slug>.mp4 -vf "fps=1/8,scale=270:-1,tile=9x1" -frames:v 1 debug/final.png` e abra a imagem.
 3. Apague a pasta `debug/`.
 4. Copie o MP4 para a pasta do canal no Drive do PC, pegue o link e mova o **card** para 📱 Pronto para postar (`references/publicar.md`).
 5. Envie o arquivo ao usuário e escreva um resumo curto: o que o vídeo mostra em uma ou duas frases, as escolhas que você fez (cenário, duração, fato do cartão final), o link do card e, com franqueza, o que não foi verificado — o áudio foi medido e não ouvido; quais fatos não foram conferidos.

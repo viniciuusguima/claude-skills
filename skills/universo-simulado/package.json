@@ -1,0 +1,9 @@
+{
+  "name": "universo-simulado",
+  "private": true,
+  "type": "module",
+  "description": "Dependências do scripts/video.mjs (Chrome headless)",
+  "dependencies": {
+    "puppeteer-core": "^23.11.1"
+  }
+}

@@ -1,6 +1,6 @@
 'use strict';
 // MODELO: copie para js/<slug>_main.js. Linha do tempo: camera, bracos, legendas, marcador e cartao final.
-const DUR = VID.DUR, T = VID.T, PI = Math.PI;
+const DUR = ROTEIRO.DUR, T = ROTEIRO.T, PI = Math.PI;
 const studio = makeStudio({ DUR });
 const { ctx, W, H, S, rich, label, fade, mkCanvas } = studio;
 
@@ -47,11 +47,6 @@ function renderAt(t) {
   drawOverlay(t, cm);
 }
 
-// Legendas: [inicio, fim, texto]; a palavra entre *asteriscos* sai em vermelho. Uma palavra vermelha por legenda.
-const CAPS = [
-  [3.3, 5.8, 'Tudo parece *normal*.'],
-  [6.2, 8.3, 'Até que o céu muda de *cor*.'],
-];
 function hudState(t) { // [titulo, valor, estado, alfa, cor] ou null
   if (t >= T.walk && t < T.card) { const v = Math.max(0, T.event - t); return ['IMPACTO EM', v.toFixed(1).replace('.', ',') + ' s', t < T.event ? 'CAMINHANDO' : 'AGORA', fade(t, T.walk, T.card, 0.3), v < 1 ? '#ff5a4a' : '#fff']; }
   return null;
@@ -62,11 +57,11 @@ function drawOverlay(t, cm) {
   ctx.drawImage(studio.vignette, 0, 0, 720, 1280);
   for (const c of [T.walk]) { const d = Math.abs(t - c); if (d < 0.18) { ctx.fillStyle = `rgba(0,0,0,${(1 - d / 0.18) * 0.85})`; ctx.fillRect(0, 0, 720, 1280); } } // corte entre cenas
   if (t < T.card) {
-    rich('E se isto fosse\num *modelo*?', 360, 330, 62, 660, 1 - sstep(2.4, 2.9, t), 1.2); // titulo
-    studio.caps(CAPS, t);
+    rich(ROTEIRO.titulo, 360, 330, 62, 660, 1 - sstep(ROTEIRO.tituloSai - 0.5, ROTEIRO.tituloSai, t), 1.2); // titulo
+    studio.caps(ROTEIRO.legendas, t);
     const h = hudState(t); if (h) studio.hud(h[0], h[1], h[2], h[3], h[4]);
   } else {
-    studio.endCard(t, T.card, { title: 'TÍTULO DO VÍDEO', fact: 'Um fato real e curto que põe a dramatização em contexto.', question: 'Uma pergunta para os *comentários*?', channel: 'UNIVERSO SIMULADO', dim: 0.66 });
+    studio.endCard(t, T.card, { ...ROTEIRO.cartao, channel: 'UNIVERSO SIMULADO', dim: 0.66 });
   }
 }
-studio.start(renderAt, synthVideo, 'modelo.mp4');
+studio.start(renderAt, synthVideo, ROTEIRO.slug + '.mp4');

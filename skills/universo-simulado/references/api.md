@@ -1,13 +1,13 @@
 # Referência das peças comuns
 
-Ordem dos scripts na página: three.js r128, mp4-muxer, `util.js`, `kit.js`, `studio.js`, `sfx.js`, depois `<slug>_world.js`, `<slug>_audio.js`, `<slug>_main.js`. São scripts clássicos (tudo global), então não redeclare com `const` um nome que já existe aqui.
+Ordem dos scripts na página: three.js r128, mp4-muxer, `util.js`, `kit.js`, `studio.js`, `sfx.js`, depois `<slug>_roteiro.js`, `<slug>_world.js`, `<slug>_audio.js`, `<slug>_main.js`. São scripts clássicos (tudo global), então não redeclare com `const` um nome que já existe aqui.
 
 ## Convenções
 
 - **Mundo**: metros, y para cima. Olhos em primeira pessoa a ~1,62 m do chão.
 - **Câmera**: `PerspectiveCamera(74, 9/16)`. Com `rotation.order = 'YXZ'`, yaw 0 olha para −z; a direção de frente é `(−sin(yaw), 0, −cos(yaw))`; yaw positivo vira à esquerda; pitch positivo olha para cima. Campo de visão: 74° na vertical, ~46° na horizontal.
 - **Tela 2D**: depois de `ctx.setTransform(S, 0, 0, S, 0, 0)` tudo é desenhado em 720×1280. Título em y≈330, marcador em x≈46 / y≈520–600, legendas em y≈916.
-- **Tempo**: tudo deriva de `t` em segundos. Guarde os inícios dos trechos em um objeto `T` no `_world.js` e use os mesmos nomes na câmera, nas legendas e no áudio.
+- **Tempo**: tudo deriva de `t` em segundos. Os inícios dos trechos ficam em `ROTEIRO.T` (`_roteiro.js`); use os mesmos nomes na câmera, nas legendas e no áudio. `ROTEIRO` também traz `DUR`, `slug`, `titulo`, `tituloSai`, `legendas`, `cartao` e `post` (veja `js/modelo_roteiro.js`).
 - **Three r128**: sem `CapsuleGeometry`; cores em sRGB simples, sem tone mapping. Use `logarithmicDepthBuffer: true` no renderer quando a mesma cena tiver objetos a 1 m e a milhares de metros (espaço).
 
 ## util.js

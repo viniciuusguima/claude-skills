@@ -1,9 +1,5 @@
 'use strict';
-// MODELO: copie para js/<slug>_world.js. Aqui ficam os tempos do roteiro e a construcao das cenas 3D.
-const VID = {
-  DUR: 12,                                   // duracao total em segundos (videos reais: 60 a 75)
-  T: { walk: 3.0, event: 6.0, card: 8.5 },   // inicio de cada trecho; main e audio leem daqui para ficarem sincronizados
-};
+// MODELO: copie para js/<slug>_world.js. Aqui fica a construcao das cenas 3D; os tempos vem de ROTEIRO (js/<slug>_roteiro.js).
 function groundH(x, z) { return 0.25 * fbm(x * 0.08, z * 0.08); }
 
 function buildField(scene) {

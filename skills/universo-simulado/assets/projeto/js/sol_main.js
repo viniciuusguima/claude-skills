@@ -116,24 +116,6 @@ const gWhite = tint(255, 255, 255), gWarm = tint(255, 190, 90), gOrange = tint(2
 const pv = new V3();
 function project(x, y, z) { pv.set(x, y, z).project(camera); return pv.z < 1 ? [(pv.x * 0.5 + 0.5) * 720, (-pv.y * 0.5 + 0.5) * 1280] : null; }
 function glare(img, p, size, alpha) { if (!p || alpha <= 0.003) return; ctx.save(); ctx.globalCompositeOperation = 'lighter'; ctx.globalAlpha = Math.min(1, alpha); ctx.drawImage(img, p[0] - size / 2, p[1] - size / 2, size, size); ctx.restore(); }
-const CAPS = [
-  [5.0, 8.2, 'A luz do Sol leva *8 minutos* para chegar aqui.'],
-  [8.6, 11.8, 'Por 8 minutos e 20 segundos, nada *muda*.'],
-  [12.2, 15.8, 'Você olha para um Sol que não *existe* mais.'],
-  [17.6, 20.4, 'Então o céu fica *branco*.'],
-  [20.8, 24.0, 'O calor chega junto. Tudo começa a *queimar*.'],
-  [24.4, 27.4, 'Corra para baixo da *terra*.'],
-  [27.8, 30.8, 'Metros de solo e concreto são o único *escudo*.'],
-  [31.6, 34.6, 'Lá fora, o mar começa a *ferver*.'],
-  [36.9, 40.4, 'No lado da noite, a Lua vira um *farol*.'],
-  [41.2, 44.2, 'Horas depois, chega a onda de *plasma*.'],
-  [44.6, 47.2, 'Ela arranca a *atmosfera*.'],
-  [47.8, 50.6, 'Sem o Sol, a Terra segue em linha *reta*.'],
-  [51.0, 53.6, 'A 107 mil km/h, rumo ao *escuro*.'],
-  [56.8, 59.8, 'Em uma semana, a superfície *congela*.'],
-  [60.2, 63.0, 'Em um ano: 73 graus *negativos*.'],
-  [63.3, 65.1, 'Não há mais *amanhecer*.'],
-];
 function hudState(t) {
   if (t >= T.beach + 0.2 && t < T.flash) {
     const rem = t < 14 ? 3 + 497 * Math.pow(1 - clamp((t - 5) / 9, 0, 1), 2.2) : Math.max(0, 17 - t), sec = Math.ceil(rem - 1e-6);
@@ -181,14 +163,11 @@ function drawOverlay(t, cm, info) {
   // cortes: escurece rapido nas trocas de cena
   for (const c of [T.beach, T.shelter, T.space2, T.shock, T.drift, T.back, T.after]) { const d = Math.abs(t - c); if (d < 0.18) { ctx.fillStyle = `rgba(0,0,0,${(1 - d / 0.18) * 0.85})`; ctx.fillRect(0, 0, 720, 1280); } }
   if (t < T.card) {
-    rich('E se o Sol\n*explodisse*?', 360, 330, 62, 660, 1 - sstep(4.0, 4.5, t), 1.2);
-    studio.caps(CAPS, t);
+    rich(ROTEIRO.titulo, 360, 330, 62, 660, 1 - sstep(ROTEIRO.tituloSai - 0.5, ROTEIRO.tituloSai, t), 1.2);
+    studio.caps(ROTEIRO.legendas, t);
     const h = hudState(t); if (h) studio.hud(h[0], h[1], h[2], h[3], h[4]);
   } else {
-    studio.endCard(t, T.card, {
-      title: 'SE O SOL EXPLODISSE', fact: 'Calma: o Sol não tem massa para explodir. Daqui a uns 5 bilhões de anos, ele vira uma gigante vermelha.',
-      question: 'Onde você passaria os últimos *8 minutos*?', channel: 'UNIVERSO SIMULADO', dim: 0.66,
-    });
+    studio.endCard(t, T.card, { ...ROTEIRO.cartao, channel: 'UNIVERSO SIMULADO', dim: 0.66 });
   }
 }
-studio.start(renderAt, synthSol, 'sol.mp4');
+studio.start(renderAt, synthSol, ROTEIRO.slug + '.mp4');

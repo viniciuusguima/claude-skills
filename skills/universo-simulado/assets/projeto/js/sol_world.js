@@ -1,8 +1,7 @@
 'use strict';
 // Video "E se o Sol explodisse?": espaco (Sol, Terra, Lua), praia e abrigo subterraneo.
 const SOL = {
-  DUR: 70,
-  T: { boom: 2.0, beach: 4.6, flash: 17.0, run: 24.2, shelter: 31.0, space2: 36.6, moon: 38.0, shock: 41.0, hit: 43.6, drift: 47.4, back: 53.6, after: 56.2, card: 65.2 },
+  DUR: ROTEIRO.DUR, T: ROTEIRO.T,                 // tempos e textos ficam em js/sol_roteiro.js
   SUN: new V3(-0.333, 0.616, -0.714).normalize(), // direcao do Sol no ceu da praia
   ENT: { x: 4, z: 17.6 },                          // entrada da passagem subterranea
   EARTH: new V3(2000, 0, 0),
