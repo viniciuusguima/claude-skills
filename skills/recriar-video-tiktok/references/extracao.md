@@ -17,7 +17,15 @@ baixa o vídeo; só lê a página e olha os quadros.
    m ? await (await fetch(JSON.parse('"' + m[1] + '"'))).text() : 'sem legenda';
    ```
    Retorna WEBVTT com tempos. Salve em `referencia/legenda.txt`. Se houver mais de um idioma em
-   `subtitleInfos`, prefira o original. Para a descrição/hashtags, procure `"desc"` no mesmo JSON.
+   `subtitleInfos`, prefira o original.
+   Descrição e hashtags do post original (servem de base para o título e as # em PT):
+   ```js
+   const desc = (JSON.stringify(d).match(/"itemStruct":\{.*?"desc":"((?:[^"\\]|\\.)*)"/) || [])[1];
+   const tags = [...new Set((JSON.stringify(d).match(/"hashtagName":"([^"]+)"/g) || []).map(s => s.split(':"')[1].slice(0, -1)))];
+   ({ desc, tags })
+   ```
+   Se vier vazio, `get_page_text` mostra a descrição e as hashtags logo abaixo do nome do autor.
+   Anote os dois em `referencia/notas.md`.
 4. Quadros: o `<video>` da página toca mesmo com o modal. Toque acelerado, capture miniaturas e mostre
    numa grade por cima da página para tirar um screenshot:
    ```js

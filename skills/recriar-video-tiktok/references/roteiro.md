@@ -44,6 +44,41 @@ corte palavras em vez de acelerar demais a voz (passar de `+12%` soa robótico).
 - Vírgula vira pausa curta; ponto vira pausa maior. Use para dar ritmo.
 - Números: "dez lições" lê melhor que "10 lições".
 
+## Título e hashtags do post (saida/post.txt)
+
+Escreva depois do roteiro pronto, porque o título sai da frase mais forte do vídeo.
+
+**Título** (é o texto que acompanha o vídeo no post):
+- Até ~80 caracteres, em PT-BR natural, sem aspas.
+- Use a frase-chave ou o gancho do vídeo. Uma frase citável funciona melhor que uma descrição
+  ("O fracasso só sai caro quando você para." > "Vídeo sobre fracasso e sucesso").
+- Se o original tiver uma frase de efeito na descrição, faça a versão em português dela, sem
+  tradução literal, mantendo o mesmo efeito.
+- No máximo 1 emoji, e só se combinar com o tom.
+
+**Hashtags**: 5 a 8, todas em português, minúsculas, sem acento (#mentalidade, não #Mentalidade
+nem #mentalidadé), porque é assim que o público BR busca.
+- Parta das hashtags do original e use o equivalente que o público brasileiro realmente usa, não a
+  tradução literal: `#mindset` → `#mentalidade`, `#business` → `#empreendedorismo`,
+  `#money` → `#dinheiro` / `#financas`, `#motivation` → `#motivacao`, `#rich` → `#riqueza`
+  (ou `#sucesso`), `#success` → `#sucesso`, `#discipline` → `#disciplina`.
+- Misture 2–3 amplas (#motivacao, #sucesso) com 3–4 do tema específico do vídeo (#fracasso,
+  #aprendizado, #negociosonline).
+- Não inclua #fyp/#foryou/#viral: em geral não ajudam e poluem.
+
+Formato do arquivo:
+```
+TÍTULO
+O fracasso só sai caro quando você para.
+
+HASHTAGS
+#mentalidade #empreendedorismo #dinheiro #motivacao #sucesso #fracasso #aprendizado
+
+PRONTO PARA COLAR
+O fracasso só sai caro quando você para. #mentalidade #empreendedorismo #dinheiro #motivacao #sucesso #fracasso #aprendizado
+```
+Se o roteiro for adaptação fiel, acrescente o crédito no "pronto para colar" (ex.: `Inspirado em @autor`).
+
 ## Roteiro próprio × adaptação
 
 - **Próprio (padrão)**: mantenha o tema e a mensagem central, mas troque o exemplo (outro negócio,
