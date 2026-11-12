@@ -1,10 +1,11 @@
-"""Cria a pasta de um vídeo novo do canal (horizontal, na língua do projeto) e confere as dependências.
+"""Cria a pasta de um vídeo novo de um canal (horizontal, na língua do projeto) e confere as dependências.
 
-    python <skill>/scripts/novo_projeto.py E:/Projetos/bitacora-de-vuelo/<slug> --idioma es --voz es-MX-JorgeNeural
+    python <skill>/scripts/novo_projeto.py E:/Projetos/<canal>/<slug> --canal <canal> --idioma es --voz es-MX-JorgeNeural
 
---idioma e --voz são obrigatórios: não há língua padrão. Os dois saem da linha da língua em canal.md ("Línguas").
+--canal, --idioma e --voz são obrigatórios: não há canal nem língua padrão. --canal é o slug do perfil em
+criar-canal/canais/<canal>.md; a língua e a voz saem de references/linguas.md (ou da exceção do perfil).
 
-Usa o motor da skill recriar-video-tiktok (pasta irmã desta): é ela que traz motor.js, index.html,
+Usa o motor da skill recriar-video-tiktok: é ela que traz motor.js, index.html,
 a voz, a trilha e o render. Aqui entram só o que é do YouTube: cenas por bloco e o modelo de thumbnail.
 Não sobrescreve roteiro.json, cenas/ nem thumb_*.html que já existam.
 """
@@ -15,26 +16,31 @@ import subprocess
 import sys
 from pathlib import Path
 
-from referencia_youtube import INSTALAR_WATCH, achar_watch
+from referencia_youtube import INSTALAR_WATCH, achar_motor, achar_watch
 
 SKILL = Path(__file__).resolve().parent.parent
-MOTOR = SKILL.parent / "recriar-video-tiktok"
 
 
 def main() -> None:
     sys.stdout.reconfigure(encoding="utf-8")
     ap = argparse.ArgumentParser()
     ap.add_argument("pasta")
-    ap.add_argument("--idioma", required=True, help="código da língua do projeto (es, pt, en...), de canal.md")
-    ap.add_argument("--voz", required=True, help="voz do edge-tts da mesma linha de canal.md (ex.: es-MX-JorgeNeural)")
+    ap.add_argument("--canal", required=True, help="slug do perfil do canal (criar-canal/canais/<slug>.md)")
+    ap.add_argument("--idioma", required=True, help="código da língua do projeto (es, pt, en...), de references/linguas.md")
+    ap.add_argument("--voz", required=True, help="voz do edge-tts da mesma linha de linguas.md (ex.: es-MX-JorgeNeural)")
     a = ap.parse_args()
 
     idioma = a.idioma.strip().lower()
     if not a.voz.lower().startswith(idioma + "-"):
-        sys.exit(f"a voz {a.voz} não é da língua '{idioma}'. Use a voz da linha dessa língua em canal.md.")
+        sys.exit(f"a voz {a.voz} não é da língua '{idioma}'. Use a voz da linha dessa língua em references/linguas.md.")
 
-    if not (MOTOR / "scripts" / "novo_projeto.py").exists():
-        sys.exit(f"motor não encontrado em {MOTOR}. Esta skill precisa da recriar-video-tiktok na pasta ao lado.")
+    MOTOR = achar_motor()
+    if not MOTOR:
+        sys.exit("motor não encontrado: esta skill precisa da recriar-video-tiktok instalada (veja o README do repositório).")
+
+    perfil = SKILL.parent / "criar-canal" / "canais" / f"{a.canal}.md"
+    if not perfil.exists():
+        print(f"AVISO: perfil do canal não encontrado em {perfil}. Crie com /criar-canal antes de seguir.")
 
     destino = Path(a.pasta).resolve()
     (destino / "cenas").mkdir(parents=True, exist_ok=True)
@@ -42,7 +48,7 @@ def main() -> None:
     # o roteiro entra antes do motor, que só cria o dele quando não existe nenhum
     arq_roteiro = destino / "roteiro.json"
     if not arq_roteiro.exists():
-        roteiro = {"voz": a.voz, "velocidade": "+4%", "formato": "horizontal", "idioma": idioma,
+        roteiro = {"canal": a.canal, "voz": a.voz, "velocidade": "+4%", "formato": "horizontal", "idioma": idioma,
                    "referencia": "", "cenas": [{"id": "apertura", "bloco": "01_gancho", "texto": ""}]}
         arq_roteiro.write_text(json.dumps(roteiro, ensure_ascii=False, indent=2), encoding="utf-8")
     else:

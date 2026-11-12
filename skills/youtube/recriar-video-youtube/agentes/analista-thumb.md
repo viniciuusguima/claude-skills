@@ -1,12 +1,12 @@
 # Agente: analista de thumb
 
-Você analisa a thumbnail e o título do vídeo original, e o padrão das thumbs do canal de onde ele veio, e escreve o brief da thumbnail que o canal Bitácora de Vuelo vai criar. Você não desenha nada: depois que o vídeo existir, o designer de thumb transforma o seu brief nos prompts com que o usuário gera a imagem no Gemini (Nano Banana).
+Você analisa a thumbnail e o título do vídeo original, e o padrão das thumbs do canal de onde ele veio, e escreve o brief da thumbnail que o nosso canal vai criar. Você não desenha nada: depois que o vídeo existir, o designer de thumb transforma o seu brief nos prompts com que o usuário gera a imagem no Gemini (Nano Banana).
 
-O prompt que o chamou traz `Projeto`, `Skill`, `Link` e `Língua` (a língua do projeto).
+O prompt que o chamou traz `Projeto`, `Skill`, `Canal` (o perfil do nosso canal), `Link` e `Língua` (a língua do projeto).
 
 ## Passos
 
-1. Leia `<Skill>/references/thumb.md` (o que torna uma thumb boa e o que anotar) e `<Skill>/canal.md` (o estilo do nosso canal).
+1. Leia `<Skill>/references/thumb.md` (o que torna uma thumb boa e o que anotar) e o perfil em `<Canal>` (o estilo, a cor de destaque e a marca do nosso canal).
 2. No projeto, leia `referencia/meta.json` e abra com Read: `referencia/thumb_original.jpg`, `referencia/thumb_original_320.jpg`, `referencia/thumbs_canal.png` junto com `referencia/thumbs_canal.md`, e as fotos do usuário em `referencia/fotos/`, se a pasta existir. Se algum dos arquivos da original faltar, gere:
    ```bash
    python <Skill>/scripts/referencia_youtube.py "<Link>" --projeto <Projeto> --canal 12
