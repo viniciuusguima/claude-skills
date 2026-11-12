@@ -1,6 +1,6 @@
 ---
 name: recriar-video-tiktok
-description: Recria em português (PT-BR), do zero, vídeos curtos de motion graphics/explicativos do TikTok, Reels ou Shorts a partir de um link — extrai a legenda e os quadros de referência, escreve um roteiro próprio no mesmo formato e tema, gera narração com voz neural (edge-tts), trilha ambiente, anima as cenas em canvas no estilo minimalista preto e branco (bonecos sob holofote, painéis HUD) e renderiza um MP4 pronto para postar, junto com título e hashtags em português para o post. Use sempre que o usuário mandar um link de vídeo curto (vt.tiktok.com, tiktok.com, instagram reels, youtube shorts) pedindo para "fazer esse vídeo", "recriar", "copiar", "fazer igual em português", "traduzir o vídeo", ou quiser produzir vídeos de mentalidade/motivação/finanças nesse estilo animado, mesmo que não diga "skill" nem "motion graphics".
+description: Recria em português (PT-BR), do zero, vídeos curtos de motion graphics/explicativos do TikTok, Reels ou Shorts a partir de um link — extrai a legenda e os quadros de referência, escreve um roteiro próprio no mesmo formato e tema, gera narração com a voz Luana da Cartesia, trilha ambiente, anima as cenas em canvas no estilo minimalista preto e branco (bonecos sob holofote, painéis HUD) e renderiza um MP4 pronto para postar, junto com título e hashtags em português para o post. Use sempre que o usuário mandar um link de vídeo curto (vt.tiktok.com, tiktok.com, instagram reels, youtube shorts) pedindo para "fazer esse vídeo", "recriar", "copiar", "fazer igual em português", "traduzir o vídeo", ou quiser produzir vídeos de mentalidade/motivação/finanças nesse estilo animado, mesmo que não diga "skill" nem "motion graphics".
 ---
 
 # Recriar vídeo curto em PT-BR
@@ -19,7 +19,7 @@ Pergunte só o que não estiver claro no pedido; para o resto, use o padrão e d
 | Decisão | Padrão |
 |---|---|
 | Formato | o mesmo do vídeo original (TikTok costuma ser vertical; o exemplo da skill é horizontal) |
-| Voz | `pt-BR-AntonioNeural` (masculina). Alternativas: `pt-BR-FranciscaNeural`, `pt-BR-ThalitaMultilingualNeural` |
+| Voz | **Luana**, da Cartesia (`gerar_audio_cartesia.py`, velocidade 1.1), que é a voz do canal. O edge-tts (`gerar_audio.py`) fica de reserva, se a Cartesia falhar |
 | Roteiro | **próprio**, no mesmo tema, estrutura e duração do original |
 | Pasta | `E:/Projetos/<slug-curto-do-tema>` (ou o diretório de projetos que o usuário usa) |
 
@@ -27,6 +27,22 @@ Sobre o roteiro: o visual, a voz e a música já saem originais. O texto é o qu
 autorais, e reaproveitá-lo também prende o canal do usuário ao conteúdo de outra pessoa. Por isso o
 padrão é escrever um roteiro novo com a mesma mensagem central. Se o usuário pedir explicitamente uma
 adaptação fiel/tradução, faça, e lembre em uma linha de dar crédito ao criador original.
+
+## Com agentes (o jeito padrão)
+
+Você, a sessão principal, é quem coordena: roda os scripts, cuida do Trello e do Drive e fala com o usuário. Cada papel é um subagente com o próprio arquivo em `agents/`. Para chamar um agente, use a ferramenta Agent com `subagent_type: "general-purpose"` e um prompt curto: "Você é o <papel> do canal de mentalidade. Leia `<skill>/agents/<papel>.md` e siga. Skill: `<skill>`. Pasta: `<pasta>`." Acrescente o link para o extrator e "adaptação fiel" para o roteirista, se o usuário pediu. `<skill>` é o caminho absoluto desta pasta.
+
+| Ordem | Quem | Faz |
+|---|---|---|
+| 1 | você | Passo 1 (`novo_projeto.py`). |
+| 2 | `extrator` | Passo 2 → `referencia/`. |
+| 3 | `roteirista` | Passos 3 e 8 → `roteiro.json` e `saida/post.txt`. Você abre o card em ✍️ Roteiro. |
+| 4 | você | Passo 4 (voz Luana e trilha). Card em 🎬 Produção. |
+| 5 | `animador` | Passos 5 e 6 → `cenas.js`. |
+| 6 | `revisor` | Revisão independente. Card em 🔍 Revisão. Repasse as correções ao dono do arquivo (SendMessage ao animador para `cenas.js`; se o texto mudar, você regenera a voz no passo 4). No máximo duas rodadas. |
+| 7 | você | Passos 7 e 9 (render, conferência, Drive, card, entrega). |
+
+O usuário tem limite de uso apertado: um agente por vez, sem refazer o trabalho de um agente para conferir. Num ajuste pequeno, faça você mesmo, sem agentes.
 
 ## Fluxo
 
@@ -60,11 +76,12 @@ Com o roteiro escrito, abra o **card** do vídeo em ✍️ Roteiro.
 Mova o **card** para 🎬 Produção.
 ```bash
 cd E:/Projetos/<slug>
-python <skill>/scripts/gerar_audio.py      # voz por cena -> timeline.js, legendas.srt, build/narracao.wav
+python <skill>/scripts/gerar_audio_cartesia.py   # voz Luana por cena -> timeline.js, legendas.srt, build/narracao.wav
 python <skill>/scripts/gerar_trilha.py     # pad ambiente + ducking + blips -> build/trilha_final.wav
 ```
-`gerar_audio.py` imprime a duração de cada cena; use esses números ao animar. Ele só regenera a voz
-das cenas cujo texto mudou. Se o texto não sair com o tom certo, ajuste `velocidade` (ex.: `"+10%"`) no roteiro.
+O script imprime a duração de cada cena; use esses números ao animar. Ele só regenera a voz das cenas
+cujo texto mudou (a chave vem de `CARTESIA_API_KEY`; nunca a imprima). Para mudar voz ou velocidade, ponha
+`"cartesia": {"voz": "<id>", "velocidade": 1.1}` no `roteiro.json`; sem esse bloco, usa a Luana.
 
 ### 5. Animar as cenas
 Leia `references/motor.md` (API e regras de estilo) e abra `<skill>/template/cenas_exemplo.js` para
@@ -128,5 +145,5 @@ Mande o MP4 com `SendUserFile` e, na mensagem, nesta ordem:
   produz no estilo animado e siga; o roteiro funciona igual.
 - **Usuário quer outro estilo visual** (cores, fonte): o motor é só canvas; mude as cores em
   `motor.js` do projeto (não no template da skill) e diga que o template continua no preto e branco.
-- **edge-tts falha** (`NoAudioReceived`): é rede ou texto vazio. Tente de novo; se persistir, use a
-  voz offline do Windows (`Microsoft Maria`) via System.Speech e avise que a qualidade cai.
+- **Cartesia falha** (sem chave, sem crédito, erro da API): mostre o erro ao usuário (nunca a chave) e,
+  se ele concordar, gere com `gerar_audio.py` (edge-tts, `pt-BR-FranciscaNeural`) avisando que não é a Luana.

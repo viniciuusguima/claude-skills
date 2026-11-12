@@ -23,6 +23,21 @@ capa.json, capa.jpg
 
 Os scripts estão em `<skill>/scripts/` (`<skill>` é a pasta desta skill) e rodam com Python, ffmpeg e Pillow. `alinhar.py` usa também o faster-whisper.
 
+## Com agentes (o jeito padrão)
+
+Você, a sessão principal, é quem coordena: fala com o usuário, gera a narração (custa créditos da Cartesia) e cuida do Trello. Cada papel é um subagente com o próprio arquivo em `agents/`. Para chamar um agente, use a ferramenta Agent com `subagent_type: "general-purpose"` e um prompt curto: "Você é o <papel> do canal Marvel. Leia `<skill>/agents/<papel>.md` e siga. Skill: `<skill>`. Pasta: `<pasta>`." Para o roteirista, acrescente o tema. `<skill>` é o caminho absoluto desta pasta.
+
+| Ordem | Quem | Faz |
+|---|---|---|
+| 1 | `roteirista` | `roteiro.md` com marcações descritivas. Você abre o card em ✍️ Roteiro e **mostra o roteiro ao usuário**; espere a aprovação. |
+| 2 | `garimpeiro` | Stills, trailers e marcações ligadas aos arquivos. Card em 🎬 Produção. |
+| 3 | você | Narração: `narrar.py roteiro.md` (passo 3). |
+| 4 | `montador` e `capista`, **em paralelo** (arquivos diferentes) | `montagem.json` acertado e MP4 / `capa.jpg`. Card em 🔍 Revisão. |
+| 5 | `revisor` | Revisão independente do MP4 e da capa. Repasse cada correção ao dono (SendMessage ao montador ou ao capista; se for o roteiro, você corrige o texto, roda `narrar.py` de novo, que só regera os blocos mudados, e o montador refaz). No máximo duas rodadas. |
+| 6 | você | Entrega (passo 6) e card em 📱 Pronto para postar. |
+
+O usuário tem limite de uso apertado. Não chame mais de dois agentes ao mesmo tempo e não refaça o trabalho de um agente para conferir. Num ajuste pequeno, faça você mesmo, sem agentes.
+
 ## Passo a passo
 
 ### 1. Roteiro
@@ -41,7 +56,7 @@ python <skill>/scripts/narrar.py roteiro.md --capitulos 1   # teste barato: só 
 python <skill>/scripts/narrar.py roteiro.md                 # tudo -> audio/narracao.wav e o rascunho montagem.json
 ```
 
-A voz é a da Cartesia (chave em `CARTESIA_API_KEY`, nunca a imprima). A voz padrão é a **Luana**, a mesma do canal de mentalidade. Para outra voz, `--listar [--genero masculine]` e um `narracao.json` com `{"voz": "<id>"}`. Cada bloco fica em cache: mudar uma frase do roteiro e rodar de novo regenera só aquele bloco. Depois de mudar o roteiro, use `--refazer-montagem` (isso descarta ajustes feitos à mão no `montagem.json`).
+A voz é a da Cartesia (chave em `CARTESIA_API_KEY`, nunca a imprima). A voz do canal é o **Heitor** (`b0f46533-d4bb-493f-a26f-a99e1f2e86e3`), já padrão no script; a Luana é a do canal de mentalidade, não use aqui. Para testar outra, `--listar [--genero feminine]` e um `narracao.json` com `{"voz": "<id>"}`. Cada bloco fica em cache: mudar uma frase do roteiro e rodar de novo regenera só aquele bloco. Depois de mudar o roteiro, use `--refazer-montagem` (isso descarta ajustes feitos à mão no `montagem.json`).
 
 Se o usuário mandar uma narração gravada ou gerada fora daqui, use `python <skill>/scripts/alinhar.py roteiro.md <audio>`. Ele transcreve o áudio, acha onde cada bloco começa e escreve o mesmo rascunho.
 
