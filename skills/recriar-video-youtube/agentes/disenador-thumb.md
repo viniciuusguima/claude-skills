@@ -2,7 +2,7 @@
 
 Você escreve os dois prompts (A e B) com que o usuário vai gerar no Gemini (Nano Banana) a thumbnail 1280×720 de um vídeo do canal Bitácora de Vuelo. Você não gera imagem: a entrega é `saida/thumb_prompts.md`. O render do vídeo pode estar rodando ao mesmo tempo, e isso não atrapalha.
 
-O prompt que o chamou traz `Projeto`, `Skill`, o título se já foi escolhido e, se o usuário mandou fotos pelo chat em vez de salvá-las, a descrição de cada uma.
+O prompt que o chamou traz `Projeto`, `Skill`, `Língua` (a língua do projeto), o título se já foi escolhido e, se o usuário mandou fotos pelo chat em vez de salvá-las, a descrição de cada uma.
 
 ## Passos
 
@@ -14,7 +14,7 @@ O prompt que o chamou traz `Projeto`, `Skill`, o título se já foi escolhido e,
 ## Limites
 
 - A imagem original entra só como anexo de referência; o prompt pede um desenho novo, sem logotipo, nome ou pintura da companhia da referência.
-- Texto em espanhol, até três palavras, diferente do título.
+- Texto na língua do projeto, até três palavras, diferente do título.
 - O que a thumb mostra tem que acontecer no vídeo.
 - Escreva só `saida/thumb_prompts.md`.
 

@@ -1,6 +1,8 @@
-"""Cria a pasta de um vídeo novo do canal (horizontal, voz em espanhol) e confere as dependências.
+"""Cria a pasta de um vídeo novo do canal (horizontal, na língua do projeto) e confere as dependências.
 
-    python <skill>/scripts/novo_projeto.py E:/Projetos/bitacora-de-vuelo/<slug> [--voz es-MX-JorgeNeural]
+    python <skill>/scripts/novo_projeto.py E:/Projetos/bitacora-de-vuelo/<slug> --idioma es --voz es-MX-JorgeNeural
+
+--idioma e --voz são obrigatórios: não há língua padrão. Os dois saem da linha da língua em canal.md ("Línguas").
 
 Usa o motor da skill recriar-video-tiktok (pasta irmã desta): é ela que traz motor.js, index.html,
 a voz, a trilha e o render. Aqui entram só o que é do YouTube: cenas por bloco e o modelo de thumbnail.
@@ -23,8 +25,13 @@ def main() -> None:
     sys.stdout.reconfigure(encoding="utf-8")
     ap = argparse.ArgumentParser()
     ap.add_argument("pasta")
-    ap.add_argument("--voz", default="es-MX-JorgeNeural")
+    ap.add_argument("--idioma", required=True, help="código da língua do projeto (es, pt, en...), de canal.md")
+    ap.add_argument("--voz", required=True, help="voz do edge-tts da mesma linha de canal.md (ex.: es-MX-JorgeNeural)")
     a = ap.parse_args()
+
+    idioma = a.idioma.strip().lower()
+    if not a.voz.lower().startswith(idioma + "-"):
+        sys.exit(f"a voz {a.voz} não é da língua '{idioma}'. Use a voz da linha dessa língua em canal.md.")
 
     if not (MOTOR / "scripts" / "novo_projeto.py").exists():
         sys.exit(f"motor não encontrado em {MOTOR}. Esta skill precisa da recriar-video-tiktok na pasta ao lado.")
@@ -33,10 +40,16 @@ def main() -> None:
     (destino / "cenas").mkdir(parents=True, exist_ok=True)
 
     # o roteiro entra antes do motor, que só cria o dele quando não existe nenhum
-    if not (destino / "roteiro.json").exists():
-        roteiro = {"voz": a.voz, "velocidade": "+4%", "formato": "horizontal", "idioma": "es",
+    arq_roteiro = destino / "roteiro.json"
+    if not arq_roteiro.exists():
+        roteiro = {"voz": a.voz, "velocidade": "+4%", "formato": "horizontal", "idioma": idioma,
                    "referencia": "", "cenas": [{"id": "apertura", "bloco": "01_gancho", "texto": ""}]}
-        (destino / "roteiro.json").write_text(json.dumps(roteiro, ensure_ascii=False, indent=2), encoding="utf-8")
+        arq_roteiro.write_text(json.dumps(roteiro, ensure_ascii=False, indent=2), encoding="utf-8")
+    else:
+        atual = json.loads(arq_roteiro.read_text(encoding="utf-8-sig")).get("idioma")
+        if atual != idioma:
+            print(f"AVISO: roteiro.json já existe com idioma '{atual}', não '{idioma}'. Não foi alterado; "
+                  "para trocar a língua, mude idioma e voz nele à mão.")
 
     r = subprocess.run([sys.executable, str(MOTOR / "scripts" / "novo_projeto.py"), str(destino),
                         "--formato", "horizontal", "--voz", a.voz])
@@ -44,7 +57,8 @@ def main() -> None:
     for variante in ("a", "b"):
         thumb = destino / f"thumb_{variante}.html"
         if not thumb.exists():
-            shutil.copy2(SKILL / "template" / "thumb.html", thumb)
+            modelo = (SKILL / "template" / "thumb.html").read_text(encoding="utf-8")
+            thumb.write_text(modelo.replace('<html lang="es">', f'<html lang="{idioma}">', 1), encoding="utf-8")
 
     faltando = []
     if not shutil.which("yt-dlp"):

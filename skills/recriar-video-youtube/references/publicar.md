@@ -38,6 +38,7 @@ Atualize o campo **Status** da descrição a cada movimento, em uma frase.
 
 ```
 **Canal:** Bitácora de Vuelo
+**Língua:** <a língua do projeto>
 **Status:** <uma frase: em que pé está>
 
 **Original:** <link do vídeo de referência>
