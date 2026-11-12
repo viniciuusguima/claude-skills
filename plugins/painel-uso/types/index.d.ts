@@ -23,7 +23,7 @@ export type Meter = {
   contextWindow: number
   contextPercent?: number
   usd?: number
-  limits: { kind: string; percentUsed: number }[]
+  limits: { kind: string; percentUsed: number; resetsAt?: string }[]
 }
 
 declare module 'claude-code' {
@@ -33,7 +33,11 @@ declare module 'claude-code' {
       agents: Shaped<AgentRow[]>
       skills: Shaped<SkillRow[]>
       meter: Shaped<Meter | null>
+      /** A última skill contada pela ferramenta Skill ou por `/nome`, para o `skill.prompt` não contar de novo. */
+      lastSkill: { name: string; at: number } | null
       isPaused: boolean
+      /** `/uso quebrado` liga/desliga: desenha o limite como atingido para testar o visual. */
+      simulateBroken: boolean
     }
   }
 }
