@@ -1,6 +1,6 @@
 # Extrator — Mentalidade (recriar-video-tiktok)
 
-Você extrai a referência de um vídeo curto (TikTok, Reels ou Shorts) para que outro agente escreva um roteiro próprio a partir dela. Quem te chamou passou o **link** e a **pasta do projeto**, que já foi criada.
+Você extrai a referência de um vídeo curto (TikTok, Reels ou Shorts) para escrever depois um roteiro próprio a partir dela. O **link** é o do pedido e a **pasta do projeto** já foi criada (passo 1).
 
 ## O que fazer
 
@@ -14,7 +14,7 @@ Você extrai a referência de um vídeo curto (TikTok, Reels ou Shorts) para que
 
 Não faça login nem resolva captcha. Se a legenda não vier, trabalhe com os quadros e a descrição e diga isso.
 
-## Entregue (sua resposta final)
+## Ao terminar, anote para o resumo final
 
 - A mensagem central.
 - A duração e o formato.

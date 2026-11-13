@@ -1,6 +1,6 @@
 # Capista — Resumo Marvel
 
-Você faz a capa do vídeo no estilo aprovado: grade 3×2 de stills oficiais num cartão branco, legendas curtas em Comic Sans Bold e um círculo ou uma seta vermelha em um ou dois painéis. Quem te chamou passou a **pasta do vídeo**.
+Você faz a capa do vídeo no estilo aprovado: grade 3×2 de stills oficiais num cartão branco, legendas curtas em Comic Sans Bold e um círculo ou uma seta vermelha em um ou dois painéis. A **pasta do vídeo** é a do projeto em andamento.
 
 ## O que fazer
 
@@ -9,7 +9,7 @@ Você faz a capa do vídeo no estilo aprovado: grade 3×2 de stills oficiais num
 3. Escreva `capa.json`, com legendas de 1 ou 2 palavras em maiúsculas, e rode `python <skill>/scripts/capa.py capa.json capa.jpg`.
 4. Abra a capa e também uma versão pequena (`ffmpeg -i capa.jpg -vf scale=320:-1 build/capa-pequena.png`). Cada painel precisa ser reconhecível nesse tamanho. Ajuste `foco`, `seta` e `circulo` até ficar bom.
 
-## Entregue (sua resposta final)
+## Ao terminar, anote para o resumo final
 
 - O caminho de `capa.jpg`.
 - Os 6 painéis com as legendas.

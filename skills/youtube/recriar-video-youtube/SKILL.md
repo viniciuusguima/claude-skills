@@ -1,6 +1,6 @@
 ---
 name: recriar-video-youtube
-description: Recria do zero um vídeo longo do YouTube (horizontal, 3 a 10 min) a partir de um link, para qualquer canal do usuário criado com a skill criar-canal e na língua que ele escolher — pergunta logo de cara o canal e a língua quando o pedido não diz, assiste ao original com a skill watch (plugin claude-video), analisa a thumbnail e o título, escreve um roteiro próprio, gera narração neural, anima em canvas, renderiza o MP4 1920×1080 e escreve os prompts da thumbnail para o Gemini (Nano Banana), o título, a descrição com capítulos e as tags. O trabalho é dividido entre agentes (analista de vídeo, analista de thumb, roteirista, animadores por bloco, designer de thumb, revisor). Use sempre que o usuário mandar um link do YouTube (youtube.com/watch, youtu.be) pedindo para "fazer esse vídeo", "recriar", "fazer igual em espanhol" (ou em outra língua), "vídeo para o canal X", ou pedir só a thumbnail, o título ou a análise de um vídeo do YouTube, mesmo que não diga "skill". Para criar um canal novo (banner, foto, perfil) use criar-canal. Para Shorts, TikTok e Reels (vídeo curto vertical) use recriar-video-tiktok.
+description: Recria do zero um vídeo longo do YouTube (horizontal, 3 a 10 min) a partir de um link, para qualquer canal do usuário criado com a skill criar-canal e na língua que ele escolher — pergunta logo de cara o canal e a língua quando o pedido não diz, assiste ao original com a skill watch (plugin claude-video), analisa a thumbnail e o título, escreve um roteiro próprio, gera narração neural, anima em canvas, renderiza o MP4 1920×1080 e escreve os prompts da thumbnail para o Gemini (Nano Banana), o título, a descrição com capítulos e as tags. O trabalho é feito em etapas, sem agentes (análise do vídeo e da thumb, roteiro, animação por bloco, prompts de thumb, revisão). Use sempre que o usuário mandar um link do YouTube (youtube.com/watch, youtu.be) pedindo para "fazer esse vídeo", "recriar", "fazer igual em espanhol" (ou em outra língua), "vídeo para o canal X", ou pedir só a thumbnail, o título ou a análise de um vídeo do YouTube, mesmo que não diga "skill". Para criar um canal novo (banner, foto, perfil) use criar-canal. Para Shorts, TikTok e Reels (vídeo curto vertical) use recriar-video-tiktok.
 argument-hint: "<link do YouTube> [canal] [língua]"
 ---
 
@@ -13,7 +13,7 @@ Cada vídeo é de um canal do usuário e sai numa língua que ele escolhe. Os do
 Os canais são os perfis em `<skill>/../criar-canal/canais/*.md`, criados pela skill criar-canal. Liste-os antes de perguntar.
 
 - **O pedido diz o canal e a língua**: use e siga.
-- **Falta um dos dois (ou os dois)**: antes de qualquer outra coisa (script, agente, as outras perguntas), pergunte só o que falta, numa chamada de `AskUserQuestion`: "Para qual canal é o vídeo?" (uma opção por perfil) e "Em que língua vai ser o vídeo?" (a primeira opção é a língua principal do canal, se ele já foi escolhido; depois Espanhol, Português, Inglês; outra língua ele digita em "Other"). Sem a ferramenta, pergunte no chat. Espere a resposta. Não deduza a língua pela do vídeo original.
+- **Falta um dos dois (ou os dois)**: antes de qualquer outra coisa (script, as outras perguntas), pergunte só o que falta, numa chamada de `AskUserQuestion`: "Para qual canal é o vídeo?" (uma opção por perfil) e "Em que língua vai ser o vídeo?" (a primeira opção é a língua principal do canal, se ele já foi escolhido; depois Espanhol, Português, Inglês; outra língua ele digita em "Other"). Sem a ferramenta, pergunte no chat. Espere a resposta. Não deduza a língua pela do vídeo original.
 - **O canal não tem perfil** (ou não existe nenhum): o vídeo depende dele (voz, tom, marca das thumbs, Trello, Drive). Diga isso e ofereça criar agora com a skill criar-canal (`/criar-canal <nome>`); volte para o vídeo quando o perfil existir.
 - **Ajuste num vídeo que já existe**: canal e língua estão nos campos `canal` e `idioma` de `roteiro.json`; não pergunte de novo.
 
@@ -21,7 +21,7 @@ Com os dois definidos:
 - `<canal>`: o perfil do canal, `<skill>/../criar-canal/canais/<slug-do-canal>.md`. Leia inteiro: tom, identidade visual, marca nas thumbs, metáforas visuais, pasta dos projetos, Trello e Drive, e o que ainda está "A definir".
 - A língua: código, variante, voz e tratamento em `references/linguas.md`; se o perfil tem uma exceção para essa língua (outra voz, outro tratamento), vale a do perfil. Língua fora da tabela: siga o que `linguas.md` diz para esse caso antes de criar o projeto.
 
-Canal e língua ficam gravados no projeto (`canal`, `idioma` e `voz` em `roteiro.json`) e vão no prompt de todo agente.
+Canal e língua ficam gravados no projeto (`canal`, `idioma` e `voz` em `roteiro.json`) e valem para todas as etapas.
 
 A entrega tem três partes, todas na língua do vídeo:
 
@@ -38,32 +38,20 @@ Caminhos usados abaixo:
 - `<motor>`: a skill recriar-video-tiktok. O motor de animação, a voz, a trilha e o render moram lá e são os mesmos dos vídeos curtos. `python <skill>/scripts/referencia_youtube.py --onde-motor` imprime o caminho. Leia `<motor>/references/motor.md` quando precisar da API.
 - `<watch>`: o `watch.py` da skill watch. `python <skill>/scripts/referencia_youtube.py --onde-watch` imprime o caminho.
 
-## Você é o orquestrador
+## Como o trabalho se divide
 
-Você conversa com o usuário, roda os scripts, despacha os agentes e confere o que eles devolvem. O trabalho pesado de cada etapa fica com um agente, por dois motivos: os quadros do vídeo e as folhas de conferência são dezenas de imagens que encheriam o seu contexto, e várias etapas não dependem uma da outra e andam ao mesmo tempo.
+Você faz todo o trabalho nesta sessão, sem agentes: conversa com o usuário, roda os scripts e segue, em cada etapa, o roteiro curto de `etapas/`. Não use a ferramenta Agent neste fluxo. Os quadros do vídeo e as folhas de conferência são dezenas de imagens, então abra-os aos poucos (uns dez por vez) e anote o que cada lote mostrou antes de abrir o próximo, para o contexto não estourar.
 
-| Agente | Brief | Lê | Escreve | Roda junto com |
-|---|---|---|---|---|
-| Analista de vídeo | `agentes/analista-video.md` | o link (via watch) | `referencia/analise.md`, `referencia/transcricao.txt` | analista de thumb |
-| Analista de thumb | `agentes/analista-thumb.md` | thumb e título originais, thumbs do canal de origem, `referencia/fotos/`, o perfil | `referencia/thumb_analise.md` | analista de vídeo |
-| Roteirista | `agentes/guionista.md` | as duas análises, o perfil, `references/linguas.md` | `roteiro.json`, `saida/post.txt` | — |
-| Animador (um por bloco) | `agentes/animador.md` | `roteiro.json`, `timeline.js`, o bloco dele, o perfil | `cenas/<bloco>.js` | os outros animadores |
-| Designer de thumb | `agentes/disenador-thumb.md` | `referencia/thumb_analise.md`, `saida/post.txt`, `referencia/fotos/`, o perfil | `saida/thumb_prompts.md` | o render final |
-| Revisor | `agentes/revisor.md` | tudo o que vai ser publicado | `build/revision.md` | — |
+| Etapa | Roteiro | Lê | Escreve |
+|---|---|---|---|
+| Analista de vídeo | `etapas/analista-video.md` | o link (via watch) | `referencia/analise.md`, `referencia/transcricao.txt` |
+| Analista de thumb | `etapas/analista-thumb.md` | thumb e título originais, thumbs do canal de origem, `referencia/fotos/`, o perfil | `referencia/thumb_analise.md` |
+| Roteirista | `etapas/guionista.md` | as duas análises, o perfil, `references/linguas.md` | `roteiro.json`, `saida/post.txt` |
+| Animador (um bloco de cada vez) | `etapas/animador.md` | `roteiro.json`, `timeline.js`, o bloco, o perfil | `cenas/<bloco>.js` |
+| Designer de thumb | `etapas/disenador-thumb.md` | `referencia/thumb_analise.md`, `saida/post.txt`, `referencia/fotos/`, o perfil | `saida/thumb_prompts.md` |
+| Revisor | `etapas/revisor.md` | tudo o que vai ser publicado | `build/revision.md` |
 
-**Como despachar**: ferramenta Agent, tipo `general-purpose`, com este prompt (preencha os caminhos absolutos; agentes paralelos vão na mesma mensagem):
-
-```
-Leia <skill>/agentes/<papel>.md e faça o que ele pede.
-Projeto: <pasta do projeto>
-Skill: <skill>   Motor: <motor>   Watch: <watch>
-Canal: <caminho do perfil do canal>
-Link: <url do vídeo original>
-Língua: <a língua do vídeo e o código, ex.: espanhol (es)>
-<o que é só desta vez: o bloco, o trecho do vídeo, um pedido do usuário>
-```
-
-O agente não vê esta conversa. O que ele precisa saber e não está no brief nem nos arquivos do projeto tem que ir nesse prompt. O retorno dele é um resumo; o trabalho está nos arquivos, e é neles que você confere antes de seguir.
+Os roteiros de `etapas/` usam `<projeto>`, `<skill>`, `<motor>`, `<watch>`, `<canal>` e `<url>` (o link do vídeo original) com o mesmo sentido desta skill, e a língua é a do projeto. Ao fim de cada etapa, confira os arquivos que ela escreveu antes de seguir.
 
 ## Antes de começar: combine com o usuário
 
@@ -92,19 +80,19 @@ python <skill>/scripts/referencia_youtube.py "<url>" --projeto <projeto> --canal
 ```
 O primeiro cria a pasta (motor, `roteiro.json` com o canal, a língua e a voz, `cenas/`, dois modelos de thumbnail) e confere as dependências. O segundo grava `referencia/meta.json`, a thumbnail original e a grade com as thumbs mais vistas do canal de onde o original veio.
 
-Confira a skill watch antes de despachar o analista, porque um agente não consegue fazer perguntas ao usuário:
+Confira a skill watch antes de analisar o vídeo, porque a primeira configuração depende de uma escolha do usuário:
 ```bash
 python "<pasta do watch.py>/setup.py" --json
 ```
 Se `first_run` for `true`, abra o `SKILL.md` da watch (uma pasta acima de `scripts/`) e faça o "Step 2" com o usuário: é lá que ele escolhe o motor (Gemini ou local) e o nível de detalhe. Se a watch não estiver instalada, veja "Quando algo foge do padrão".
 
-### 1. Analisar (dois agentes ao mesmo tempo)
-Despache o **analista de vídeo** e o **analista de thumb** na mesma mensagem. Vídeo com mais de 10 min: um analista de vídeo por trecho de 8 min, cada um com `Trecho: 0:00-8:00` no prompt.
+### 1. Analisar
+Siga `etapas/analista-video.md` e depois `etapas/analista-thumb.md`. Vídeo com mais de 10 min: analise um trecho de 8 min por vez (`0:00-8:00`, `8:00-16:00`...), com um arquivo de análise por trecho.
 
-Ao voltar, leia `referencia/analise.md` e `referencia/thumb_analise.md` inteiros. Se o analista avisou que faltou evidência (sem legenda, vídeo bloqueado), decida com o usuário antes de escrever em cima de uma análise furada.
+Ao terminar, releia `referencia/analise.md` e `referencia/thumb_analise.md` inteiros. Se a análise registrou que faltou evidência (sem legenda, vídeo bloqueado), decida com o usuário antes de escrever em cima de uma análise furada.
 
 ### 2. Roteiro
-Despache o **roteirista**. Ele devolve `roteiro.json` (cenas agrupadas em blocos) e `saida/post.txt` com três opções de título.
+Siga `etapas/guionista.md`. Ele produz `roteiro.json` (cenas agrupadas em blocos) e `saida/post.txt` com três opções de título.
 
 Mostre ao usuário, em poucas linhas: o título recomendado, a promessa do vídeo, a lista de blocos e a duração estimada. Um vídeo longo custa caro para refazer, então espere o ok dele aqui, a menos que ele tenha pedido para fazer direto. Abra o **card** em ✍️ Roteiro.
 
@@ -116,12 +104,12 @@ python <motor>/scripts/gerar_audio.py        # voz por cena -> timeline.js, lege
 python <motor>/scripts/gerar_trilha.py       # pad ambiente + ducking -> build/trilha_final.wav
 python <skill>/scripts/juntar_cenas.py --esqueleto   # cria cenas/<bloco>.js com a duração e o texto de cada cena
 ```
-Confira a duração total impressa por `gerar_audio.py`. Se passou do combinado em mais de 10%, peça ao roteirista para cortar antes de animar: cortar depois joga fora cenas prontas.
+Confira a duração total impressa por `gerar_audio.py`. Se passou do combinado em mais de 10%, corte o roteiro antes de animar (`etapas/guionista.md`): cortar depois joga fora cenas prontas.
 
-### 4. Animar (um agente por bloco, ao mesmo tempo)
-Se o vídeo tem um objeto que aparece em vários blocos (um avião, um mapa, um painel), escreva você mesmo `cenas/00_comum.js` antes de despachar, para todos desenharem igual. O formato está no topo de `<skill>/scripts/juntar_cenas.py`.
+### 4. Animar (um bloco de cada vez)
+Se o vídeo tem um objeto que aparece em vários blocos (um avião, um mapa, um painel), escreva `cenas/00_comum.js` antes de animar, para todos os blocos desenharem igual. O formato está no topo de `<skill>/scripts/juntar_cenas.py`.
 
-Despache um **animador** por bloco, com `Bloco: <nome>` no prompt, até cinco por vez. Cada um escreve só o arquivo dele e confere o próprio trabalho com `folha_bloco.mjs`, que não mexe em nada compartilhado.
+Siga `etapas/animador.md` para cada bloco, na ordem do vídeo. Cada bloco escreve só o arquivo dele e é conferido com `folha_bloco.mjs`, que não mexe em nada compartilhado. Anote o que a folha de um bloco mostrou antes de abrir a do próximo.
 
 ### 5. Conferir o conjunto
 Mova o **card** para 🔍 Revisão.
@@ -129,18 +117,18 @@ Mova o **card** para 🔍 Revisão.
 python <skill>/scripts/juntar_cenas.py --estrito                       # cenas/*.js -> cenas.js; acusa cena faltando
 node <motor>/scripts/render.mjs --folha build/folha.png --fracs 0.85   # um quadro de cada cena do vídeo inteiro
 ```
-Abra `build/folha.png` com Read. Os animadores já olharam cada bloco por dentro; o que só aparece aqui é a costura: blocos vizinhos com cara de vídeos diferentes, o mesmo objeto desenhado de dois jeitos, um bloco muito mais vazio que os outros. Ajuste pequeno, faça você no `cenas/<bloco>.js` e junte de novo; bloco para refazer, devolva ao animador com o que precisa mudar.
+Abra `build/folha.png` com Read. Cada bloco já foi conferido por dentro; o que só aparece aqui é a costura: blocos vizinhos com cara de vídeos diferentes, o mesmo objeto desenhado de dois jeitos, um bloco muito mais vazio que os outros. Ajuste pequeno, edite o `cenas/<bloco>.js` e junte de novo; bloco para refazer, volte a `etapas/animador.md` com o que precisa mudar.
 
-### 6. Renderizar, e a thumbnail em paralelo
-Dispare o render em segundo plano (leva cerca de 1 min por minuto de vídeo) e, na mesma mensagem, despache o **designer de thumb**:
+### 6. Renderizar, e a thumbnail enquanto isso
+Dispare o render em segundo plano (leva cerca de 1 min por minuto de vídeo) e, enquanto ele roda, siga `etapas/disenador-thumb.md`:
 ```bash
 node <motor>/scripts/render.mjs              # -> saida/<slug>.mp4
 ```
-Enquanto os dois trabalham, feche `saida/post.txt`: escolha o título com o usuário se ele ainda não escolheu e cole os capítulos impressos por
+Ainda com o render rodando, feche `saida/post.txt`: escolha o título com o usuário se ele ainda não escolheu e cole os capítulos impressos por
 ```bash
 python <skill>/scripts/juntar_cenas.py --capitulos
 ```
-Quando o designer voltar, mande `saida/thumb_prompts.md` ao usuário com `SendUserFile` e peça para ele gerar as duas no Gemini e salvar como `saida/thumb_a.png` e `saida/thumb_b.png`. O vídeo segue sem esperar por isso; quando as imagens chegarem, confira-as como em "Conferir a imagem gerada" de `references/thumb.md`.
+Quando os prompts estiverem prontos, mande `saida/thumb_prompts.md` ao usuário com `SendUserFile` e peça para ele gerar as duas no Gemini e salvar como `saida/thumb_a.png` e `saida/thumb_b.png`. O vídeo segue sem esperar por isso; quando as imagens chegarem, confira-as como em "Conferir a imagem gerada" de `references/thumb.md`.
 
 Quando o render terminar, confira o resultado de verdade:
 ```bash
@@ -149,8 +137,8 @@ ffmpeg -i saida/<slug>.mp4 -af ebur128 -f null - 2>&1 | grep -A1 "Integrated lou
 ```
 O volume deve ficar perto de -15 LUFS.
 
-### 7. Revisão de olhos frescos
-Despache o **revisor**. Ele não participou de nada, e é por isso que serve: lê o texto como um falante nativo da língua do vídeo leria, olha a thumbnail no tamanho do feed e confere se título, thumbnail e os primeiros 30 s contam a mesma história. O usuário fala português: num vídeo em outra língua ele não vai pegar um erro sozinho, e num vídeo em português o revisor continua sendo quem pega o fato sem apoio e a promessa que o vídeo não paga. Esta etapa não é opcional.
+### 7. Revisão final
+Siga `etapas/revisor.md`, como quem vê o vídeo pela primeira vez: leia o texto como um falante nativo da língua do vídeo leria, olhe a thumbnail no tamanho do feed e confira se título, thumbnail e os primeiros 30 s contam a mesma história. O usuário fala português: num vídeo em outra língua ele não vai pegar um erro sozinho, e num vídeo em português esta revisão continua sendo o que pega o fato sem apoio e a promessa que o vídeo não paga. Esta etapa não é opcional.
 
 Leia `build/revision.md`. Corrija tudo o que estiver como **bloqueante** (texto de cena: `roteiro.json` → passos 3, 5 e 6 de novo, só a voz das cenas alteradas é regerada) e use o seu critério no resto.
 
@@ -171,7 +159,7 @@ Mande o MP4 com `SendUserFile` e, na mensagem, nesta ordem:
 
 ## Quando algo foge do padrão
 
-- **Watch não instalada**: é o plugin `watch` do repositório `bradautomates/claude-video`. Com o ok do usuário, instale você mesmo com `claude plugin marketplace add bradautomates/claude-video` e `claude plugin install watch@claude-video`. Não precisa de sessão nova: os agentes chamam o `watch.py` pelo caminho, que `referencia_youtube.py --onde-watch` já encontra. Na primeira vez o usuário escolhe o motor (passo 0); com Gemini, abra `~/.config/watch/.env` no Bloco de Notas para ele colar a chave, que nunca passa pelo chat. Se ele preferir não instalar, analise pelo navegador embutido como em `<motor>/references/extracao.md` (seção YouTube) e avise que a análise visual fica mais rasa.
+- **Watch não instalada**: é o plugin `watch` do repositório `bradautomates/claude-video`. Com o ok do usuário, instale você mesmo com `claude plugin marketplace add bradautomates/claude-video` e `claude plugin install watch@claude-video`. Não precisa de sessão nova: o `watch.py` é chamado pelo caminho, que `referencia_youtube.py --onde-watch` já encontra. Na primeira vez o usuário escolhe o motor (passo 0); com Gemini, abra `~/.config/watch/.env` no Bloco de Notas para ele colar a chave, que nunca passa pelo chat. Se ele preferir não instalar, analise pelo navegador embutido como em `<motor>/references/extracao.md` (seção YouTube) e avise que a análise visual fica mais rasa.
 - **Watch falha ao baixar (erro 403)**: atualize o yt-dlp (`winget upgrade --id yt-dlp.yt-dlp`) e tente uma vez. Não use cookies do navegador sem o usuário pedir.
 - **Gemini falha**: a watch não troca de motor sozinha. Diga ao usuário o erro e ofereça rodar com `--engine local`.
 - **Motor não encontrado**: a skill recriar-video-tiktok precisa estar instalada também (veja o README do repositório). `--onde-motor` diz onde procurou.
@@ -179,5 +167,5 @@ Mande o MP4 com `SendUserFile` e, na mensagem, nesta ordem:
 - **Vídeo com mais de 10 min de resultado**: o motor nasceu para vídeos de 1 min. Acima de umas 120 cenas, renderize primeiro um trecho (`--de 0 --ate 60 --saida build/trecho.mp4`) para confirmar que voz, trilha e imagem estão em ordem antes de gastar o render inteiro.
 - **edge-tts falha** (`NoAudioReceived`): rede ou texto vazio. Tente de novo.
 - **`roteiro.json` com erro "Unexpected UTF-8 BOM"**: o arquivo foi salvo pelo PowerShell com BOM. Regrave com a ferramenta Write.
-- **Usuário quer trocar a língua de um vídeo já começado**: mude `idioma` e `voz` em `roteiro.json` (valores de `references/linguas.md` ou do perfil), despache o roteirista de novo com a língua nova e refaça do passo 2 em diante. A análise do passo 1 continua valendo.
+- **Usuário quer trocar a língua de um vídeo já começado**: mude `idioma` e `voz` em `roteiro.json` (valores de `references/linguas.md` ou do perfil), refaça o roteiro com a língua nova e siga do passo 2 em diante. A análise do passo 1 continua valendo.
 - **Usuário quer o mesmo vídeo em outro canal**: é um projeto novo, na pasta do outro canal; a análise do passo 1 pode ser copiada de um projeto para o outro.

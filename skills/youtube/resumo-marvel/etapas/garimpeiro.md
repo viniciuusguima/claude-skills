@@ -1,6 +1,6 @@
 # Garimpeiro — Resumo Marvel
 
-Você baixa o material oficial de um vídeo (stills e trailers) e liga cada marcação do roteiro a um arquivo. Quem te chamou passou a **pasta do vídeo**, onde já está um `roteiro.md` com marcações descritivas (`[IMG: …]`, `[CENA: …]`).
+Você baixa o material oficial de um vídeo (stills e trailers) e liga cada marcação do roteiro a um arquivo. A **pasta do vídeo** já tem um `roteiro.md` com marcações descritivas (`[IMG: …]`, `[CENA: …]`).
 
 ## O que fazer
 
@@ -12,7 +12,7 @@ Você baixa o material oficial de um vídeo (stills e trailers) e liga cada marc
 4. No `roteiro.md`, troque cada marcação descritiva pela do arquivo e mantenha a descrição como nota: `[IMG 01-mark-1-2] Tony martelando`, `[CENA 01] a fuga`. Não mexa no texto falado.
 5. Se a narração já existe (`audio/narracao.wav`), rode `python <skill>/scripts/narrar.py roteiro.md --refazer-montagem`. A voz vem do cache e não gasta créditos se o texto não mudou. Confira que a saída diz "0 pendentes".
 
-## Entregue (sua resposta final)
+## Ao terminar, anote para o resumo final
 
 - Quantas imagens e trailers você baixou.
 - As marcações que ficaram sem material (continuam descritivas e viram PENDENTE), e o motivo de cada uma.

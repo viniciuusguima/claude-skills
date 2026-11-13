@@ -5,8 +5,8 @@
     python <skill>/scripts/juntar_cenas.py --estrito     # idem, e sai com erro se faltar alguma
     python <skill>/scripts/juntar_cenas.py --capitulos   # só imprime os capítulos do YouTube (tempo + título)
 
-Cada cena do roteiro.json tem um campo "bloco" (ex.: "01_gancho"). Um bloco = um arquivo = um agente
-animador, então vários podem escrever ao mesmo tempo sem pisar um no outro. O arquivo de um bloco é:
+Cada cena do roteiro.json tem um campo "bloco" (ex.: "01_gancho"). Um bloco = um arquivo = uma etapa de animação,
+então cada bloco pode ser escrito e conferido sem pisar nos outros. O arquivo de um bloco é:
 
     BLOCO((M) => {
       const { W, H, seg, text, ... } = M;

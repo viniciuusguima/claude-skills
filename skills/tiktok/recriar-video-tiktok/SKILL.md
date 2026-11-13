@@ -28,21 +28,21 @@ autorais, e reaproveitá-lo também prende o canal do usuário ao conteúdo de o
 padrão é escrever um roteiro novo com a mesma mensagem central. Se o usuário pedir explicitamente uma
 adaptação fiel/tradução, faça, e lembre em uma linha de dar crédito ao criador original.
 
-## Com agentes (o jeito padrão)
+## Etapas (tudo na sessão principal, sem agentes)
 
-Você, a sessão principal, é quem coordena: roda os scripts, cuida do Trello e do Drive e fala com o usuário. Cada papel é um subagente com o próprio arquivo em `agents/`. Para chamar um agente, use a ferramenta Agent com `subagent_type: "general-purpose"` e um prompt curto: "Você é o <papel> do canal de mentalidade. Leia `<skill>/agents/<papel>.md` e siga. Skill: `<skill>`. Pasta: `<pasta>`." Acrescente o link para o extrator e "adaptação fiel" para o roteirista, se o usuário pediu. `<skill>` é o caminho absoluto desta pasta.
+Você faz todo o trabalho nesta sessão: roda os scripts, cuida do Trello e do Drive e fala com o usuário. Não use a ferramenta Agent neste fluxo. Quatro papéis têm um roteiro curto em `etapas/<papel>.md`: quando chegar na etapa, leia o arquivo e siga. `<skill>` é o caminho absoluto desta pasta.
 
-| Ordem | Quem | Faz |
+| Ordem | Etapa | Faz |
 |---|---|---|
-| 1 | você | Passo 1 (`novo_projeto.py`). |
-| 2 | `extrator` | Passo 2 → `referencia/`. |
-| 3 | `roteirista` | Passos 3 e 8 → `roteiro.json` e `saida/post.txt`. Você abre o card em ✍️ Roteiro. |
-| 4 | você | Passo 4 (voz Luana e trilha). Card em 🎬 Produção. |
-| 5 | `animador` | Passos 5 e 6 → `cenas.js`. |
-| 6 | `revisor` | Revisão independente. Card em 🔍 Revisão. Repasse as correções ao dono do arquivo (SendMessage ao animador para `cenas.js`; se o texto mudar, você regenera a voz no passo 4). No máximo duas rodadas. |
-| 7 | você | Passos 7 e 9 (render, conferência, Drive, card, entrega). |
+| 1 | passo 1 | `novo_projeto.py`. |
+| 2 | `etapas/extrator.md` | Passo 2 → `referencia/`. |
+| 3 | `etapas/roteirista.md` | Passos 3 e 8 → `roteiro.json` e `saida/post.txt` (adaptação fiel só se o usuário pediu). Abra o card em ✍️ Roteiro. |
+| 4 | passo 4 | Voz Luana e trilha. Card em 🎬 Produção. |
+| 5 | `etapas/animador.md` | Passos 5 e 6 → `cenas.js`. |
+| 6 | `etapas/revisor.md` | Revisão como se fosse a primeira vez que vê o vídeo. Card em 🔍 Revisão. Corrija você mesmo os itens (se o texto mudar, regenere a voz no passo 4). No máximo duas rodadas. |
+| 7 | passos 7 e 9 | Render, conferência, Drive, card, entrega. |
 
-O usuário tem limite de uso apertado: um agente por vez, sem refazer o trabalho de um agente para conferir. Num ajuste pequeno, faça você mesmo, sem agentes.
+O usuário tem limite de uso apertado: não refaça um trabalho só para conferir. Abra as folhas de imagens aos poucos e anote o que cada uma mostrou antes de abrir a próxima. Num ajuste pequeno, edite direto o arquivo que muda, sem repassar as etapas.
 
 ## Fluxo
 

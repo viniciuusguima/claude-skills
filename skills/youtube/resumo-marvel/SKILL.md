@@ -23,20 +23,20 @@ capa.json, capa.jpg
 
 Os scripts estão em `<skill>/scripts/` (`<skill>` é a pasta desta skill) e rodam com Python, ffmpeg e Pillow. `alinhar.py` usa também o faster-whisper.
 
-## Com agentes (o jeito padrão)
+## Etapas (tudo na sessão principal, sem agentes)
 
-Você, a sessão principal, é quem coordena: fala com o usuário, gera a narração (custa créditos da Cartesia) e cuida do Trello. Cada papel é um subagente com o próprio arquivo em `agents/`. Para chamar um agente, use a ferramenta Agent com `subagent_type: "general-purpose"` e um prompt curto: "Você é o <papel> do canal Marvel. Leia `<skill>/agents/<papel>.md` e siga. Skill: `<skill>`. Pasta: `<pasta>`." Para o roteirista, acrescente o tema. `<skill>` é o caminho absoluto desta pasta.
+Você faz todo o trabalho nesta sessão: fala com o usuário, gera a narração (custa créditos da Cartesia) e cuida do Trello. Não use a ferramenta Agent neste fluxo. Cada papel tem um roteiro curto em `etapas/<papel>.md`: quando chegar na etapa, leia o arquivo e siga. `<skill>` é o caminho absoluto desta pasta.
 
-| Ordem | Quem | Faz |
+| Ordem | Etapa | Faz |
 |---|---|---|
-| 1 | `roteirista` | `roteiro.md` com marcações descritivas. Você abre o card em ✍️ Roteiro e **mostra o roteiro ao usuário**; espere a aprovação. |
-| 2 | `garimpeiro` | Stills, trailers e marcações ligadas aos arquivos. Card em 🎬 Produção. |
+| 1 | `etapas/roteirista.md` | `roteiro.md` com marcações descritivas. Abra o card em ✍️ Roteiro e **mostre o roteiro ao usuário**; espere a aprovação. |
+| 2 | `etapas/garimpeiro.md` | Stills, trailers e marcações ligadas aos arquivos. Card em 🎬 Produção. |
 | 3 | você | Narração: `narrar.py roteiro.md` (passo 3). |
-| 4 | `montador` e `capista`, **em paralelo** (arquivos diferentes) | `montagem.json` acertado e MP4 / `capa.jpg`. Card em 🔍 Revisão. |
-| 5 | `revisor` | Revisão independente do MP4 e da capa. Repasse cada correção ao dono (SendMessage ao montador ou ao capista; se for o roteiro, você corrige o texto, roda `narrar.py` de novo, que só regera os blocos mudados, e o montador refaz). No máximo duas rodadas. |
+| 4 | `etapas/montador.md` e depois `etapas/capista.md` | `montagem.json` acertado e MP4; depois `capa.jpg`. Card em 🔍 Revisão. |
+| 5 | `etapas/revisor.md` | Revisão do MP4 e da capa, com folhas novas. Corrija você mesmo cada item (se for o roteiro, corrija o texto, rode `narrar.py` de novo, que só regera os blocos mudados, e refaça a montagem). No máximo duas rodadas. |
 | 6 | você | Entrega (passo 6) e card em 📱 Pronto para postar. |
 
-O usuário tem limite de uso apertado. Não chame mais de dois agentes ao mesmo tempo e não refaça o trabalho de um agente para conferir. Num ajuste pequeno, faça você mesmo, sem agentes.
+O usuário tem limite de uso apertado. Não refaça um trabalho só para conferir (a etapa do revisor já faz isso). Como tudo cai nesta conversa, abra as folhas de imagens aos poucos e anote o que cada uma mostrou antes de abrir a próxima. Num ajuste pequeno, vá direto ao arquivo que muda, sem repassar as etapas.
 
 ## Passo a passo
 

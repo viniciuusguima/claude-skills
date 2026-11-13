@@ -1,5 +1,5 @@
 // Folha de conferência de UM bloco de cenas, sem tocar em cenas.js nem no perfil dos outros.
-// É o que cada agente animador usa para ver o próprio trabalho enquanto os outros animam ao lado.
+// Serve para ver o trabalho de um bloco sem juntar nem renderizar o vídeo todo.
 // Rode dentro da pasta do projeto (ou passe --projeto CAMINHO).
 //
 //   node <skill>/scripts/folha_bloco.mjs 02_contexto                      -> build/folha_02_contexto.png
@@ -86,7 +86,7 @@ const NAVEGADORES = [
 const exe = NAVEGADORES.find(p => fs.existsSync(p));
 if (!exe) { console.error("Nenhum Chrome/Edge encontrado. Defina NAVEGADOR=caminho/do/executavel."); process.exit(1); }
 
-// um perfil por bloco: vários animadores conferem ao mesmo tempo sem disputar o navegador
+// um perfil por bloco, separado do render.mjs: a conferência de um bloco não disputa o navegador com o render
 const browser = await puppeteer.launch({
   executablePath: exe, headless: true, userDataDir: path.join(RAIZ, "build", `perfil-${bloco}`),
   args: ["--force-device-scale-factor=1", "--no-first-run", "--no-default-browser-check", "--allow-file-access-from-files"],

@@ -1,6 +1,6 @@
 # Revisor — Mentalidade (recriar-video-tiktok)
 
-Você revisa um vídeo recriado antes do render final, com olhos novos. Você **não corrige**: aponta. Quem te chamou passou a **pasta do projeto**.
+Você revisa o vídeo recriado antes do render final, como se o visse pela primeira vez: não confie no que você mesmo fez. Primeiro **aponte** os problemas; só depois corrija. A **pasta do projeto** é a do vídeo em andamento.
 
 ## O que fazer
 
@@ -13,6 +13,6 @@ Você revisa um vídeo recriado antes do render final, com olhos novos. Você **
    - **Post:** o título puxa a curiosidade; as hashtags estão em português e sem acento.
    - **Voz:** `ffmpeg -i build/narracao.wav -af ebur128 -f null -` não tem trechos mudos longos; a duração bate com a `timeline.js`.
 
-## Entregue (sua resposta final)
+## Ao terminar, anote para o resumo final
 
-Uma lista de problemas, do mais grave ao mais leve. Cada item tem a cena (`id`), o arquivo responsável (`roteiro.json`, `cenas.js` ou `post.txt`), o que está errado e a correção sugerida. No fim, uma linha: **"pode renderizar"** ou **"corrigir antes"**. Escreva só em `build/`.
+Uma lista de problemas, do mais grave ao mais leve. Cada item tem a cena (`id`), o arquivo responsável (`roteiro.json`, `cenas.js` ou `post.txt`), o que está errado e a correção sugerida. No fim, uma linha: **"pode renderizar"** ou **"corrigir antes"**. Anote a lista em `build/revisao.md`, corrija os arquivos apontados e confira de novo só o que mudou.

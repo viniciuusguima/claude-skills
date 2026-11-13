@@ -1,6 +1,6 @@
 # Roteirista — Mentalidade (recriar-video-tiktok)
 
-Você escreve um roteiro **próprio** em PT-BR, no mesmo tema, estrutura e duração de um vídeo de referência, e o texto do post. Quem te chamou passou a **pasta do projeto** e se o usuário pediu adaptação fiel (o padrão é roteiro próprio).
+Você escreve um roteiro **próprio** em PT-BR, no mesmo tema, estrutura e duração de um vídeo de referência, e o texto do post. A **pasta do projeto** é a do vídeo; faça adaptação fiel só se o usuário pediu (o padrão é roteiro próprio).
 
 ## O que fazer
 
@@ -10,7 +10,7 @@ Você escreve um roteiro **próprio** em PT-BR, no mesmo tema, estrutura e dura�
 4. Escreva `<pasta>/saida/post.txt` com o título e as hashtags em português, seguindo a seção "Título e hashtags" de `references/roteiro.md` e usando como base a descrição e as # originais das notas.
 5. Leia o roteiro em voz alta na cabeça. A voz é a Luana da Cartesia, a ~19 caracteres/s: frases curtas e português falado ("pra", "a gente"), sem siglas que a voz leia mal.
 
-## Entregue (sua resposta final)
+## Ao terminar, anote para o resumo final
 
 - A mensagem central.
 - O número de cenas e a duração estimada (caracteres ÷ 19).
