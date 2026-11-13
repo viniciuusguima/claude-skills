@@ -1,4 +1,4 @@
-"""Narração com a Cartesia (Sonic): a voz padrão do canal é a Luana. Gera os mesmos arquivos que o
+"""Narração com a Cartesia (Sonic): a voz padrão do canal é a Isabella. Gera os mesmos arquivos que o
 gerar_audio.py (edge-tts, que fica de reserva): build/audio/*.wav, build/narracao.wav, timeline.js e legendas.srt.
 
 Rode dentro da pasta do projeto:
@@ -25,7 +25,8 @@ from pathlib import Path
 API = "https://api.cartesia.ai"
 VERSAO = "2026-08-14"
 INTRO, GAP, OUTRO = 0.35, 0.45, 3.4
-LUANA = "700d1ee3-a641-4018-ba6e-899dcadc9e2b"   # iguais aos do gerar_audio.py da skill
+ISABELLA = "c9611be8-aae9-4a93-bb1c-98dd6b7d52a4"  # Isabella (Warm Storyteller), voz padrão do canal
+LUANA = "700d1ee3-a641-4018-ba6e-899dcadc9e2b"     # Luana (Public Speaker), a voz anterior
 
 
 def chave_api(raiz: Path) -> str:
@@ -133,8 +134,8 @@ def main() -> None:
         falar(chave, cfg, a.texto, a.emocao or cfg.get("emocao"), pasta / nome)
         return print(f"amostra: {pasta / nome}")
 
-    if not cfg.get("voz"):  # padrão do canal: Luana (pt-BR), a voz escolhida pelo usuário
-        cfg = {"voz": LUANA, "modelo": "sonic-3.6", "velocidade": 1.1, "idioma": "pt", **cfg}
+    if not cfg.get("voz"):  # padrão do canal: Isabella, a voz escolhida pelo usuário
+        cfg = {"voz": ISABELLA, "modelo": "sonic-3.6", "velocidade": 1.25, "idioma": "pt", **cfg}
     audio = raiz / "build" / "audio"
     audio.mkdir(parents=True, exist_ok=True)
     cenas = roteiro["cenas"]

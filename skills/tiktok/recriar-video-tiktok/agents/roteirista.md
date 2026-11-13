@@ -8,7 +8,7 @@ Você escreve um roteiro **próprio** em PT-BR, no mesmo tema, estrutura e dura�
 2. Preencha as `cenas` de `<pasta>/roteiro.json`, uma por frase ou ideia, de 10 a 18 para ~60 s. Cada cena tem `id` curto e `texto` falado; `"continua": true` faz a cena entrar sem corte. Não mexa no bloco `cartesia` nem em `formato`.
 3. Ao lado de cada cena, ponha `"visual"`: a metáfora visual simples que **mostra** a frase (placar, labirinto, medidor, máquina, cartas, escada...). É o briefing do animador.
 4. Escreva `<pasta>/saida/post.txt` com o título e as hashtags em português, seguindo a seção "Título e hashtags" de `references/roteiro.md` e usando como base a descrição e as # originais das notas.
-5. Leia o roteiro em voz alta na cabeça. A voz é a Luana da Cartesia, a ~19 caracteres/s: frases curtas e português falado ("pra", "a gente"), sem siglas que a voz leia mal.
+5. Leia o roteiro em voz alta na cabeça. A voz é a Isabella da Cartesia, a ~15 caracteres/s contando as pausas entre cenas (~17/s só a fala), então ~60 s pedem ~900 caracteres: frases curtas e português falado ("pra", "a gente"), sem siglas que a voz leia mal.
 
 ## Entregue (sua resposta final)
 

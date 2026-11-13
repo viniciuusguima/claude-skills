@@ -30,7 +30,7 @@ sys.path.insert(0, str(Path(__file__).parent))
 from alinhar import escrever_montagem, ler_roteiro, rascunho  # noqa: E402
 
 API, VERSAO = "https://api.cartesia.ai", "2026-08-14"
-PADRAO = {"voz": "b0f46533-d4bb-493f-a26f-a99e1f2e86e3",  # Heitor (pt-BR): a voz do canal Marvel (a Luana é a do Mentalidade)
+PADRAO = {"voz": "b0f46533-d4bb-493f-a26f-a99e1f2e86e3",  # Heitor (pt-BR): a voz do canal Marvel (a Isabella é a do Mentalidade)
           "modelo": "sonic-3.6", "velocidade": 1.0, "pausa_bloco": 0.35, "pausa_capitulo": 0.9}
 SR = 48000
 

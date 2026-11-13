@@ -56,7 +56,7 @@ python <skill>/scripts/narrar.py roteiro.md --capitulos 1   # teste barato: só 
 python <skill>/scripts/narrar.py roteiro.md                 # tudo -> audio/narracao.wav e o rascunho montagem.json
 ```
 
-A voz é a da Cartesia (chave em `CARTESIA_API_KEY`, nunca a imprima). A voz do canal é o **Heitor** (`b0f46533-d4bb-493f-a26f-a99e1f2e86e3`), já padrão no script; a Luana é a do canal de mentalidade, não use aqui. Para testar outra, `--listar [--genero feminine]` e um `narracao.json` com `{"voz": "<id>"}`. Cada bloco fica em cache: mudar uma frase do roteiro e rodar de novo regenera só aquele bloco. Depois de mudar o roteiro, use `--refazer-montagem` (isso descarta ajustes feitos à mão no `montagem.json`).
+A voz é a da Cartesia (chave em `CARTESIA_API_KEY`, nunca a imprima). A voz do canal é o **Heitor** (`b0f46533-d4bb-493f-a26f-a99e1f2e86e3`), já padrão no script; a Isabella é a do canal de mentalidade, não use aqui. Para testar outra, `--listar [--genero feminine]` e um `narracao.json` com `{"voz": "<id>"}`. Cada bloco fica em cache: mudar uma frase do roteiro e rodar de novo regenera só aquele bloco. Depois de mudar o roteiro, use `--refazer-montagem` (isso descarta ajustes feitos à mão no `montagem.json`).
 
 Se o usuário mandar uma narração gravada ou gerada fora daqui, use `python <skill>/scripts/alinhar.py roteiro.md <audio>`. Ele transcreve o áudio, acha onde cada bloco começa e escreve o mesmo rascunho.
 

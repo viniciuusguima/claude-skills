@@ -1,6 +1,6 @@
 ---
 name: recriar-video-tiktok
-description: Recria em português (PT-BR), do zero, vídeos curtos de motion graphics/explicativos do TikTok, Reels ou Shorts a partir de um link — extrai a legenda e os quadros de referência, escreve um roteiro próprio no mesmo formato e tema, gera narração com a voz Luana da Cartesia, trilha ambiente, anima as cenas em canvas no estilo minimalista preto e branco (bonecos sob holofote, painéis HUD) e renderiza um MP4 pronto para postar, junto com título e hashtags em português para o post. Use sempre que o usuário mandar um link de vídeo curto (vt.tiktok.com, tiktok.com, instagram reels, youtube shorts) pedindo para "fazer esse vídeo", "recriar", "copiar", "fazer igual em português", "traduzir o vídeo", ou quiser produzir vídeos de mentalidade/motivação/finanças nesse estilo animado, mesmo que não diga "skill" nem "motion graphics".
+description: Recria em português (PT-BR), do zero, vídeos curtos de motion graphics/explicativos do TikTok, Reels ou Shorts a partir de um link — extrai a legenda e os quadros de referência, escreve um roteiro próprio no mesmo formato e tema, gera narração com a voz Isabella da Cartesia, trilha ambiente, anima as cenas em canvas no estilo minimalista preto e branco (bonecos sob holofote, painéis HUD) e renderiza um MP4 pronto para postar, junto com título e hashtags em português para o post. Use sempre que o usuário mandar um link de vídeo curto (vt.tiktok.com, tiktok.com, instagram reels, youtube shorts) pedindo para "fazer esse vídeo", "recriar", "copiar", "fazer igual em português", "traduzir o vídeo", ou quiser produzir vídeos de mentalidade/motivação/finanças nesse estilo animado, mesmo que não diga "skill" nem "motion graphics".
 ---
 
 # Recriar vídeo curto em PT-BR
@@ -19,7 +19,7 @@ Pergunte só o que não estiver claro no pedido; para o resto, use o padrão e d
 | Decisão | Padrão |
 |---|---|
 | Formato | o mesmo do vídeo original (TikTok costuma ser vertical; o exemplo da skill é horizontal) |
-| Voz | **Luana**, da Cartesia (`gerar_audio_cartesia.py`, velocidade 1.1), que é a voz do canal. O edge-tts (`gerar_audio.py`) fica de reserva, se a Cartesia falhar |
+| Voz | **Isabella** (Warm Storyteller), da Cartesia (`gerar_audio_cartesia.py`, velocidade 1.25), que é a voz do canal. A Luana (`700d1ee3-a641-4018-ba6e-899dcadc9e2b`, velocidade 1.1) foi a voz anterior. O edge-tts (`gerar_audio.py`) fica de reserva, se a Cartesia falhar |
 | Roteiro | **próprio**, no mesmo tema, estrutura e duração do original |
 | Pasta | `E:/Projetos/<slug-curto-do-tema>` (ou o diretório de projetos que o usuário usa) |
 
@@ -37,7 +37,7 @@ Você, a sessão principal, é quem coordena: roda os scripts, cuida do Trello e
 | 1 | você | Passo 1 (`novo_projeto.py`). |
 | 2 | `extrator` | Passo 2 → `referencia/`. |
 | 3 | `roteirista` | Passos 3 e 8 → `roteiro.json` e `saida/post.txt`. Você abre o card em ✍️ Roteiro. |
-| 4 | você | Passo 4 (voz Luana e trilha). Card em 🎬 Produção. |
+| 4 | você | Passo 4 (voz Isabella e trilha). Card em 🎬 Produção. |
 | 5 | `animador` | Passos 5 e 6 → `cenas.js`. |
 | 6 | `revisor` | Revisão independente. Card em 🔍 Revisão. Repasse as correções ao dono do arquivo (SendMessage ao animador para `cenas.js`; se o texto mudar, você regenera a voz no passo 4). No máximo duas rodadas. |
 | 7 | você | Passos 7 e 9 (render, conferência, Drive, card, entrega). |
@@ -76,12 +76,12 @@ Com o roteiro escrito, abra o **card** do vídeo em ✍️ Roteiro.
 Mova o **card** para 🎬 Produção.
 ```bash
 cd E:/Projetos/<slug>
-python <skill>/scripts/gerar_audio_cartesia.py   # voz Luana por cena -> timeline.js, legendas.srt, build/narracao.wav
+python <skill>/scripts/gerar_audio_cartesia.py   # voz Isabella por cena -> timeline.js, legendas.srt, build/narracao.wav
 python <skill>/scripts/gerar_trilha.py     # pad ambiente + ducking + blips -> build/trilha_final.wav
 ```
 O script imprime a duração de cada cena; use esses números ao animar. Ele só regenera a voz das cenas
 cujo texto mudou (a chave vem de `CARTESIA_API_KEY`; nunca a imprima). Para mudar voz ou velocidade, ponha
-`"cartesia": {"voz": "<id>", "velocidade": 1.1}` no `roteiro.json`; sem esse bloco, usa a Luana.
+`"cartesia": {"voz": "<id>", "velocidade": 1.25}` no `roteiro.json`; sem esse bloco, usa a Isabella.
 
 ### 5. Animar as cenas
 Leia `references/motor.md` (API e regras de estilo) e abra `<skill>/template/cenas_exemplo.js` para
@@ -146,4 +146,4 @@ Mande o MP4 com `SendUserFile` e, na mensagem, nesta ordem:
 - **Usuário quer outro estilo visual** (cores, fonte): o motor é só canvas; mude as cores em
   `motor.js` do projeto (não no template da skill) e diga que o template continua no preto e branco.
 - **Cartesia falha** (sem chave, sem crédito, erro da API): mostre o erro ao usuário (nunca a chave) e,
-  se ele concordar, gere com `gerar_audio.py` (edge-tts, `pt-BR-FranciscaNeural`) avisando que não é a Luana.
+  se ele concordar, gere com `gerar_audio.py` (edge-tts, `pt-BR-FranciscaNeural`) avisando que não é a Isabella.
