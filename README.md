@@ -1,13 +1,13 @@
 # claude-skills
 
-Minhas skills pessoais para o Claude Code, separadas por plataforma: `skills/youtube/` e `skills/tiktok/`. Cada pasta dentro delas é uma skill independente.
+Minhas skills pessoais para o Claude Code, separadas por plataforma: `skills/youtube/` e `skills/tiktok/`. Cada pasta dentro delas é uma skill independente. As skills de vídeo não usam agentes: a sessão principal faz todo o trabalho, seguindo os roteiros de `etapas/` de cada skill.
 
 ## YouTube
 
 | Skill | O que faz |
 |---|---|
 | [criar-canal](skills/youtube/criar-canal/SKILL.md) | `/criar-canal <nome do canal>`: monta um canal novo parecido com um canal de referência. Olha a home da referência (banner, foto, thumbs mais vistas, títulos), define tema, língua, voz, tom e a marca do canal, gera o banner 2560×1440 e a foto de perfil 800×800, escreve prompts para versões ilustradas no Gemini, descrição e palavras-chave, e grava o perfil do canal (`canais/<slug>.md`) que a `recriar-video-youtube` usa em todo vídeo. |
-| [recriar-video-youtube](skills/youtube/recriar-video-youtube/SKILL.md) | `/recriar-video-youtube <link>`: recria um vídeo longo do YouTube para qualquer canal criado com a `criar-canal`, na língua escolhida (se o canal ou a língua não vierem junto com o link, a skill pergunta logo de cara): análise com a skill `watch` (plugin `bradautomates/claude-video`), roteiro próprio, vídeo 1920×1080, prompts para gerar as duas thumbnails no Gemini (Nano Banana), título, descrição e tags. Dividida em agentes (analistas, roteirista, animadores por bloco, designer de thumb, revisor). Usa o motor da `recriar-video-tiktok` e os perfis de canal da `criar-canal`. |
+| [recriar-video-youtube](skills/youtube/recriar-video-youtube/SKILL.md) | `/recriar-video-youtube <link>`: recria um vídeo longo do YouTube para qualquer canal criado com a `criar-canal`, na língua escolhida (se o canal ou a língua não vierem junto com o link, a skill pergunta logo de cara): análise com a skill `watch` (plugin `bradautomates/claude-video`), roteiro próprio, vídeo 1920×1080, prompts para gerar as duas thumbnails no Gemini (Nano Banana), título, descrição e tags. Feita em etapas, sem agentes (análise, roteiro, animação por bloco, prompts de thumb, revisão). Usa o motor da `recriar-video-tiktok` e os perfis de canal da `criar-canal`. |
 | [resumo-marvel](skills/youtube/resumo-marvel/SKILL.md) | Vídeo longo para o YouTube (1920×1080, PT-BR) que resume heróis, vilões e sagas no formato "O ÚNICO resumo de X": roteiro em capítulos, narração pela Cartesia, stills e trailers oficiais, montagem com ffmpeg e capa em grade 3×2. |
 
 Um canal novo começa na `criar-canal`; depois, cada vídeo é um `/recriar-video-youtube <link>`. Os perfis dos canais ficam em [`skills/youtube/criar-canal/canais/`](skills/youtube/criar-canal/canais/).

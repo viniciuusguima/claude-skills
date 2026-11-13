@@ -6,7 +6,7 @@
 //   node <skill>/scripts/video.mjs som      <slug>                          duração, NaN e volume (dB RMS) de cada segundo
 //   node <skill>/scripts/video.mjs exportar <slug> [arquivo.mp4]            exporta o MP4 e confere com ffprobe
 //
-// Sai com código 1 se algo falhar, para quem chamou (você ou um agente) perceber sem ler tudo.
+// Sai com código 1 se algo falhar, para quem chamou perceber sem ler tudo.
 import { spawn, execFileSync } from "node:child_process";
 import fs from "node:fs";
 import net from "node:net";

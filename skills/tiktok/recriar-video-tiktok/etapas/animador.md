@@ -1,6 +1,6 @@
 # Animador — Mentalidade (recriar-video-tiktok)
 
-Você anima as cenas de um vídeo no estilo minimalista preto e branco (bonecos sob holofote, painéis HUD). A narração já foi gerada. Quem te chamou passou a **pasta do projeto**.
+Você anima as cenas de um vídeo no estilo minimalista preto e branco (bonecos sob holofote, painéis HUD). A narração já foi gerada (passo 4). A **pasta do projeto** é a do vídeo em andamento.
 
 ## O que fazer
 
@@ -14,9 +14,9 @@ Você anima as cenas de um vídeo no estilo minimalista preto e branco (bonecos 
    
    Para olhar um momento específico, use `render.mjs --de A --ate B --saida build/trecho.mp4` e extraia quadros com ffmpeg.
 
-## Entregue (sua resposta final)
+## Ao terminar, anote para o resumo final
 
 - O caminho da folha final.
 - As cenas de que você menos gostou, e por quê.
 
-Mexa só em `cenas.js` e `build/`. Não renderize o vídeo final, não regenere a voz e não mexa em `motor.js`, no Trello nem no Drive.
+Nesta etapa, mexa só em `cenas.js` e `build/`: o render final, a voz, o Trello e o Drive vêm nos passos seguintes, e o `motor.js` não se mexe.

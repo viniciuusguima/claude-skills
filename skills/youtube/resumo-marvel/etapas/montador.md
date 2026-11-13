@@ -1,6 +1,6 @@
 # Montador — Resumo Marvel
 
-Você acerta a linha do tempo de um vídeo já narrado: que imagem ou trecho de trailer entra em cada momento. Quem te chamou passou a **pasta do vídeo**, onde já estão `montagem.json` (rascunho), `audio/narracao.wav`, `build/blocos.json` (a fala de cada bloco com o tempo), `imagens/` e `cenas/`.
+Você acerta a linha do tempo de um vídeo já narrado: que imagem ou trecho de trailer entra em cada momento. A **pasta do vídeo** já tem `montagem.json` (rascunho), `audio/narracao.wav`, `build/blocos.json` (a fala de cada bloco com o tempo), `imagens/` e `cenas/`.
 
 ## O que fazer
 
@@ -16,10 +16,10 @@ Você acerta a linha do tempo de um vídeo já narrado: que imagem ou trecho de 
 4. Rode `--folha` de novo (só os planos alterados são refeitos) até ficar limpo. Faça no máximo 3 rodadas.
 5. Gere o vídeo final: `python <skill>/scripts/montar.py`. Depois tire uma folha do MP4 pronto, como em `montagem.md`, e abra.
 
-## Entregue (sua resposta final)
+## Ao terminar, anote para o resumo final
 
 - O caminho do MP4, a duração e o tamanho.
 - Quantos planos você mudou.
-- Os planos que continuam fracos por falta de material, para o garimpeiro.
+- Os planos que continuam fracos por falta de material, para voltar ao garimpo se der.
 
 Mexa só no `montagem.json` e em `build/` e `saida/`. Não mexa no roteiro nem na narração.

@@ -1,6 +1,6 @@
 # Roteirista — Universo Simulado
 
-Você escreve o roteiro de um vídeo do canal UNIVERSO SIMULADO: vertical, 60 a 75 s, simulação 3D low-poly em primeira pessoa ("E se...?" / "Como sobreviver a..."). Quem te chamou passou a **ideia**, a **pasta de trabalho** e o **slug**.
+Você escreve o roteiro de um vídeo do canal UNIVERSO SIMULADO: vertical, 60 a 75 s, simulação 3D low-poly em primeira pessoa ("E se...?" / "Como sobreviver a..."). A **ideia** é a do usuário; a **pasta de trabalho** e o **slug** são os do vídeo.
 
 ## O que fazer
 
@@ -11,14 +11,14 @@ Você escreve o roteiro de um vídeo do canal UNIVERSO SIMULADO: vertical, 60 a 
    - `legendas`: 12 a 18, com 2,5 a 3,6 s cada e 0,3 a 0,5 s entre elas, no presente, falando com "você", com uma palavra `*vermelha*` por legenda.
    - `cartao`: um fato **real** que põe a premissa em contexto e uma pergunta para os comentários.
    - `post`: no formato de `<skill>/references/publicar.md`.
-3. Acima de `T`, deixe um comentário por trecho dizendo **o que a câmera mostra** (cenário, onde está a câmera, o que acontece, as mãos) e **o marcador** (título, grandeza e de quanto a quanto vai). É o briefing do visual e do sonoplasta, que não vão falar com você.
+3. Acima de `T`, deixe um comentário por trecho dizendo **o que a câmera mostra** (cenário, onde está a câmera, o que acontece, as mãos) e **o marcador** (título, grandeza e de quanto a quanto vai). É o briefing das etapas visual e sonora, que vêm depois.
 4. Confira os fatos (números, tempos, temperaturas) com busca na web, se você tiver. Se não tiver, marque cada fato não conferido com `// NÃO CONFERIDO` no comentário.
 5. Valide o arquivo: `node -e "eval(require('fs').readFileSync('<arquivo>','utf8').replace('const ROTEIRO','globalThis.R'));console.log(R.DUR,R.legendas.length)"`. Confira que nenhuma legenda passa de `T.card` e que nenhuma se sobrepõe a outra.
 
-## Entregue (sua resposta final)
+## Ao terminar, anote para o resumo final
 
 - O caminho do arquivo.
 - O vídeo em 2 frases e o cenário escolhido. Varie: não repita praia, campo ou espaço só porque já existem.
 - Os fatos não conferidos.
 
-Mexa só no `<slug>_roteiro.js`. Não crie outros arquivos do vídeo e não mexa no Trello nem no Drive.
+Nesta etapa, mexa só no `<slug>_roteiro.js`. Os outros arquivos do vídeo vêm nas etapas seguintes; o card do Trello você abre em seguida, com o `post` (passo 1 do SKILL.md).

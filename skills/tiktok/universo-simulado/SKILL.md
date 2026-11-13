@@ -40,23 +40,21 @@ Leia `references/api.md` antes de escrever código: ele lista as funções dispo
 
 Cada vídeo também é um **card** no quadro do Trello do usuário, que anda pelas listas junto com o trabalho e termina com o link do Drive e o texto do post. Leia `references/publicar.md` antes do passo 1: lá estão os endereços do quadro e da pasta do Drive, o que fazer com o card em cada etapa e como subir o vídeo.
 
-## Com agentes (o jeito padrão)
+## Etapas (tudo na sessão principal, sem agentes)
 
-Você, a sessão principal, é quem coordena. Cada papel é um subagente que recebe o próprio arquivo de instruções em `agents/`. Assim a conversa principal não se enche com o código das cenas, e o revisor olha o vídeo sem viés.
+Você faz todo o trabalho nesta sessão. Não use a ferramenta Agent neste fluxo. Cada papel tem um roteiro curto em `etapas/<papel>.md`: quando chegar na etapa, leia o arquivo e siga. `<skill>` é o caminho absoluto desta pasta.
 
-Para chamar um agente, use a ferramenta Agent com `subagent_type: "general-purpose"` e um prompt curto: "Você é o <papel> do Universo Simulado. Leia `<skill>/agents/<papel>.md` e siga. Skill: `<skill>`. Pasta: `<pasta>`. Slug: `<slug>`." Para o roteirista, acrescente a ideia do usuário. `<skill>` é o caminho absoluto desta pasta.
-
-| Ordem | Agente | Arquivos dele | Você, entre um e outro |
+| Ordem | Etapa | Arquivos dela | Você, entre uma e outra |
 |---|---|---|---|
-| 1 | `roteirista` | `js/<slug>_roteiro.js` | Abre o card em ✍️ Roteiro com o `post` do roteiro. |
-| 2 | `visual` e `sonoplasta`, **em paralelo** (arquivos diferentes) | `<slug>.html`, `_world.js` e `_main.js` / `_audio.js` | Move o card para 🎬 Produção. |
-| 3 | `revisor` | só `debug/` | Move o card para 🔍 Revisão. |
-| 4 | correções | quem é dono do arquivo | Repassa ao visual ou ao sonoplasta (SendMessage, para manter o contexto deles) só os itens do revisor que tocam os arquivos de cada um. Se o revisor disse "corrigir antes", depois das correções chame um revisor novo só para os trechos alterados. |
+| 1 | `etapas/roteirista.md` | `js/<slug>_roteiro.js` | Abre o card em ✍️ Roteiro com o `post` do roteiro. |
+| 2 | `etapas/visual.md` e depois `etapas/sonoplasta.md` | `<slug>.html`, `_world.js` e `_main.js`; depois `_audio.js` | Move o card para 🎬 Produção. |
+| 3 | `etapas/revisor.md` | só `debug/` | Move o card para 🔍 Revisão. |
+| 4 | correções | o arquivo que o revisor apontou | Corrige você mesmo os itens do revisor. Se ele disse "corrigir antes", depois das correções tire folhas novas só dos trechos alterados e revise esses trechos de novo. |
 | 5 | você | — | `video.mjs exportar`, folha do MP4 final, Drive, card em 📱 Pronto para postar, resumo ao usuário (passo 6). |
 
-O usuário tem limite de uso apertado. Não chame mais de dois agentes ao mesmo tempo, não refaça o trabalho de um agente "para conferir" (o revisor já faz isso) e limite a duas rodadas de correção. Num pedido de ajuste pequeno ("troca a frase do final"), faça você mesmo, sem agentes.
+O usuário tem limite de uso apertado. Não refaça o trabalho "para conferir" (a etapa do revisor já faz isso) e limite a duas rodadas de correção. Como o código das cenas fica nesta conversa, abra as folhas de quadros aos poucos e anote o que cada uma mostrou antes de abrir a próxima. Num pedido de ajuste pequeno ("troca a frase do final"), edite direto o arquivo, sem repassar as etapas.
 
-Os passos abaixo descrevem o trabalho de cada papel; os agentes os seguem.
+Os passos abaixo descrevem o trabalho de cada etapa; os roteiros em `etapas/` trazem o detalhe.
 
 ## Passo a passo
 

@@ -1,6 +1,6 @@
 # Visual — Universo Simulado
 
-Você constrói as cenas 3D, a câmera, o marcador e os efeitos de um vídeo do UNIVERSO SIMULADO a partir de um roteiro pronto. Quem te chamou passou a **pasta de trabalho** e o **slug**. O roteiro está em `<pasta>/js/<slug>_roteiro.js`, e os comentários acima de `T` são o seu briefing.
+Você constrói as cenas 3D, a câmera, o marcador e os efeitos de um vídeo do UNIVERSO SIMULADO a partir de um roteiro pronto. A **pasta de trabalho** e o **slug** são os do vídeo. O roteiro está em `<pasta>/js/<slug>_roteiro.js`, e os comentários acima de `T` são o seu briefing.
 
 ## O que fazer
 
@@ -14,10 +14,10 @@ Você constrói as cenas 3D, a câmera, o marcador e os efeitos de um vídeo do 
    - procure de propósito os defeitos da lista do passo 4 do SKILL.md (clarão que apaga tudo, cena escura, objeto tapando a câmera, câmera atravessando parede, assunto fora do quadro de ~46°, mãos gigantes, texto ilegível, objeto distante minúsculo);
    - corrija e refaça só as folhas afetadas.
 
-## Entregue (sua resposta final)
+## Ao terminar, anote para o resumo final
 
 - Os arquivos criados.
 - A lista das folhas finais (`debug/*.png`) com os instantes de cada uma.
 - O que você ainda acha fraco e não conseguiu resolver.
 
-Não mexa no `_roteiro.js`. Se um tempo do roteiro não funcionar na imagem, diga na resposta qual e por quê. Não mexa no `_audio.js` definitivo do sonoplasta. Não exporte o vídeo e não mexa no Trello nem no Drive.
+Nesta etapa, não mexa no `_roteiro.js`: se um tempo não funcionar na imagem, anote qual e por quê e decida depois. Também não mexa no `_audio.js` definitivo, que é da etapa seguinte. Exportar o vídeo e mexer no Trello e no Drive ficam para o passo 6.
