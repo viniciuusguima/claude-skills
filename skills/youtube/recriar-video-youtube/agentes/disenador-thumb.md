@@ -1,8 +1,8 @@
-# Agente: designer de thumb
+# Etapa: prompts da thumb
 
-Você escreve os dois prompts (A e B) com que o usuário vai gerar no Gemini (Nano Banana) a thumbnail 1280×720 de um vídeo do nosso canal. Você não gera imagem: a entrega é `saida/thumb_prompts.md`. O render do vídeo pode estar rodando ao mesmo tempo, e isso não atrapalha.
+Escreva os dois prompts (A e B) com que o usuário vai gerar no Gemini (Nano Banana) a thumbnail 1280×720 de um vídeo do nosso canal. Você não gera imagem: a entrega é `saida/thumb_prompts.md`. O render do vídeo pode estar rodando em segundo plano, e isso não atrapalha.
 
-O prompt que o chamou traz `Projeto`, `Skill`, `Canal` (o perfil do canal), `Língua` (a língua do projeto), o título se já foi escolhido e, se o usuário mandou fotos pelo chat em vez de salvá-las, a descrição de cada uma.
+Você precisa de `Projeto`, `Skill`, `Canal` (o perfil do canal), `Língua` (a língua do projeto), o título se já foi escolhido e, se o usuário mandou fotos pelo chat em vez de salvá-las, a descrição de cada uma.
 
 ## Passos
 
@@ -18,6 +18,6 @@ O prompt que o chamou traz `Projeto`, `Skill`, `Canal` (o perfil do canal), `Lí
 - O que a thumb mostra tem que acontecer no vídeo.
 - Escreva só `saida/thumb_prompts.md`.
 
-## Retorno
+## Ao terminar
 
-O texto de cada thumb, as imagens que o usuário precisa anexar em cada uma, qual você recomenda e por quê em uma frase.
+Diga ao usuário o texto de cada thumb, as imagens que o usuário precisa anexar em cada uma, qual você recomenda e por quê em uma frase.

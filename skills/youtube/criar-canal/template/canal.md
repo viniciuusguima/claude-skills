@@ -43,6 +43,7 @@ Valem as vozes e o tratamento de `recriar-video-youtube/references/linguas.md`. 
 |---|---|
 | Etiqueta no quadro "Produção de Vídeos" | <cor> · `<ID>` |
 | Pasta no Drive | "<Nome>" · `<ID>` (preencher no primeiro vídeo, veja "Subir no Drive" em `recriar-video-youtube/references/publicar.md`) |
+| Pasta dos já postados no Drive | "<Nome> - Postados" · `<ID>` (criada na primeira arrumação, ao lado da pasta acima; veja "Arrumar o Drive: o que já foi postado" em `recriar-video-youtube/references/publicar.md`) |
 
 ## A definir
 

@@ -14,8 +14,9 @@ Quadro "Produção de Vídeos": https://trello.com/b/0UPaoPtl
 | Lista 🎬 Produção | `ari:cloud:trello::list/workspace/6462511340407b9d58c8bc49/6af5302688f9572e498c5d37` |
 | Lista 🔍 Revisão | `ari:cloud:trello::list/workspace/6462511340407b9d58c8bc49/6af5302720bea21b70c66082` |
 | Lista 📱 Pronto para postar | `ari:cloud:trello::list/workspace/6462511340407b9d58c8bc49/6af530283f6917fda331a3b7` |
+| Lista ✅ Publicado | `ari:cloud:trello::list/workspace/6462511340407b9d58c8bc49/6af53029e9463110cf1db221` |
 
-A etiqueta e a pasta do Drive de cada canal ficam no perfil dele ("Trello e Drive").
+A etiqueta e as pastas do Drive de cada canal (a de trabalho e a "- Postados") ficam no perfil dele ("Trello e Drive").
 
 Cores já em uso no quadro: azul é Bitácora de Vuelo, verde é Mentalidade TikTok, roxa é Universo Simulado, e a vermelha está em uso. Um canal novo precisa de uma cor livre; quando a etiqueta dele for criada, acrescente-a nesta lista.
 
@@ -54,6 +55,17 @@ Atualize o campo **Status** da descrição a cada movimento, em uma frase.
 
 <o conteúdo de saida/post.txt: título, descrição com capítulos, tags>
 ```
+
+## Arrumar o Drive: o que já foi postado
+
+Quando o usuário posta um vídeo, ele move o card para ✅ Publicado, mas os arquivos continuam na pasta de trabalho do canal. **Antes de subir um vídeo novo** (e no início do trabalho, se o usuário pedir para arrumar), faça esta arrumação, para a pasta "<Nome do canal>" ficar só com o que ainda falta postar e o que já saiu ir para "<Nome do canal> - Postados":
+
+1. Leia a lista ✅ Publicado (`trelloReadList`, `get`) e abra os cards dela (`trelloReadCard`). Fique com os do canal (a etiqueta do perfil ou **Canal:** na descrição).
+2. Da descrição de cada um tire os IDs dos arquivos do Drive, que são o trecho `/file/d/<ID>/` dos links de **Vídeo:**, **Prompts da thumb** e **Thumbnail A/B**.
+3. Veja onde cada arquivo está (`get_file_metadata`). Se o pai ainda é a pasta do canal, mova-o com `update_file` (`parentId` = ID da pasta "Postados"). Se já está em "Postados", ou o usuário o apagou ou guardou em outro lugar, deixe como está. `banner.png` e `avatar.png` não pertencem a nenhum card: ficam onde estão.
+4. A pasta "<Nome do canal> - Postados" fica ao lado da pasta do canal, com o mesmo pai. O ID dela está no perfil do canal. Se ainda não está, procure (`search_files`, `title = '<Nome do canal> - Postados'`); se não existir, crie com `create_file` (`mimeType = application/vnd.google-apps.folder`, `parentId` = o pai da pasta do canal, que vem do `get_file_metadata` dela) e grave o ID no perfil.
+5. Mover não muda o link: o card em ✅ Publicado continua abrindo os arquivos. Não apague arquivo, não mexa em card e **nunca mova os de um card que ainda não está em ✅ Publicado**. Com o Drive para computador, os arquivos também mudam de pasta no PC sozinhos.
+6. Conte na entrega quantos vídeos foram para "Postados" (ou "nenhum postado novo"). Se o Trello ou o Drive não estiver disponível, pule a arrumação e avise.
 
 ## Subir no Drive
 

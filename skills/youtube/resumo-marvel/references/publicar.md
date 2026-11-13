@@ -10,6 +10,7 @@ Quadro "Produção de Vídeos": https://trello.com/b/0UPaoPtl
 | Lista 🎬 Produção | `ari:cloud:trello::list/workspace/6462511340407b9d58c8bc49/6af5302688f9572e498c5d37` |
 | Lista 🔍 Revisão | `ari:cloud:trello::list/workspace/6462511340407b9d58c8bc49/6af5302720bea21b70c66082` |
 | Lista 📱 Pronto para postar | `ari:cloud:trello::list/workspace/6462511340407b9d58c8bc49/6af530283f6917fda331a3b7` |
+| Lista ✅ Publicado | `ari:cloud:trello::list/workspace/6462511340407b9d58c8bc49/6af53029e9463110cf1db221` |
 | Etiqueta vermelha (Marvel) | `ari:cloud:trello::label/workspace/6462511340407b9d58c8bc49/6af53015ef992c6dbf8a6ac3` |
 
 | Quando | O que fazer |
@@ -38,3 +39,7 @@ Descrição do card:
 ```
 
 Ainda não há pasta do Drive para este canal: o vídeo é longo e vai para o YouTube. Pergunte ao usuário onde subir na primeira vez e registre a resposta aqui.
+
+## Quando o canal tiver pasta no Drive
+
+Vale a mesma arrumação dos outros canais ("Arrumar o Drive: o que já foi postado" em `recriar-video-youtube/references/publicar.md`): ao subir um vídeo novo, os arquivos dos cards do canal que já estão em ✅ Publicado saem da pasta "Marvel" e vão para "Marvel - Postados", ao lado dela. Registre aqui os IDs das duas pastas.

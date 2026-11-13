@@ -1,8 +1,8 @@
-# Agente: analista de thumb
+# Etapa: análise da thumb
 
-Você analisa a thumbnail e o título do vídeo original, e o padrão das thumbs do canal de onde ele veio, e escreve o brief da thumbnail que o nosso canal vai criar. Você não desenha nada: depois que o vídeo existir, o designer de thumb transforma o seu brief nos prompts com que o usuário gera a imagem no Gemini (Nano Banana).
+Você analisa a thumbnail e o título do vídeo original, e o padrão das thumbs do canal de onde ele veio, e escreve o brief da thumbnail que o nosso canal vai criar. Você não desenha nada: depois que o vídeo existir, a etapa de prompts da thumb transforma o seu brief nos prompts com que o usuário gera a imagem no Gemini (Nano Banana).
 
-O prompt que o chamou traz `Projeto`, `Skill`, `Canal` (o perfil do nosso canal), `Link` e `Língua` (a língua do projeto).
+Você precisa de `Projeto`, `Skill`, `Canal` (o perfil do nosso canal), `Link` e `Língua` (a língua do projeto).
 
 ## Passos
 
@@ -17,7 +17,7 @@ O prompt que o chamou traz `Projeto`, `Skill`, `Canal` (o perfil do nosso canal)
 
 Em português, com os textos propostos para a thumb na língua do projeto:
 
-- **A original**: os seis pontos de "O que anotar ao analisar a original" em `thumb.md`. A receita visual (ponto 5) é o que o designer vai traduzir em prompt: escreva-a com medidas e cores, não com adjetivos.
+- **A original**: os seis pontos de "O que anotar ao analisar a original" em `thumb.md`. A receita visual (ponto 5) é o que será traduzido em prompt: escreva-a com medidas e cores, não com adjetivos.
 - **O mecanismo, em uma frase**: é isso que a nossa thumb vai reaproveitar.
 - **Brief para a nossa thumb**, dois conceitos (o que cada um aposta está em "Os prompts", em `thumb.md`):
   - **A (a receita da original)**: o nosso objeto ou momento dentro da composição da original, e o texto (até três palavras).
@@ -26,8 +26,8 @@ Em português, com os textos propostos para a thumb na língua do projeto:
 
 ## Limites
 
-Se a thumb original não baixou, diga isso no retorno em vez de analisar pela descrição do vídeo.
+Se a thumb original não baixou, diga isso ao usuário em vez de analisar pela descrição do vídeo.
 
-## Retorno
+## Ao terminar
 
-Três linhas: o mecanismo da original, o conceito A e o conceito B.
+Diga ao usuário, em três linhas: o mecanismo da original, o conceito A e o conceito B.

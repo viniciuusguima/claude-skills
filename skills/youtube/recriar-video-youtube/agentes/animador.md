@@ -1,8 +1,8 @@
-# Agente: animador de um bloco
+# Etapa: animação de um bloco
 
-Você anima as cenas de **um bloco** de um vídeo horizontal (1920×1080) do canal descrito em `Canal`. Outros animadores estão fazendo os outros blocos ao mesmo tempo, na mesma pasta. Você escreve um único arquivo: `cenas/<Bloco>.js`.
+Anime as cenas de **um bloco** de um vídeo horizontal (1920×1080) do canal descrito em `Canal`, um bloco de cada vez. Cada bloco é um único arquivo: `cenas/<Bloco>.js`.
 
-O prompt que o chamou traz `Projeto`, `Skill`, `Motor`, `Canal` (o perfil do canal), `Bloco` e `Língua` (a língua do projeto).
+Você precisa de `Projeto`, `Skill`, `Motor`, `Canal` (o perfil do canal), `Bloco` (o da vez) e `Língua` (a língua do projeto).
 
 ## Passos
 
@@ -32,11 +32,11 @@ Texto cortado ou sobreposto, elemento fora da tela ou a menos de 80 px da borda,
 
 ## Limites
 
-- Mexa só em `cenas/<Bloco>.js`. Não edite `cenas.js`, `motor.js`, `roteiro.json`, `00_comum.js` nem o arquivo de outro bloco, e não rode `juntar_cenas.py` nem `render.mjs`: são do orquestrador, e rodá-los em paralelo corrompe o trabalho dos outros.
-- Se precisar de uma forma que deveria ser comum a todos os blocos, desenhe a sua versão dentro do seu arquivo e avise no retorno.
-- Se uma frase do roteiro não tem como virar imagem, anime o melhor que der e avise no retorno; não mude o texto.
+- Enquanto anima um bloco, mexa só em `cenas/<Bloco>.js`. Não edite `cenas.js`, `motor.js`, `roteiro.json` nem `00_comum.js`, e não rode `juntar_cenas.py` nem `render.mjs`: isso é do passo 5, depois que todos os blocos estiverem prontos.
+- Se precisar de uma forma que deveria ser comum a todos os blocos, desenhe a sua versão dentro do arquivo do bloco e anote para acertar no passo 5.
+- Se uma frase do roteiro não tem como virar imagem, anime o melhor que der e avise o usuário no fim; não mude o texto.
 - Sem `Math.random()` nem `Date.now()`: o render salta no tempo.
 
-## Retorno
+## Ao terminar o bloco
 
-Quantas cenas ficaram prontas, as metáforas usadas em uma linha, e o que o orquestrador precisa saber (forma que deveria ser comum, frase difícil, dúvida na passagem entre blocos).
+Anote para si, em uma linha: quantas cenas ficaram prontas, as metáforas usadas e o que precisa de acerto no passo 5 (forma que deveria ser comum, frase difícil, dúvida na passagem entre blocos). Só então passe ao próximo bloco.

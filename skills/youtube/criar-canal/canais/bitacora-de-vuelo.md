@@ -40,6 +40,7 @@ O nome do canal é um diário de bordo: quem narra esteve lá, anotou o que viu 
 |---|---|
 | Etiqueta no quadro "Produção de Vídeos" | azul · `ari:cloud:trello::label/workspace/6462511340407b9d58c8bc49/6af53015ef992c6dbf8a6ac5` |
 | Pasta no Drive | "Bitácora de Vuelo" · (preencher no primeiro vídeo, veja "Subir no Drive" em `recriar-video-youtube/references/publicar.md`) |
+| Pasta dos já postados no Drive | "Bitácora de Vuelo - Postados" · (criada na primeira arrumação, ao lado da pasta acima; veja "Arrumar o Drive: o que já foi postado" em `recriar-video-youtube/references/publicar.md`) |
 
 ## A definir
 

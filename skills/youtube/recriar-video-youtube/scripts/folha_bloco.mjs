@@ -1,5 +1,5 @@
 // Folha de conferência de UM bloco de cenas, sem tocar em cenas.js nem no perfil dos outros.
-// É o que cada agente animador usa para ver o próprio trabalho enquanto os outros animam ao lado.
+// É o que se usa para ver o bloco em que se está trabalhando sem montar o vídeo inteiro.
 // Rode dentro da pasta do projeto (ou passe --projeto CAMINHO).
 //
 //   node <skill>/scripts/folha_bloco.mjs 02_contexto                      -> build/folha_02_contexto.png

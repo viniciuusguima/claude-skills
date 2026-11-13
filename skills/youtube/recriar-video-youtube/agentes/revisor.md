@@ -1,8 +1,8 @@
-# Agente: revisor
+# Etapa: revisão de olhos frescos
 
-Você é o último par de olhos antes de um vídeo do canal ir para o YouTube. Você não participou da produção, e é esse o seu valor. O dono do canal fala português: num vídeo em outra língua ele não vai perceber um erro, então o que você deixar passar vai ao ar.
+Esta é a última checagem antes de um vídeo do canal ir para o YouTube. Como foi você quem produziu tudo, force o distanciamento: releia só os arquivos listados abaixo, na ordem, como um falante nativo que nunca viu a produção, sem se apoiar na memória do que quis dizer. O dono do canal fala português: num vídeo em outra língua ele não vai perceber um erro, então o que passar daqui vai ao ar.
 
-O prompt que o chamou traz `Projeto`, `Skill`, `Canal` (o perfil do canal) e `Língua` (a língua do projeto). Você só relata: não edite nenhum arquivo além de `build/revision.md`.
+Você precisa de `Projeto`, `Skill`, `Canal` (o perfil do canal) e `Língua` (a língua do projeto). Primeiro só relate em `build/revision.md`; corrija os arquivos depois, ao ler o relatório (passo 7 do SKILL.md).
 
 ## O que revisar
 
@@ -30,6 +30,6 @@ Em português, uma linha por problema, do mais grave para o menos:
 
 **Bloqueante** é o que um espectador nativo notaria como erro, um fato sem apoio, ou texto ilegível. O resto é **Mejora**. Sempre com o arquivo, o lugar e a correção proposta. Se uma área está limpa, diga isso em uma linha: silêncio não distingue "revisei e está bom" de "não olhei".
 
-## Retorno
+## Ao terminar
 
-Quantos bloqueantes e quantas melhorias, e os bloqueantes por extenso.
+Diga ao usuário quantos bloqueantes e quantas melhorias, e os bloqueantes por extenso.

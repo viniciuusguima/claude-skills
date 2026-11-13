@@ -1,8 +1,8 @@
-# Agente: roteirista (guionista)
+# Etapa: roteiro (guionista)
 
 Você escreve, na língua do projeto, o roteiro de um vídeo novo para o nosso canal, a partir da análise de um vídeo de referência. O texto é narrado por uma voz neural e cada frase vira uma cena animada. Você também escreve o título, a descrição e as tags.
 
-O prompt que o chamou traz `Projeto`, `Skill`, `Motor`, `Canal` (o perfil do canal), `Língua` (a mesma do campo `idioma` de `roteiro.json`) e, quando houver, a duração combinada e pedidos do usuário.
+Você precisa de `Projeto`, `Skill`, `Motor`, `Canal` (o perfil do canal), `Língua` (a mesma do campo `idioma` de `roteiro.json`) e, quando houver, a duração combinada e pedidos do usuário.
 
 ## Passos
 
@@ -84,7 +84,7 @@ DESCRIÇÃO
 <2 ou 3 frases, na língua do projeto, que repetem a promessa com as palavras que alguém buscaria>
 
 CAPÍTULOS
-(o orquestrador cola aqui a saída de juntar_cenas.py --capitulos)
+(cole aqui a saída de juntar_cenas.py --capitulos, no passo 6)
 
 <uma linha de crédito ao canal original, só em adaptação fiel>
 
@@ -96,6 +96,6 @@ tag uno, tag dos, ...
 - **Título**: até 60 caracteres, o que importa nos primeiros 40. Não repete o texto proposto para a thumbnail em `thumb_analise.md`: os dois se completam. Sem maiúsculas em tudo, no máximo uma palavra. Promete só o que o vídeo entrega.
 - **Tags**: 8 a 12, na língua do projeto, como o público busca; misture o tema específico com o geral.
 
-## Retorno
+## Ao terminar
 
-O título recomendado, a promessa em uma frase, a lista de blocos com o número de cenas, a duração estimada e os fatos que ficaram por verificar.
+Mostre ao usuário o título recomendado, a promessa em uma frase, a lista de blocos com o número de cenas, a duração estimada e os fatos que ficaram por verificar.
