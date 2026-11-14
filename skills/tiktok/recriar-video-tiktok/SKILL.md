@@ -28,21 +28,11 @@ autorais, e reaproveitá-lo também prende o canal do usuário ao conteúdo de o
 padrão é escrever um roteiro novo com a mesma mensagem central. Se o usuário pedir explicitamente uma
 adaptação fiel/tradução, faça, e lembre em uma linha de dar crédito ao criador original.
 
-## Com agentes (o jeito padrão)
+## Sem agentes
 
-Você, a sessão principal, é quem coordena: roda os scripts, cuida do Trello e do Drive e fala com o usuário. Cada papel é um subagente com o próprio arquivo em `agents/`. Para chamar um agente, use a ferramenta Agent com `subagent_type: "general-purpose"` e um prompt curto: "Você é o <papel> do canal de mentalidade. Leia `<skill>/agents/<papel>.md` e siga. Skill: `<skill>`. Pasta: `<pasta>`." Acrescente o link para o extrator e "adaptação fiel" para o roteirista, se o usuário pediu. `<skill>` é o caminho absoluto desta pasta.
+**Não use a ferramenta Agent nem subagentes, em nenhuma etapa** (decisão do usuário, por causa do limite de uso). Você mesmo faz cada passo do Fluxo, na ordem. Os briefs em `agents/` (`extrator`, `roteirista`, `animador`, `revisor`) ficam como guia do que fazer e do formato do que escrever em cada etapa; leia o brief da etapa quando precisar. Os arquivos de saída são os mesmos de antes.
 
-| Ordem | Quem | Faz |
-|---|---|---|
-| 1 | você | Passo 1 (`novo_projeto.py`). |
-| 2 | `extrator` | Passo 2 → `referencia/`. |
-| 3 | `roteirista` | Passos 3 e 8 → `roteiro.json` e `saida/post.txt`. Você abre o card em ✍️ Roteiro. |
-| 4 | você | Passo 4 (voz Isabella e trilha). Card em 🎬 Produção. |
-| 5 | `animador` | Passos 5 e 6 → `cenas.js`. |
-| 6 | `revisor` | Revisão independente. Card em 🔍 Revisão. Repasse as correções ao dono do arquivo (SendMessage ao animador para `cenas.js`; se o texto mudar, você regenera a voz no passo 4). No máximo duas rodadas. |
-| 7 | você | Passos 7 e 9 (render, conferência, Drive, card, entrega). |
-
-O usuário tem limite de uso apertado: um agente por vez, sem refazer o trabalho de um agente para conferir. Num ajuste pequeno, faça você mesmo, sem agentes.
+Para não encher o contexto: leia quadros e folhas de conferência em lotes pequenos (ou em escala reduzida). Na revisão do passo 6, confira o seu próprio trabalho com o brief `agents/revisor.md` em mãos, no máximo duas rodadas.
 
 ## Fluxo
 
@@ -124,8 +114,10 @@ hashtags" de `references/roteiro.md`. Use como base a descrição e as # do post
 na extração. O usuário vai postar o vídeo, então essa parte faz parte da entrega, não é um extra.
 
 ### 9. Entregar
-Copie o MP4 para a pasta do canal no Drive do PC, pegue o link e mova o **card** para 📱 Pronto para
-postar, com o link e o texto de `saida/post.txt` (`references/publicar.md`).
+Antes de subir, arrume o Drive: o que já está em ✅ Publicado no Trello sai da pasta "Mentalidade
+Tiktok" e vai para "Mentalidade Tiktok - Postados" (seção "Arrumar o Drive" de `references/publicar.md`).
+Depois copie o MP4 para a pasta do canal, pegue o link e mova o **card** para 📱 Pronto para
+postar, com o link e o texto de `saida/post.txt`.
 
 Mande o MP4 com `SendUserFile` e, na mensagem, nesta ordem:
 1. **Título** e **hashtags** em blocos de código separados, para copiar com um clique (e a versão
