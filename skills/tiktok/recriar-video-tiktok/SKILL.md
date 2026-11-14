@@ -139,3 +139,7 @@ Mande o MP4 com `SendUserFile` e, na mensagem, nesta ordem:
   `motor.js` do projeto (não no template da skill) e diga que o template continua no preto e branco.
 - **Cartesia falha** (sem chave, sem crédito, erro da API): mostre o erro ao usuário (nunca a chave) e,
   se ele concordar, gere com `gerar_audio.py` (edge-tts, `pt-BR-FranciscaNeural`) avisando que não é a Isabella.
+
+
+## Regra do usuário: a thumbnail/capa SEGUE A THUMB DO VÍDEO ORIGINAL
+Baixe a thumb do original (`yt-dlp --skip-download --write-thumbnail --convert-thumbnails jpg -o <pasta>/referencia/thumb_dl/thumb <link>`), abra com Read e replique o MESMO layout (divisão da tela, posição/cor/tipografia dos textos, quantidade de elementos), com elementos e textos nossos (nunca pixels do original). Na skill `recriar-video`, `scripts/gerar_thumb.py --modelo dividida|grade|titulo|quadro0 --ref` já faz isso e grava `build/thumb_comparacao.png` (original | nova) para conferir com Read. Vertical (TikTok/Short): a capa é o quadro t=0, que já deve ter texto na tela. Thumb genérica (quadro + título embaixo) fora do layout do original é errada.

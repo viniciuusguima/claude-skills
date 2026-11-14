@@ -53,6 +53,14 @@ Caminhos usados abaixo:
 
 **Como executar uma etapa**: leia `<skill>/agentes/<etapa>.md`, faça o que ele pede com os caminhos do projeto, do motor e do watch, e grave os arquivos de saída. Sem agente separado, a "revisão de olhos frescos" (passo 7) é uma releitura crítica sua, feita depois de um intervalo de trabalho, relendo só os arquivos publicáveis e o `roteiro.json`, como falante nativo da língua do vídeo.
 
+## Estilo visual: o do vídeo original (não o preto e branco do motor)
+
+O vídeo recriado **copia o estilo do original**: a técnica (cartoon 2D plano, filmagem, mapas...), a paleta, os cenários e as cartelas. Só os personagens, os desenhos exatos, a pintura, os números e os nomes são nossos. O branco sobre preto do motor (a regra de paleta de `<motor>/references/motor.md`) é o modo antigo e **só vale se o usuário pedir esse estilo**.
+
+- Antes de animar, leia "Estilo visual" de `referencia/analise.md` e abra uns 20 quadros de `referencia/watch/*/frames/` numa folha só (`ffmpeg -framerate 1 -i frames/frame_%04d.jpg -vf scale=480:-1,tile=5x5 -frames:v 1 build/original_folha.png`). Escreva um `referencia/estilo.md` curto: paleta em hex aproximado, cenários que se repetem, personagem recorrente, tipografia, o que aparece na tela em cada tipo de cena.
+- Ligue o modo colorido do motor no projeto: `python <skill>/scripts/modo_cor.py <projeto>` e, no topo de `cenas/00_comum.js`, `M.modoCor(true)`. Nesse modo cada cena pinta o próprio fundo, com corte seco entre cenas.
+- Em caso de dúvida sobre o estilo, pergunte ao usuário **antes** de animar, não depois de renderizar.
+
 ## Antes de começar: combine com o usuário
 
 Pergunte só o que não estiver claro no pedido; para o resto, use o padrão e diga qual usou.
@@ -84,10 +92,17 @@ Confira a skill watch antes de analisar:
 ```bash
 python "<pasta do watch.py>/setup.py" --json
 ```
-Se `first_run` for `true`, abra o `SKILL.md` da watch (uma pasta acima de `scripts/`) e faça o "Step 2" com o usuário: é lá que ele escolhe o motor (Gemini ou local) e o nível de detalhe. Se a watch não estiver instalada, veja "Quando algo foge do padrão".
+Se `first_run` for `true`, não pergunte nada ao usuário: a configuração inicial da watch já está decidida e é respondida pelo prompt fixo de `agentes/analista-video.md` (detalhe `balanced`, só legenda, sem transcrição de fala, `none`). Se a watch não estiver instalada, veja "Quando algo foge do padrão".
+
+A watch é sempre chamada pela ferramenta Skill (`watch:watch`) com o prompt de `agentes/analista-video.md`:
+```
+Use the watch skill on <link> in the folder I shared.
+For setup, choose balanced detail and captions only (none).
+Summarize what is visible, with timestamps.
+```
 
 ### 1. Analisar
-Siga `agentes/analista-video.md` (watch) e `agentes/analista-thumb.md` você mesmo. Vídeo com mais de 10 min: analise por trechos de 8 min (`--start/--end`).
+Siga `agentes/analista-video.md` (watch) e `agentes/analista-thumb.md` você mesmo. Na análise do vídeo, **veja todos os frames que a watch extraiu**, sem amostrar. Vídeo com mais de 10 min: analise por trechos de 8 min (`--start/--end`).
 
 Escreva `referencia/analise.md` e `referencia/thumb_analise.md`. Se faltou evidência (sem legenda, vídeo bloqueado), decida com o usuário antes de escrever em cima de uma análise furada.
 
@@ -159,7 +174,7 @@ Mande o MP4 com `SendUserFile` e, na mensagem, nesta ordem:
 
 ## Quando algo foge do padrão
 
-- **Watch não instalada**: é o plugin `watch` do repositório `bradautomates/claude-video`. Com o ok do usuário, instale você mesmo com `claude plugin marketplace add bradautomates/claude-video` e `claude plugin install watch@claude-video`. Não precisa de sessão nova: o `watch.py` é chamado pelo caminho, que `referencia_youtube.py --onde-watch` já encontra. Na primeira vez o usuário escolhe o motor (passo 0); com Gemini, abra `~/.config/watch/.env` no Bloco de Notas para ele colar a chave, que nunca passa pelo chat. Se ele preferir não instalar, analise pelo navegador embutido como em `<motor>/references/extracao.md` (seção YouTube) e avise que a análise visual fica mais rasa.
+- **Watch não instalada**: é o plugin `watch` do repositório `bradautomates/claude-video`. Com o ok do usuário, instale você mesmo com `claude plugin marketplace add bradautomates/claude-video` e `claude plugin install watch@claude-video`. Não precisa de sessão nova: o `watch.py` é chamado pelo caminho, que `referencia_youtube.py --onde-watch` já encontra. A configuração inicial já é a do prompt fixo (passo 0), sem perguntar ao usuário. Se ele pedir o motor Gemini, abra `~/.config/watch/.env` no Bloco de Notas para ele colar a chave, que nunca passa pelo chat. Se ele preferir não instalar, analise pelo navegador embutido como em `<motor>/references/extracao.md` (seção YouTube) e avise que a análise visual fica mais rasa.
 - **Watch falha ao baixar (erro 403)**: atualize o yt-dlp (`winget upgrade --id yt-dlp.yt-dlp`) e tente uma vez. Não use cookies do navegador sem o usuário pedir.
 - **Gemini falha**: a watch não troca de motor sozinha. Diga ao usuário o erro e ofereça rodar com `--engine local`.
 - **Motor não encontrado**: a skill recriar-video-tiktok precisa estar instalada também (veja o README do repositório). `--onde-motor` diz onde procurou.
@@ -169,3 +184,7 @@ Mande o MP4 com `SendUserFile` e, na mensagem, nesta ordem:
 - **`roteiro.json` com erro "Unexpected UTF-8 BOM"**: o arquivo foi salvo pelo PowerShell com BOM. Regrave com a ferramenta Write.
 - **Usuário quer trocar a língua de um vídeo já começado**: mude `idioma` e `voz` em `roteiro.json` (valores de `references/linguas.md` ou do perfil), reescreva o roteiro na língua nova e refaça do passo 2 em diante. A análise do passo 1 continua valendo.
 - **Usuário quer o mesmo vídeo em outro canal**: é um projeto novo, na pasta do outro canal; a análise do passo 1 pode ser copiada de um projeto para o outro.
+
+
+## Regra do usuário: a thumbnail/capa SEGUE A THUMB DO VÍDEO ORIGINAL
+Baixe a thumb do original (`yt-dlp --skip-download --write-thumbnail --convert-thumbnails jpg -o <pasta>/referencia/thumb_dl/thumb <link>`), abra com Read e replique o MESMO layout (divisão da tela, posição/cor/tipografia dos textos, quantidade de elementos), com elementos e textos nossos (nunca pixels do original). Na skill `recriar-video`, `scripts/gerar_thumb.py --modelo dividida|grade|titulo|quadro0 --ref` já faz isso e grava `build/thumb_comparacao.png` (original | nova) para conferir com Read. Vertical (TikTok/Short): a capa é o quadro t=0, que já deve ter texto na tela. Thumb genérica (quadro + título embaixo) fora do layout do original é errada.
