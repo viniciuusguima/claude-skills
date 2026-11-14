@@ -667,12 +667,12 @@ export const buildScene = (d: SceneData, animate: boolean): string => {
     : `<text x="18" y="${H - 18}" class="sm" fill="${SUB}">agentes ${d.agents.length}${running ? ` (${running} rodando)` : ''}</text>
        <text x="${W - 18}" y="${H - 18}" text-anchor="end" class="sm" fill="${SUB}">skills ${d.skills.length}</text>`
 
-  const bg = isBroken ? ['#2b2b2d', '#1b1b1c', '#111112'] : ['#4a4a51', '#38383e', '#2a2a2f']
+  const bg = isBroken ? ['#2b2b2d', '#1b1b1c', '#111112'] : ['#191919', '#191919', '#191919']
 
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="100%" height="100%" preserveAspectRatio="xMidYMid meet" font-family="Inter, Segoe UI, system-ui, sans-serif">
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="${bg[0]}"/><stop offset="60%" stop-color="${bg[1]}"/><stop offset="100%" stop-color="${bg[2]}"/></linearGradient>
-    <radialGradient id="spot" cx="50%" cy="58%" r="45%"><stop offset="0%" stop-color="#fff" stop-opacity="${isBroken ? 0.03 : 0.1}"/><stop offset="100%" stop-color="#fff" stop-opacity="0"/></radialGradient>
+    <radialGradient id="spot" cx="50%" cy="58%" r="45%"><stop offset="0%" stop-color="#fff" stop-opacity="${isBroken ? 0.03 : 0}"/><stop offset="100%" stop-color="#fff" stop-opacity="0"/></radialGradient>
     <filter id="gray"><feColorMatrix type="saturate" values="0"/><feComponentTransfer><feFuncR type="linear" slope="0.85"/><feFuncG type="linear" slope="0.85"/><feFuncB type="linear" slope="0.85"/></feComponentTransfer></filter>
   </defs>
   <style>
