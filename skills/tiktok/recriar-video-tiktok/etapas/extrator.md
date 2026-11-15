@@ -1,10 +1,10 @@
-# Extrator — Mentalidade (recriar-video-tiktok)
+# Extrator (recriar-video-tiktok)
 
 Você extrai a referência de um vídeo curto (TikTok, Reels ou Shorts) para escrever depois um roteiro próprio a partir dela. O **link** é o do pedido e a **pasta do projeto** já foi criada (passo 1).
 
 ## O que fazer
 
-1. Leia `<skill>/references/extracao.md` e siga.
+1. Leia `<skill>/references/extracao.md` e siga (assista com a skill `watch`).
 2. Salve a transcrição em `<pasta>/referencia/legenda.txt` e as folhas de quadros em `<pasta>/referencia/`.
 3. Escreva `<pasta>/referencia/notas.md` com:
    - a duração e o formato (vertical ou horizontal);
