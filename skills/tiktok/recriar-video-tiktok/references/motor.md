@@ -35,7 +35,7 @@ nomeDaCena(lt, d, k) { ... }
   vertical, `label` ≥ 20 px e texto principal ≥ 48 px. Nada importante a menos de 80 px da borda
   (no vertical, deixe livres os 250 px de baixo e os 150 px de cima, onde ficam a interface e a
   legenda do TikTok).
-- **Paleta**: só branco com alpha sobre preto. O brilho (`glow`) marca o que importa; se tudo
+- **Paleta (padrão)**: só branco com alpha sobre preto. Para outro estilo, troque `wa()` e as cores no `motor.js` do projeto. O brilho (`glow`) marca o que importa; se tudo
   brilha, nada se destaca.
 
 ## Funções disponíveis (desestruture de `M`)

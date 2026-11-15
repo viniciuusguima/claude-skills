@@ -3,7 +3,16 @@
 Objetivo: sair com (1) a transcrição com tempos e (2) uma noção visual de cada trecho. Você não
 baixa o vídeo; só lê a página e olha os quadros.
 
-## TikTok (vt.tiktok.com / tiktok.com)
+## Método principal: skill `watch` (qualquer vídeo)
+
+Invoque a skill `watch` com o link (ou caminho do arquivo). Ela baixa com yt-dlp, extrai quadros e
+traz a transcrição com tempos (ou o relatório do Gemini, se houver chave). Use o resultado para
+montar `referencia/legenda.txt` e `referencia/notas.md` (veja "O que anotar" abaixo) e para ver o
+estilo e a sequência de cenas. Descrição e hashtags do post original: pegue do metadado do vídeo
+(`yt-dlp --skip-download --print description --print tags <link>` serve).
+Só use os métodos abaixo se a `watch` falhar (site bloqueado, sem setup).
+
+## Plano B: TikTok pelo navegador embutido (vt.tiktok.com / tiktok.com)
 
 1. Abra o link no navegador embutido (`mcp__Claude_Browser__navigate`). O link curto redireciona
    para `tiktok.com/@autor/video/<id>`; anote autor e id em `referencia/notas.md`.
@@ -49,7 +58,7 @@ baixa o vídeo; só lê a página e olha os quadros.
    Recrie o canvas a cada página (como acima); reaproveitar o mesmo às vezes deixa o screenshot desatualizado.
 5. Ao terminar, remova o overlay (`document.getElementById('dbgc')?.remove()`) e libere a memória (`window.quadros = null`).
 
-## Instagram Reels / YouTube Shorts
+## Plano B: Instagram Reels / YouTube Shorts
 
 - **YouTube**: a transcrição costuma estar em "Mostrar transcrição" na descrição; leia com
   `get_page_text`. O `<video>` funciona igual ao do TikTok para os quadros.

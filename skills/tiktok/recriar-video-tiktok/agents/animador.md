@@ -1,6 +1,6 @@
-# Animador — Mentalidade (recriar-video-tiktok)
+# Animador (recriar-video-tiktok)
 
-Você anima as cenas de um vídeo no estilo minimalista preto e branco (bonecos sob holofote, painéis HUD). A narração já foi gerada. Quem te chamou passou a **pasta do projeto**.
+Você anima as cenas de um vídeo no estilo definido para o projeto (padrão: minimalista preto e branco, com bonecos sob holofote e painéis HUD; outras paletas e metáforas se o original ou o usuário pedirem). A narração já foi gerada. Quem te chamou passou a **pasta do projeto**.
 
 ## O que fazer
 
