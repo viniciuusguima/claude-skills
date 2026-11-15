@@ -1,9 +1,12 @@
 ---
 name: recriar-video-tiktok
-description: Recria em português (PT-BR), do zero, vídeos curtos de motion graphics/explicativos do TikTok, Reels ou Shorts a partir de um link — extrai a legenda e os quadros de referência, escreve um roteiro próprio no mesmo formato e tema, gera narração com a voz Luana da Cartesia, trilha ambiente, anima as cenas em canvas no estilo minimalista preto e branco (bonecos sob holofote, painéis HUD) e renderiza um MP4 pronto para postar, junto com título e hashtags em português para o post. Use sempre que o usuário mandar um link de vídeo curto (vt.tiktok.com, tiktok.com, instagram reels, youtube shorts) pedindo para "fazer esse vídeo", "recriar", "copiar", "fazer igual em português", "traduzir o vídeo", ou quiser produzir vídeos de mentalidade/motivação/finanças nesse estilo animado, mesmo que não diga "skill" nem "motion graphics".
+description: Recria em português (PT-BR), do zero, QUALQUER vídeo curto (TikTok, Reels, Shorts ou outro link/arquivo), de qualquer nicho e estilo — assiste ao original com a skill watch (transcrição + quadros), escreve um roteiro próprio no mesmo tema, estrutura e duração, gera narração com a voz Luana da Cartesia, trilha ambiente, anima as cenas em canvas (padrão: minimalista preto e branco; outras cores/estilos sob pedido ou para acompanhar o original) e renderiza um MP4 pronto para postar, junto com título e hashtags em português. Use sempre que o usuário mandar um link de vídeo curto (vt.tiktok.com, tiktok.com, instagram reels, youtube shorts) pedindo para "fazer esse vídeo", "recriar", "copiar", "fazer igual em português", "traduzir o vídeo", em qualquer tema (curiosidades, ciência, história, finanças, mentalidade, tecnologia...), mesmo que não diga "skill" nem "motion graphics".
 ---
 
 # Recriar vídeo curto em PT-BR
+
+Skill **geral**: serve para recriar qualquer vídeo curto, de qualquer tema e canal. O tema vem do
+vídeo original (não assuma mentalidade/motivação/finanças); o canal só importa na hora de entregar.
 
 O resultado é um MP4 (1920×1080 ou 1080×1920, 30 fps) gerado 100% por código, com narração neural
 pt-BR, trilha sintetizada e animação em canvas sincronizada com a fala, mais o título e as hashtags
@@ -18,9 +21,11 @@ Pergunte só o que não estiver claro no pedido; para o resto, use o padrão e d
 
 | Decisão | Padrão |
 |---|---|
+| Canal / destino | pergunte para qual canal é, se o pedido não disser: define a pasta do Drive e a etiqueta do Trello (hoje só existem as do canal Mentalidade TikTok; para outro canal, entregue o MP4 e o `post.txt` sem Trello/Drive) |
 | Formato | o mesmo do vídeo original (TikTok costuma ser vertical; o exemplo da skill é horizontal) |
 | Voz | **Luana**, da Cartesia (`gerar_audio_cartesia.py`, velocidade 1.1), que é a voz do canal. O edge-tts (`gerar_audio.py`) fica de reserva, se a Cartesia falhar |
 | Roteiro | **próprio**, no mesmo tema, estrutura e duração do original |
+| Estilo visual | **Preto e branco minimalista** (o do motor). Se o original tiver identidade visual forte (cores, personagens) ou o usuário pedir, adapte paleta e metáforas, só mexendo no `motor.js`/`cenas.js` do projeto |
 | Pasta | `E:/Projetos/<slug-curto-do-tema>` (ou o diretório de projetos que o usuário usa) |
 
 Sobre o roteiro: o visual, a voz e a música já saem originais. O texto é o que mais pesa em direitos
@@ -59,9 +64,10 @@ Copia `index.html` e `motor.js`, cria `roteiro.json` e `cenas.js` vazios e confe
 (ffmpeg, node, edge-tts, numpy, puppeteer-core). Se algo faltar, ele lista o comando para instalar.
 
 ### 2. Extrair a referência
-Leia `references/extracao.md`. Resumo: abra o link no navegador embutido, pegue a legenda
-automática pelo JSON da página (não precisa de login) e monte folhas de quadros para ver o estilo e a
-sequência de cenas. Salve a transcrição em `referencia/legenda.txt` e anote em
+Leia `references/extracao.md`. Resumo: **assista ao vídeo com a skill `watch`** (plugin claude-video,
+funciona com qualquer link ou arquivo): ela traz a transcrição com tempos e os quadros para ver o
+estilo e a sequência de cenas. O navegador embutido fica de plano B (TikTok bloqueado, `watch` sem
+setup). Salve a transcrição em `referencia/legenda.txt` e anote em
 `referencia/notas.md` o que acontece em cada trecho (tempo → visual), porque é isso que guia as cenas.
 Anote também a descrição e as hashtags do post original: elas são a base do título e das # em PT do passo 8.
 
@@ -124,8 +130,9 @@ hashtags" de `references/roteiro.md`. Use como base a descrição e as # do post
 na extração. O usuário vai postar o vídeo, então essa parte faz parte da entrega, não é um extra.
 
 ### 9. Entregar
-Copie o MP4 para a pasta do canal no Drive do PC, pegue o link e mova o **card** para 📱 Pronto para
-postar, com o link e o texto de `saida/post.txt` (`references/publicar.md`).
+**Só para o canal Mentalidade TikTok** (Trello + Drive): copie o MP4 para a pasta do canal no
+Drive do PC, pegue o link e mova o **card** para 📱 Pronto para postar, com o link e o texto de
+`saida/post.txt` (`references/publicar.md`). Para outro canal, pule o Trello/Drive e só mande o MP4.
 
 Mande o MP4 com `SendUserFile` e, na mensagem, nesta ordem:
 1. **Título** e **hashtags** em blocos de código separados, para copiar com um clique (e a versão
@@ -141,8 +148,10 @@ Mande o MP4 com `SendUserFile` e, na mensagem, nesta ordem:
   de login aberto. Se não houver `subtitleInfos`, peça a transcrição ao usuário ou trabalhe só a partir
   dos quadros e da descrição; não tente logar nem resolver captcha.
 - **Instagram/YouTube**: o mesmo fluxo vale; a extração muda (veja `references/extracao.md`).
-- **Vídeo original com pessoa falando para a câmera** (não é motion graphics): avise que a skill
-  produz no estilo animado e siga; o roteiro funciona igual.
+- **Vídeo original de outro tipo** (pessoa falando para a câmera, imagens reais, gameplay, outro
+  nicho): a skill continua valendo. Recrie a ideia e o roteiro e anime com metáforas visuais próprias
+  (diagramas, mapas, linhas do tempo, gráficos, ícones) no lugar dos bonecos. Avise que o resultado é
+  animado, não uma cópia do visual.
 - **Usuário quer outro estilo visual** (cores, fonte): o motor é só canvas; mude as cores em
   `motor.js` do projeto (não no template da skill) e diga que o template continua no preto e branco.
 - **Cartesia falha** (sem chave, sem crédito, erro da API): mostre o erro ao usuário (nunca a chave) e,

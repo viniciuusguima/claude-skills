@@ -24,7 +24,7 @@
 
 ## Estrutura que funciona para vídeos de ~60 s
 
-Os vídeos desse nicho seguem quase sempre o mesmo arco; reaproveite o arco, não as frases:
+Vídeos curtos explicativos seguem quase sempre um arco parecido; use o do original como base (ou este, se ele não tiver um claro) e reaproveite o arco, não as frases:
 
 1. **Gancho** (1 frase, 3 s): afirmação contraintuitiva ou promessa. É o que segura o scroll.
 2. **Crença comum** (1–2 frases): o que a maioria pensa.
@@ -56,14 +56,13 @@ Escreva depois do roteiro pronto, porque o título sai da frase mais forte do v�
   tradução literal, mantendo o mesmo efeito.
 - No máximo 1 emoji, e só se combinar com o tom.
 
-**Hashtags**: 5 a 8, todas em português, minúsculas, sem acento (#mentalidade, não #Mentalidade
-nem #mentalidadé), porque é assim que o público BR busca.
+**Hashtags**: 5 a 8, todas em português, minúsculas, sem acento (#historia, não #História
+nem #Historia), porque é assim que o público BR busca.
 - Parta das hashtags do original e use o equivalente que o público brasileiro realmente usa, não a
-  tradução literal: `#mindset` → `#mentalidade`, `#business` → `#empreendedorismo`,
-  `#money` → `#dinheiro` / `#financas`, `#motivation` → `#motivacao`, `#rich` → `#riqueza`
-  (ou `#sucesso`), `#success` → `#sucesso`, `#discipline` → `#disciplina`.
-- Misture 2–3 amplas (#motivacao, #sucesso) com 3–4 do tema específico do vídeo (#fracasso,
-  #aprendizado, #negociosonline).
+  tradução literal (ex.: `#mindset` → `#mentalidade`, `#money` → `#dinheiro`, `#history` →
+  `#historia`, `#science` → `#ciencia`, `#facts` → `#curiosidades`).
+- Misture 2–3 amplas do nicho com 3–4 do tema específico do vídeo.
+- (O exemplo abaixo é de um vídeo de mentalidade; adapte ao tema do seu.)
 - Não inclua #fyp/#foryou/#viral: em geral não ajudam e poluem.
 
 Formato do arquivo:
