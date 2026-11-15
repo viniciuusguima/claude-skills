@@ -16,7 +16,7 @@ Um canal novo começa na `criar-canal`; depois, cada vídeo é um `/recriar-vide
 
 | Skill | O que faz |
 |---|---|
-| [recriar-video-tiktok](skills/tiktok/recriar-video-tiktok/SKILL.md) | Recria em PT-BR, do zero, vídeos curtos de motion graphics do TikTok/Reels/Shorts a partir de um link: roteiro próprio, voz neural, trilha, animação em canvas (preto e branco, bonecos sob holofote) e MP4 pronto para postar. |
+| [recriar-video-tiktok](skills/tiktok/recriar-video-tiktok/SKILL.md) | Recria em PT-BR, do zero, qualquer vídeo curto (TikTok/Reels/Shorts, de qualquer tema) a partir de um link: assiste ao original com a skill `watch`, escreve roteiro próprio, voz neural, trilha, animação em canvas (padrão preto e branco; outros estilos sob pedido) e MP4 pronto para postar. |
 | [tiktok-similar-channels](skills/tiktok/tiktok-similar-channels/SKILL.md) | Recebe um canal do TikTok e conta quantos canais do mesmo estilo existem e em quais línguas: separa os de mesmo estilo (A), formato parecido (B) e mesmo nicho (C), aponta línguas sem ninguém no formato e salva o relatório em `tiktok-research/`. Funciona sem chave de API, pelo navegador interno do app (busca do TikTok + embed de perfil). Com `SCRAPECREATORS_API_KEY`, usa a API do ScrapeCreators. |
 | [universo-simulado](skills/tiktok/universo-simulado/SKILL.md) | Produz do zero um vídeo vertical completo (MP4 1080×1920, 60–75 s, PT-BR) do canal UNIVERSO SIMULADO a partir de uma única ideia: simulação 3D low-poly em primeira pessoa, legendas, trilha e efeitos sintetizados. |
 
